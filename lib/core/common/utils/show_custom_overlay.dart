@@ -9,15 +9,15 @@ void showCustomOverlay({required BuildContext context, String content = 'Success
   overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
       bottom: 20,
-      left: 80,
-      right: 80,
+      left: isSuccessType ? 50 : 70,
+      right: isSuccessType ? 50 : 70,
       child: Material(
         color: Colors.transparent,
         child: Container(
-          padding: EdgeInsets.all(AppConstants.paddingMedium),
+          padding: EdgeInsets.all(AppConstants.paddingTiny),
           decoration: BoxDecoration(
             color: isSuccessType ? AppColors.green : AppColors.red,
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius: BorderRadius.circular(AppConstants.borderWide),
           ),
           alignment: Alignment.center,
           child: Row(
@@ -25,7 +25,7 @@ void showCustomOverlay({required BuildContext context, String content = 'Success
             children: [
               Icon(isSuccessType ? Icons.check : Icons.close, color: AppColors.white),
               Padding(
-                padding: EdgeInsets.only(left: AppConstants.paddingMedium),
+                padding: EdgeInsets.only(left: AppConstants.paddingSmall),
                 child: Text(
                   content,
                   style: const TextStyle(color: Colors.white),
@@ -40,7 +40,7 @@ void showCustomOverlay({required BuildContext context, String content = 'Success
 
   overlayState.insert(overlayEntry);
 
-  // Remove the overlay after 2 seconds
+  // Remove the utils after 2 seconds
   Future.delayed(const Duration(seconds: 2), () {
     overlayEntry.remove();
   });

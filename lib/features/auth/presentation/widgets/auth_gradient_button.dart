@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class AuthGradientButton extends StatelessWidget {
           AppPallete.gradient1,
           AppPallete.gradient2,
         ], begin: Alignment.bottomLeft, end: Alignment.topRight),
-        borderRadius: BorderRadius.circular(7.0),
+        borderRadius: BorderRadius.circular(AppConstants.borderImage),
       ),
       child: ElevatedButton(
         onPressed: onPressed,

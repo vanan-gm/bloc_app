@@ -1,5 +1,5 @@
 import 'package:bloc_app/core/error/failures.dart';
-import 'package:bloc_app/features/auth/domain/entities/user_entity.dart';
+import 'package:bloc_app/core/common/entities/user_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class AuthRepository {
@@ -13,4 +13,6 @@ abstract interface class AuthRepository {
     String email,
     String password,
   );
+
+  Future<Either<Failure, UserEntity>> getCurrentUser();
 }
