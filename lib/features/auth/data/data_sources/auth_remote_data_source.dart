@@ -3,10 +3,12 @@ import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
+  Session? get currentUseSession;
   Future<UserModel> signUpWithEmailPassword(
       String name, String email, String password);
 
   Future<UserModel> loginWithEmailPassword(String email, String password);
+  Future<UserModel?> getCurrentUserData();
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -22,7 +24,9 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
         throw const ServerException(message: 'User is null !!');
       }
       return UserModel.fromJson(response.user!.toJson());
-    } catch (e) {
+    } on AuthException catch (e) {
+      throw ServerException(message: e.message);
+    }catch (e) {
       throw ServerException(message: e.toString());
     }
   }
@@ -38,7 +42,26 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
         throw const ServerException(message: 'User is null !!');
       }
       return UserModel.fromJson(response.user!.toJson());
+    } on AuthException catch (e) {
+      throw ServerException(message: e.message);
     } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Session? get currentUseSession => supabaseClient.auth.currentSession;
+
+  @override
+  Future<UserModel?> getCurrentUserData() async{
+    try{
+      if(currentUseSession == null) return null;
+      final userData = await supabaseClient.from('profiles').select().eq('id', currentUseSession!.user.id);
+      // Here we add copyWith function bc data get from table profiles only contains id and name
+      return UserModel.fromJson(userData.first).copyWith(email: currentUseSession!.user.email);
+    } on AuthException catch (e) {
+      throw ServerException(message: e.message);
+    } catch (e){
       throw ServerException(message: e.toString());
     }
   }
