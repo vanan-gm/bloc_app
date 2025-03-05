@@ -4,14 +4,18 @@ import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
 import 'package:bloc_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:bloc_app/features/auth/presentation/widgets/auth_gradient_button.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
+import 'package:bloc_app/init_dependencies.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
+  static route() => CupertinoPageRoute(builder: (context) => const SignUpPage());
   const SignUpPage({super.key});
 
   @override
@@ -22,6 +26,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passWordCtrl = TextEditingController();
+  final TextEditingController _passWordConfirmCtrl = TextEditingController();
+  final signUpStream = getIt<SignupStream>();
 
   @override
   void dispose() {
@@ -29,6 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passWordCtrl.dispose();
+    _passWordConfirmCtrl.dispose();
   }
 
   @override
@@ -78,6 +85,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: AuthField(
                             hintText: 'Name',
                             controller: _nameCtrl,
+                            stream: signUpStream.nameS,
+                            onChange: signUpStream.nameChange,
                           ),
                         ),
                         Padding(
@@ -88,6 +97,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: AuthField(
                             hintText: 'Email',
                             controller: _emailCtrl,
+                            stream: signUpStream.emailS,
+                            onChange: signUpStream.emailChange,
                           ),
                         ),
                         Padding(
@@ -98,7 +109,27 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: AuthField(
                             hintText: 'Password',
                             controller: _passWordCtrl,
-                            isObscure: true,
+                            isPasswordType: true,
+                            stream: signUpStream.passwordS,
+                            onChange: signUpStream.passwordChange,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppConstants.paddingSmall,
+                            vertical: AppConstants.paddingSmall,
+                          ),
+                          child: AuthField(
+                            hintText: 'Password Confirm',
+                            controller: _passWordConfirmCtrl,
+                            isPasswordType: true,
+                            stream: signUpStream.passwordConfirmS,
+                            onChange: (value){
+                              signUpStream.passwordConfirmChange({
+                                "password": _passWordCtrl.text.trim(),
+                                "password_confirm": _passWordConfirmCtrl.text.trim(),
+                              });
+                            },
                           ),
                         ),
                         Padding(
@@ -107,15 +138,12 @@ class _SignUpPageState extends State<SignUpPage> {
                             horizontal: AppConstants.paddingSmall,
                           ),
                           child: AuthGradientButton(
+                            stream: signUpStream.submitS,
                             onPressed: () {
-                              if (_nameCtrl.text.trim().isNotEmpty &&
-                                  _emailCtrl.text.trim().isNotEmpty &&
-                                  _passWordCtrl.text.trim().isNotEmpty) {
-                                context.read<AuthBloc>().add(AuthSignUp(
-                                    name: _nameCtrl.text.trim().toLowerCase(),
-                                    email: _emailCtrl.text.trim().toLowerCase(),
-                                    password: _passWordCtrl.text.trim()));
-                              }
+                              context.read<AuthBloc>().add(AuthSignUp(
+                                  name: _nameCtrl.text.trim().toLowerCase(),
+                                  email: _emailCtrl.text.trim().toLowerCase(),
+                                  password: _passWordCtrl.text.trim()));
                             },
                             text: 'Sign Up',
                           ),

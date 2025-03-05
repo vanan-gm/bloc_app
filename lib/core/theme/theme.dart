@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,11 @@ class AppTheme{
   static final darkThemeMode = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: AppColors.backgroundColor,
     chipTheme: const ChipThemeData(
-      color: MaterialStatePropertyAll(AppPallete.backgroundColor),
+      color: WidgetStatePropertyAll(AppPallete.backgroundColor),
       side: BorderSide.none,
     ),
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.all(25),
+      contentPadding: EdgeInsets.all(AppConstants.paddingMediumSmall),
       enabledBorder: _customBorder(),
       border: _customBorder(),
       focusedBorder: _customBorder(color: AppColors.gradient1),

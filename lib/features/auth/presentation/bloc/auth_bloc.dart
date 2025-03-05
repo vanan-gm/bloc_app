@@ -4,6 +4,7 @@ import 'package:bloc_app/core/usercase/usecase.dart';
 import 'package:bloc_app/core/common/entities/user_entity.dart';
 import 'package:bloc_app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_login.dart';
+import 'package:bloc_app/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,22 +17,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUp _userSignUp;
   final UserLogin _userLogin;
   final GetCurrentUser _getCurrentUser;
+  final UserSignOut _userSignOut;
   final AppUserCubit _appUserCubit;
 
   AuthBloc(
       {required UserSignUp userSignUp,
       required UserLogin userLogin,
       required GetCurrentUser getCurrentUser,
+      required UserSignOut userSignOut,
       required AppUserCubit appUserCubit})
       : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _getCurrentUser = getCurrentUser,
+        _userSignOut = userSignOut,
         _appUserCubit = appUserCubit,
         super(AuthInitialState()) {
     // Here we handle for every events, we will emit LoadingState first for all of them
     on<AuthEvent>((_, emit) => emit(AuthLoadingState()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
+    on<AuthSignOut>(_onAuthSignOut);
     on<AuthIsUserLoggedIn>(_onAuthIsUserLoggedIn);
   }
 
@@ -50,6 +55,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (user) => _emitAuthSuccess(user, emit));
   }
 
+  Future<void> _onAuthSignOut(
+      AuthSignOut event, Emitter<AuthState> emit) async {
+    final res = await _userSignOut.call(NoParams());
+    res.fold((failure) => emit(AuthFailureState(message: failure.message)),
+        (_) => emit(AuthSignOutSuccessState()));
+  }
+
   FutureOr<void> _onAuthIsUserLoggedIn(
       AuthIsUserLoggedIn event, Emitter<AuthState> emit) async {
     final res = await _getCurrentUser(NoParams());
@@ -60,7 +72,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  void _emitAuthSuccess(UserEntity user, Emitter<AuthState> emit){
+  void _emitAuthSuccess(UserEntity user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccessState(user: user));
   }

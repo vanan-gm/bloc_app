@@ -8,6 +8,7 @@ class AppConstants{
   // Paddings
   static double paddingTiny = 10.w;
   static double paddingSmall = 15.w;
+  static double paddingMediumSmall = 25.w;
   static double paddingMedium = 30.w;
   static double paddingLarge = 45.w;
   static double paddingBig = 60.w;
@@ -17,6 +18,7 @@ class AppConstants{
   static const double borderWide = 20.0;
   static const double borderImage = 10.0;
   static const double borderButton = 8.0;
+  static const double borderRound = 50.0;
 
   // TextSize
   static const double textTinySize = 12;

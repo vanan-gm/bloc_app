@@ -5,15 +5,18 @@ import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/signup_page.dart';
+import 'package:bloc_app/features/auth/presentation/streams/login_stream.dart';
 import 'package:bloc_app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:bloc_app/features/auth/presentation/widgets/auth_gradient_button.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
+import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
+  static route() => CupertinoPageRoute(builder: (context) => const LoginPage());
   const LoginPage({super.key});
 
   @override
@@ -23,12 +26,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passWordCtrl = TextEditingController();
+  final loginStream = getIt<LoginStream>();
 
   @override
   void dispose() {
     super.dispose();
     _emailCtrl.dispose();
     _passWordCtrl.dispose();
+    loginStream.dispose();
   }
 
   @override
@@ -46,7 +51,8 @@ class _LoginPageState extends State<LoginPage> {
                     (route) => false,
                   );
                 } else if (state is AuthFailureState) {
-                  showCustomOverlay(context: context,
+                  showCustomOverlay(
+                      context: context,
                       content: state.message,
                       isSuccessType: false);
                 }
@@ -59,37 +65,53 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Sign In', style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold),),
+                        const Text(
+                          'Sign In',
+                          style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold),
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
                           child: AuthField(
-                            hintText: 'Email', controller: _emailCtrl,),
+                            hintText: 'Email',
+                            controller: _emailCtrl,
+                            stream: loginStream.emailS,
+                            onChange: loginStream.emailChange,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
-                          child: AuthField(hintText: 'Password',
+                          child: AuthField(
+                            hintText: 'Password',
                             controller: _passWordCtrl,
-                            isObscure: true,),
+                            stream: loginStream.passwordS,
+                            onChange: loginStream.passwordChange,
+                            isPasswordType: true,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: AppConstants.paddingSmall,
                             horizontal: AppConstants.paddingSmall,
                           ),
-                          child: AuthGradientButton(onPressed: () {
-                            context.read<AuthBloc>().add(AuthLogin(
-                                email: _emailCtrl.text.trim().toLowerCase(),
-                                password: _passWordCtrl.text.trim().toLowerCase()));
-                          }, text: 'Sign In',),
+                          child: AuthGradientButton(
+                            onPressed: () {
+                              context.read<AuthBloc>().add(AuthLogin(
+                                  email: _emailCtrl.text.trim().toLowerCase(),
+                                  password:
+                                      _passWordCtrl.text.trim().toLowerCase()));
+                            },
+                            text: 'Sign In',
+                            stream: loginStream.submitS,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -97,26 +119,20 @@ class _LoginPageState extends State<LoginPage> {
                           child: RichText(
                             text: TextSpan(
                                 text: 'Don\'t have an account? ',
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .titleMedium,
+                                style: Theme.of(context).textTheme.titleMedium,
                                 children: [
                                   TextSpan(
-                                      text: 'Sign Up', style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .copyWith(color: AppPallete.gradient2,
-                                      fontWeight: FontWeight.bold),
+                                      text: 'Sign Up',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: AppPallete.gradient2,
+                                              fontWeight: FontWeight.bold),
                                       recognizer: TapGestureRecognizer()
-                                        ..onTap = () =>
-                                            Navigator.of(context).push(
-                                                CupertinoPageRoute(builder: (
-                                                    _) => const SignUpPage()))
-                                  )
-                                ]
-                            ),
+                                        ..onTap = () => Navigator.of(context)
+                                            .push(SignUpPage.route()))
+                                ]),
                           ),
                         ),
                       ],
