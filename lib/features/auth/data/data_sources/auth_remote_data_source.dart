@@ -9,6 +9,7 @@ abstract interface class AuthRemoteDataSource {
 
   Future<UserModel> loginWithEmailPassword(String email, String password);
   Future<UserModel?> getCurrentUserData();
+  Future<void> signOut();
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -62,6 +63,17 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     } on AuthException catch (e) {
       throw ServerException(message: e.message);
     } catch (e){
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> signOut() async{
+    try{
+      await supabaseClient.auth.signOut();
+    }on AuthException catch(e){
+      throw ServerException(message: e.message);
+    }catch (e){
       throw ServerException(message: e.toString());
     }
   }

@@ -6,8 +6,11 @@ import 'package:bloc_app/features/auth/data/repository/auth_repository_impl.dart
 import 'package:bloc_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:bloc_app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_login.dart';
+import 'package:bloc_app/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bloc_app/features/auth/presentation/streams/login_stream.dart';
+import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
 import 'package:bloc_app/features/blog/data/data_sources/blog_local_data_source.dart';
 import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source.dart';
 import 'package:bloc_app/features/blog/data/repository/blog_repository_impl.dart';
@@ -26,6 +29,8 @@ final getIt = GetIt.instance;
 Future<void> initDependencies() async {
   _initAuth();
   _initBlog();
+  _initStreams();
+
   final supaBase = await Supabase.initialize(
       url: AppSecrets.supaBaseUrl, anonKey: AppSecrets.supaBaseAnonKey);
   Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
@@ -54,12 +59,14 @@ void _initAuth() {
     ..registerFactory(() => UserSignUp(authRepository: getIt()))
     ..registerFactory(() => UserLogin(authRepository: getIt()))
     ..registerFactory(() => GetCurrentUser(authRepository: getIt()))
+    ..registerFactory(() => UserSignOut(authRepository: getIt()))
     // Bloc
     ..registerLazySingleton(() => AuthBloc(
         userSignUp: getIt(),
         userLogin: getIt(),
         getCurrentUser: getIt(),
-        appUserCubit: getIt()));
+        appUserCubit: getIt(),
+        userSignOut: getIt()));
 }
 
 void _initBlog() {
@@ -81,4 +88,9 @@ void _initBlog() {
     // Bloc
     ..registerLazySingleton(
         () => BlogBloc(uploadBlog: getIt(), getAllBlogs: getIt()));
+}
+
+void _initStreams() {
+  getIt.registerLazySingleton<LoginStream>(() => LoginStream());
+  getIt.registerLazySingleton<SignupStream>(() => SignupStream());
 }

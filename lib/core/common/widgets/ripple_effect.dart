@@ -6,7 +6,8 @@ class RippleEffect extends StatelessWidget {
   final Widget child;
   final VoidCallback onTap;
   final EdgeInsets? padding;
-  const RippleEffect({super.key, required this.child, required this.onTap, this.padding});
+  final double? radius;
+  const RippleEffect({super.key, required this.child, required this.onTap, this.padding, this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class RippleEffect extends StatelessWidget {
         Positioned.fill(
           child: Material(
             color: AppColors.transparentColor,
-            borderRadius: BorderRadius.circular(AppConstants.borderButton),
+            borderRadius: BorderRadius.circular(radius ?? AppConstants.borderButton),
             child: Container(
               margin: padding,
               child: InkWell(
