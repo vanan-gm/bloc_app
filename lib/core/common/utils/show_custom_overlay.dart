@@ -28,7 +28,7 @@ void showCustomOverlay({required BuildContext context, String content = 'Success
                 padding: EdgeInsets.only(left: AppConstants.paddingSmall),
                 child: Text(
                   content,
-                  style: const TextStyle(color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               )
             ],

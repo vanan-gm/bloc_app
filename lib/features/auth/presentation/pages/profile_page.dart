@@ -1,0 +1,305 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:bloc_app/core/common/extesions/string_ext.dart';
+import 'package:bloc_app/core/common/paths/app_path.dart';
+import 'package:bloc_app/core/common/utils/app_dialog.dart';
+import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
+import 'package:bloc_app/core/common/widgets/loading_widget.dart';
+import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
+import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/enums/card_type.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
+import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart'
+    as ab;
+import 'package:bloc_app/features/blog/domain/entities/blog.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/profile_blog/profile_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/pages/blog_detail_page.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
+import 'package:bloc_app/init_dependencies.dart';
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String name = "";
+  String image = AppPath.defaultUserImageUrl;
+  final List<String> images = [
+    AppPath.picturesProfileImageUrl1,
+    AppPath.picturesProfileImageUrl2,
+    AppPath.picturesProfileImageUrl3,
+    AppPath.picturesProfileImageUrl4,
+    AppPath.picturesProfileImageUrl5,
+    AppPath.picturesProfileImageUrl6,
+    AppPath.picturesProfileImageUrl7,
+    AppPath.picturesProfileImageUrl8,
+    AppPath.picturesProfileImageUrl9,
+    AppPath.picturesProfileImageUrl10,
+    AppPath.picturesProfileImageUrl11,
+    AppPath.picturesProfileImageUrl12,
+  ];
+  List<Blog> blogs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    callReads();
+  }
+
+  Future<void> handleRefresh() async {
+    await Future.delayed(AppConstants.refreshDuration, () {});
+    if (!mounted) return;
+    callReads();
+  }
+
+  void callReads() {
+    context.read<ab.AuthBloc>().add(ab.AuthIsUserLoggedIn());
+    context.read<ProfileBloc>().add(
+      GetProfileBlogsEvent(
+        userId: getIt<SupabaseClient>().auth.currentSession!.user.id,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: AppConstants.paddingSmall,
+        bottom: AppConstants.paddingTiny,
+      ),
+      child: BlocListener<ab.AuthBloc, ab.AuthState>(
+        listener: (context, state) {
+          if (state is ab.AuthSuccessState) {
+            name = state.user.name;
+            image = state.user.imageUrl;
+            setState(() {});
+          }
+        },
+        child: BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is GetProfileSuccessState) {
+              blogs = state.blogs;
+              setState(() {});
+            }
+          },
+          child: RefreshIndicator(
+            onRefresh: handleRefresh,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: RippleEffect(
+                    onTap: () {},
+                    radius: AppConstants.borderRound,
+                    child: CircleAvatar(
+                      backgroundImage: CachedNetworkImageProvider(image),
+                      backgroundColor: AppColors.whiteColor,
+                      radius: 42,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: AppConstants.paddingSmall,
+                  ),
+                  child: Text(
+                    name.upperFirstLetterWithSpace(),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: AppConstants.paddingSmall,
+                    left: AppConstants.paddingMediumSmall,
+                    right: AppConstants.paddingMediumSmall,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      buildInfoSection("28K", 'Followers'),
+                      buildInfoSection("${blogs.length}", 'Posts'),
+                      buildInfoSection("734K", 'Likes'),
+                      buildInfoSection("983K", 'Views'),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                    child: DefaultTabController(
+                      length: 3,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppConstants.paddingMediumSmall,
+                            ),
+                            child: Container(
+                              height: 35,
+                              child: TabBar(
+                                labelColor: AppColors.white,
+                                unselectedLabelColor: AppColors.white,
+                                indicatorColor: AppColors.transparentColor,
+                                labelStyle:
+                                    Theme.of(context).textTheme.bodyMedium,
+                                unselectedLabelStyle:
+                                    Theme.of(context).textTheme.bodyMedium,
+                                dividerColor: AppColors.transparentColor,
+                                splashBorderRadius: BorderRadius.circular(
+                                  AppConstants.borderTab,
+                                ),
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicator: BoxDecoration(
+                                  color: AppColors.gradient1,
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.borderTab,
+                                  ),
+                                ),
+                                tabs: [
+                                  Tab(text: "Updates"),
+                                  Tab(text: "Pictures"),
+                                  Tab(text: "About"),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: AppConstants.paddingTiny,
+                              ),
+                              child: TabBarView(
+                                children: [
+                                  buildFirstTab(blogs),
+                                  buildSecondTab(),
+                                  buildThirdTab(name),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildFirstTab(List<Blog> blogs) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state){
+        if(state is ProfileLoadingState){
+          return const LoadingWidget();
+        }else if (state is GetProfileSuccessState){
+          return ListView.builder(
+            itemCount: blogs.length,
+            itemBuilder: (context, i) {
+              return BlogCard(
+                blog: blogs[i],
+                cardType: CardType.horizontal,
+                padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall).copyWith(
+                  bottom: i < blogs.length - 1 ? AppConstants.paddingSmall : 0.0,
+                ),
+                onTap: () {
+                  Navigator.of(context).push(BlogDetailPage.route(blog: blogs[i]));
+                },
+              );
+            },
+          );
+        }else{
+          return SizedBox();
+        }
+      },
+    );
+  }
+
+  Widget buildSecondTab() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall),
+      child: MasonryGridView.builder(
+        gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        crossAxisSpacing: 5.0,
+        mainAxisSpacing: 5.0,
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          return RippleEffect(
+            onTap: () => AppDialog.showImageViewerDialog(context: context, imageUrl: images[index]),
+            child: CachedNetworkImg(imageUrl: images[index])
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildThirdTab(String name) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              "Hi, I'm $name, a passionate traveler, storyteller, and blogger with an insatiable curiosity for exploring the world. "
+              "Traveling isn't just a hobby for me—it's a way of life. From wandering through ancient streets filled with history to relaxing on pristine,"
+              " untouched beaches, every journey fuels my desire to discover and share.",
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(height: 1.7),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSmall),
+              child: CachedNetworkImg(imageUrl: AppPath.aboutProfileImageUrl),
+            ),
+            Text(
+              "Through my blog, I bring my experiences to life with vivid storytelling, "
+              "stunning photography, and practical travel tips. I love uncovering hidden gems, immersing myself in diverse cultures, and capturing the essence of each place I visit."
+              " Whether it's solo adventures, cultural deep dives, food explorations, or road trips to breathtaking landscapes, I believe every journey has a story worth telling.",
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(height: 1.7),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildInfoSection(String title, String des) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: AppConstants.paddingMicroSmall * .1),
+          child: Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
+          ),
+        ),
+        Text(
+          des,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: AppColors.whiteColor.withValues(alpha: .6),
+          ),
+        ),
+      ],
+    );
+  }
+}

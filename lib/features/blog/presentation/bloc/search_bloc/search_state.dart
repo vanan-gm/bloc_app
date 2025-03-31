@@ -1,0 +1,17 @@
+part of 'search_bloc.dart';
+
+abstract class SearchState{}
+
+final class SearchBlogsInitialState extends SearchState{}
+
+final class SearchBlogsLoadingState extends SearchState{}
+
+final class SearchBlogsSuccessState extends SearchState{
+  final List<Blog> blogs;
+  SearchBlogsSuccessState({required this.blogs});
+}
+
+final class SearchBlogsFailureState extends SearchState{
+  final String message;
+  SearchBlogsFailureState({required this.message});
+}

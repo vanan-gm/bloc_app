@@ -1,8 +1,9 @@
-import 'dart:ui';
-
 import 'package:bloc_app/core/common/extesions/date_time_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
+import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
+import 'package:bloc_app/core/common/widgets/long_text_painter.dart';
+import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
@@ -24,12 +25,29 @@ class BlogDetailPage extends StatefulWidget {
 
 class _BlogDetailPageState extends State<BlogDetailPage> {
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _key = GlobalKey();
+  double _titleHeight = 0.0;
   bool _showFloatingButton = false;
+  String _appBarTitle = '';
 
   @override
   void initState() {
     super.initState();
+    // Here we will calculate title height to handle display appbar title when user overscroll title blog
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final RenderBox renderBox =
+          _key.currentContext?.findRenderObject() as RenderBox;
+      setState(() {
+        _titleHeight = renderBox.size.height;
+      });
+    });
+
     _scrollController.addListener(() {
+      if (_scrollController.position.pixels > _titleHeight) {
+        _appBarTitle = widget.blog.title;
+      } else {
+        _appBarTitle = '';
+      }
       if (_scrollController.position.pixels > 55) {
         _showFloatingButton = true;
       } else {
@@ -42,7 +60,21 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        title: AnimatedOpacity(
+          opacity: _appBarTitle.trim().isNotEmpty ? 1.0 : 0.0,
+          duration: AppConstants.fadeDuration,
+          curve: Curves.easeInOut,
+          child: Text(
+            _appBarTitle,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Scrollbar(
           controller: _scrollController,
@@ -55,29 +87,33 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                 children: [
                   Text(
                     widget.blog.title,
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontSize: AppConstants.textBigSize,
-                      fontWeight: FontWeight.bold,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
+                    key: _key,
                   ),
                   Padding(
                     padding: EdgeInsets.only(
                       top: AppConstants.paddingSmall,
                       bottom: AppConstants.paddingTiny,
                     ),
-                    child: Text(
-                      'By ${widget.blog.posterName}',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: AppConstants.textMediumSize,
-                      ),
+                    child: Row(
+                      children: [
+                        if(widget.blog.imageUrl.isNotEmptyOrNull())
+                        Text(
+                          'By ${widget.blog.posterName}',
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: AppConstants.textMediumSize,
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   Text(
                     '${widget.blog.updatedAt.formatDMY()}. ${widget.blog.content.toReadingTime()} mins',
                     style: TextStyle(
-                      color: AppColors.white.withOpacity(.8),
+                      color: AppColors.white.withValues(alpha: .8),
                       fontSize: AppConstants.textMediumSize,
                     ),
                   ),
@@ -85,28 +121,35 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     padding: EdgeInsets.symmetric(
                       vertical: AppConstants.paddingSmall,
                     ),
-                    child: ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(AppConstants.borderImage),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.blog.imageUrl,
-                        fit: BoxFit.cover,
-                        width: AppConstants.widthScreen,
-                        height: AppConstants.containerCardHeight,
-                        placeholder: (context, url) => CustomShimmer(
+                    child: RippleEffect(
+                      onTap:
+                          () => AppDialog.showImageViewerDialog(
+                            context: context,
+                            imageUrl: widget.blog.imageUrl,
+                          ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.borderImage,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.blog.imageUrl,
+                          fit: BoxFit.cover,
                           width: AppConstants.widthScreen,
                           height: AppConstants.containerCardHeight,
+                          placeholder:
+                              (context, url) => CustomShimmer(
+                                width: AppConstants.widthScreen,
+                                height: AppConstants.containerCardHeight,
+                              ),
                         ),
                       ),
                     ),
                   ),
-                  Text(
-                    widget.blog.content,
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontSize: AppConstants.textSmallSize,
-                      wordSpacing: 1.5,
-                    ),
+                  LongTextPainter(
+                    text: widget.blog.content,
+                    textStyle: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
                   ),
                 ],
               ),
@@ -117,20 +160,18 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
       floatingActionButton: Visibility(
         visible: _showFloatingButton,
         child: FloatingActionButton(
-          onPressed: () => _scrollController.animateTo(
-            0.0,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeIn,
-          ),
+          onPressed:
+              () => _scrollController.animateTo(
+                0.0,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeIn,
+              ),
           backgroundColor: AppColors.black.withOpacity(.7),
           mini: true,
           shape: const CircleBorder(),
           child: const RotatedBox(
             quarterTurns: 1,
-            child: Icon(
-              Icons.arrow_back_ios_rounded,
-              color: AppColors.white,
-            ),
+            child: Icon(Icons.arrow_back_ios_rounded, color: AppColors.white),
           ),
         ),
       ),

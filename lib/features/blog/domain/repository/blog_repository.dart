@@ -14,4 +14,6 @@ abstract class BlogRepository {
   });
 
   Future<Either<Failure, List<Blog>>> getAllBlogs();
+  Future<Either<Failure, List<Blog>>> getBlogsByUserId(String userId);
+  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord(String key);
 }

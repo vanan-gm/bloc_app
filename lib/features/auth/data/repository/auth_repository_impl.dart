@@ -35,9 +35,9 @@ class AuthRepositoryImpl implements AuthRepository {
         return right(user);
       }
     } on sb.AuthException catch (e) {
-      return left(Failure(message: e.toString()));
+      return left(Failure(message: e.message.toString()));
     }on ServerException catch (e) {
-      return left(Failure(message: e.toString()));
+      return left(Failure(message: e.message.toString()));
     }
   }
 
@@ -45,9 +45,19 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUser() async{
     try{
       final user = await authRemoteDataSource.getCurrentUserData();
-      if(user == null) return left(Failure(message: 'User not logged in'));
+      if(user == null) return left(Failure(message: AppConstants.userNotLoggedIn));
       return right(user);
-    } on ServerException catch (e) {
+    } on ServerException {
+      return left(Failure(message: ''));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> signOut() async{
+    try{
+      authRemoteDataSource.signOut();
+      return right(null);
+    } on ServerException catch(e){
       return left(Failure(message: e.toString()));
     }
   }

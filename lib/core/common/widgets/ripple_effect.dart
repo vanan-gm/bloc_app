@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 
 class RippleEffect extends StatelessWidget {
   final Widget child;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final EdgeInsets? padding;
-  const RippleEffect({super.key, required this.child, required this.onTap, this.padding});
+  final double? radius;
+  const RippleEffect({super.key, required this.child, required this.onTap, this.padding, this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +17,14 @@ class RippleEffect extends StatelessWidget {
         Positioned.fill(
           child: Material(
             color: AppColors.transparentColor,
-            borderRadius: BorderRadius.circular(AppConstants.borderButton),
+            borderRadius: BorderRadius.circular(radius ?? AppConstants.borderButton),
             child: Container(
               margin: padding,
               child: InkWell(
                 onTap: onTap,
-                splashColor: Colors.white.withOpacity(0.1), // Custom splash color
-                highlightColor: Colors.white.withOpacity(0.2), // Custom highlight color
-                borderRadius: BorderRadius.circular(AppConstants.borderButton), // Custom border radius
+                splashColor: Colors.white.withValues(alpha: 0.1), // Custom splash color
+                highlightColor: Colors.white.withValues(alpha: 0.2), // Custom highlight color
+                borderRadius: BorderRadius.circular(radius ?? AppConstants.borderButton), // Custom border radius
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/paths/app_path.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,6 +10,7 @@ abstract interface class AuthRemoteDataSource {
 
   Future<UserModel> loginWithEmailPassword(String email, String password);
   Future<UserModel?> getCurrentUserData();
+  Future<void> signOut();
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -37,6 +39,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     try {
       final response = await supabaseClient.auth.signUp(password: password, email: email, data: {
         'name': name,
+        'image_url': AppPath.defaultUserImageUrl,
       });
       if(response.user == null){
         throw const ServerException(message: 'User is null !!');
@@ -62,6 +65,17 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     } on AuthException catch (e) {
       throw ServerException(message: e.message);
     } catch (e){
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> signOut() async{
+    try{
+      await supabaseClient.auth.signOut();
+    }on AuthException catch(e){
+      throw ServerException(message: e.message);
+    }catch (e){
       throw ServerException(message: e.toString());
     }
   }
