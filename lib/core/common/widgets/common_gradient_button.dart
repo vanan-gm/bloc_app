@@ -20,22 +20,22 @@ class CommonGradientButton extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: stream != null
                 ? snapshot.error == null && snapshot.data != null
-                    ? gGradientColor
+                    ? snapshot.data! ? gGradientColor
                     : null
-                : gGradientColor,
+                : null : null,
             color: stream != null
                 ? snapshot.error == null && snapshot.data != null
-                    ? gColor
+                    ? snapshot.data! ? gColor
                     : null
-                : gColor,
+                : null : null,
             borderRadius: BorderRadius.circular(AppConstants.borderImage),
           ),
           child: ElevatedButton(
             onPressed: stream != null
                 ? snapshot.error == null && snapshot.data != null
-                    ? onPressed
+                    ? snapshot.data! ? onPressed
                     : null
-                : onPressed,
+                : null : null,
             style: ElevatedButton.styleFrom(
               fixedSize: const Size(400, 50),
               shape: RoundedRectangleBorder(
