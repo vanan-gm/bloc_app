@@ -17,7 +17,7 @@ class CircleAvatarImage extends StatelessWidget {
       child: CircleAvatar(
         backgroundImage: CachedNetworkImageProvider(image),
         backgroundColor: AppColors.whiteColor,
-        radius: 42,
+        radius: radius,
       ),
     );
   }

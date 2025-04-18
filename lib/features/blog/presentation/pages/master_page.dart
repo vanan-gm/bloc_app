@@ -1,17 +1,14 @@
+import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
+import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bloc_app/core/common/paths/app_path.dart';
-import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/bottom_nav_app.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/page_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
-import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
-import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/add_blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/favorite_page.dart';
@@ -39,6 +36,7 @@ class _MasterPageState extends State<MasterPage> {
     SearchPage(),
     FavoritePage(),
     ProfilePage(),
+    SettingsPage(),
   ];
   int _currentTabIndex = 0;
 
@@ -65,39 +63,6 @@ class _MasterPageState extends State<MasterPage> {
         ),
         centerTitle: true,
         forceMaterialTransparency: true,
-        actions: [
-          AnimatedOpacity(
-            opacity: _currentTabIndex == 0 ? 1 : 0,
-            duration: AppConstants.fadeShortDuration,
-            child: AppIcon.asset(
-              AppPath.icReload,
-              size: AppConstants.iconMediumSize,
-              margin: EdgeInsets.all(AppConstants.paddingTiny),
-              onClick: () {
-                context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
-              },
-            ),
-          ),
-          AppIcon.asset(
-            AppPath.icLogout,
-            size: AppConstants.iconMediumSize,
-            margin: EdgeInsets.all(
-              AppConstants.paddingTiny,
-            ).copyWith(right: AppConstants.paddingSmall),
-            onClick: () {
-              AppDialog.showSignOutDialog(
-                context: context,
-                onBack: () {
-                  Navigator.of(context).pop();
-                },
-                onOk: () {
-                  Navigator.of(context).pop();
-                  context.read<AuthBloc>().add(AuthSignOut());
-                },
-              );
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: IndexedStack(index: _currentTabIndex, children: pages),
@@ -110,7 +75,7 @@ class _MasterPageState extends State<MasterPage> {
             icon: Padding(
               padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
               child: AppIcon.asset(
-                AppPath.icHome,
+                Assets.iconsIcHome,
                 color:
                     _currentTabIndex == 0
                         ? AppPallete.gradient1
@@ -123,7 +88,7 @@ class _MasterPageState extends State<MasterPage> {
             icon: Padding(
               padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
               child: AppIcon.asset(
-                AppPath.icSearch,
+                Assets.iconsIcSearch,
                 color:
                     _currentTabIndex == 1
                         ? AppPallete.gradient1
@@ -136,7 +101,7 @@ class _MasterPageState extends State<MasterPage> {
             icon: Padding(
               padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
               child: AppIcon.asset(
-                AppPath.icFavorite,
+                Assets.iconsIcHeart,
                 color:
                     _currentTabIndex == 2
                         ? AppPallete.gradient1
@@ -149,7 +114,7 @@ class _MasterPageState extends State<MasterPage> {
             icon: Padding(
               padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
               child: AppIcon.asset(
-                AppPath.icProfile,
+                Assets.iconsIcUser,
                 color:
                     _currentTabIndex == 3
                         ? AppPallete.gradient1
@@ -157,6 +122,19 @@ class _MasterPageState extends State<MasterPage> {
               ),
             ),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
+              child: AppIcon.asset(
+                Assets.iconsIcSettings,
+                color:
+                _currentTabIndex == 4
+                    ? AppPallete.gradient1
+                    : AppColors.white,
+              ),
+            ),
+            label: 'Settings',
           ),
         ],
       ),

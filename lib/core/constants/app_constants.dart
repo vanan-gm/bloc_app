@@ -47,11 +47,17 @@ class AppConstants{
   static const double containerTopicHeight = 50;
   static const double containerCardHeight = 200;
   static const double containerBottomHeight = 100;
+  static const double containerDetailHeight = 70;
+  static const double circleAvatarDetailPageSize = 18;
+  static const double circleAvatarSmallSize = 24;
+  static const double circleAvatarMedSize = 30;
+  static const double circleAvatarBigSize = 42;
 
   // Duration
   static const Duration refreshDuration = Duration(seconds: 2);
   static const Duration fadeDuration = Duration(milliseconds: 300);
   static const Duration fadeShortDuration = Duration(milliseconds: 100);
+  static const Duration rotationDuration = Duration(milliseconds: 200);
 
   // Elevation
   static const double elevationZero = 0.0;

@@ -1,4 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math';
+
+import 'package:bloc_app/core/common/widgets/app_icon.dart';
+import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
+import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -12,8 +16,7 @@ import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/card_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart'
-    as ab;
+import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart' as ab;
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/profile_blog/profile_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_detail_page.dart';
@@ -29,6 +32,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String name = "";
+  bool showDetails = true;
   String image = AppPath.defaultUserImageUrl;
   final List<String> images = [
     AppPath.picturesProfileImageUrl1,
@@ -67,6 +71,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void setDetailAppear(){
+    setState(() {
+      showDetails = !showDetails;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -96,41 +106,69 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Align(
                   alignment: Alignment.center,
-                  child: RippleEffect(
-                    onTap: () {},
-                    radius: AppConstants.borderRound,
-                    child: CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(image),
-                      backgroundColor: AppColors.whiteColor,
-                      radius: 42,
-                    ),
+                  child: CircleAvatarImage(
+                    image: image,
+                    radius: AppConstants.circleAvatarBigSize,
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: AppConstants.paddingSmall,
-                  ),
-                  child: Text(
-                    name.upperFirstLetterWithSpace(),
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Text(
+                        name.upperFirstLetterWithSpace(),
+                        style: Theme.of(context).textTheme.titleMedium!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: AppConstants.paddingTiny,
+                          ),
+                          child: RippleEffect(
+                            onTap: () => setDetailAppear.call(),
+                            child: TweenAnimationBuilder(
+                              tween: Tween<double>(begin: pi, end: showDetails ? pi : 0),
+                              duration: AppConstants.rotationDuration,
+                              builder: (context, value, child){
+                                return Transform.rotate(
+                                  angle: value,
+                                  child: AppIcon.asset(
+                                    Assets.iconsIcUpArrow,
+                                    color: AppColors.white,
+                                    size: AppConstants.iconMediumSize,
+                                  ),
+                                );
+                              }
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Padding(
+                AnimatedContainer(
+                  duration: AppConstants.rotationDuration,
+                  height: showDetails ? AppConstants.containerDetailHeight : 0,
+                  curve: Curves.easeInOut,
                   padding: EdgeInsets.only(
                     top: AppConstants.paddingSmall,
                     left: AppConstants.paddingMediumSmall,
                     right: AppConstants.paddingMediumSmall,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      buildInfoSection("28K", 'Followers'),
-                      buildInfoSection("${blogs.length}", 'Posts'),
-                      buildInfoSection("734K", 'Likes'),
-                      buildInfoSection("983K", 'Views'),
-                    ],
+                  child: ClipRect(
+                    child: SingleChildScrollView(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          buildInfoSection("28K", 'Followers'),
+                          buildInfoSection("${blogs.length}", 'Posts'),
+                          buildInfoSection("734K", 'Likes'),
+                          buildInfoSection("983K", 'Views'),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -202,26 +240,31 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildFirstTab(List<Blog> blogs) {
     return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state){
-        if(state is ProfileLoadingState){
+      builder: (context, state) {
+        if (state is ProfileLoadingState) {
           return const LoadingWidget();
-        }else if (state is GetProfileSuccessState){
+        } else if (state is GetProfileSuccessState) {
           return ListView.builder(
             itemCount: blogs.length,
             itemBuilder: (context, i) {
               return BlogCard(
                 blog: blogs[i],
                 cardType: CardType.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall).copyWith(
-                  bottom: i < blogs.length - 1 ? AppConstants.paddingSmall : 0.0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.paddingSmall,
+                ).copyWith(
+                  bottom:
+                      i < blogs.length - 1 ? AppConstants.paddingSmall : 0.0,
                 ),
                 onTap: () {
-                  Navigator.of(context).push(BlogDetailPage.route(blog: blogs[i]));
+                  Navigator.of(
+                    context,
+                  ).push(BlogDetailPage.route(blog: blogs[i]));
                 },
               );
             },
           );
-        }else{
+        } else {
           return SizedBox();
         }
       },
@@ -240,8 +283,12 @@ class _ProfilePageState extends State<ProfilePage> {
         itemCount: images.length,
         itemBuilder: (context, index) {
           return RippleEffect(
-            onTap: () => AppDialog.showImageViewerDialog(context: context, imageUrl: images[index]),
-            child: CachedNetworkImg(imageUrl: images[index])
+            onTap:
+                () => AppDialog.showImageViewerDialog(
+                  context: context,
+                  imageUrl: images[index],
+                ),
+            child: CachedNetworkImg(imageUrl: images[index]),
           );
         },
       ),
@@ -263,7 +310,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ).textTheme.bodyMedium!.copyWith(height: 1.7),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSmall),
+              padding: EdgeInsets.symmetric(
+                vertical: AppConstants.paddingSmall,
+              ),
               child: CachedNetworkImg(imageUrl: AppPath.aboutProfileImageUrl),
             ),
             Text(

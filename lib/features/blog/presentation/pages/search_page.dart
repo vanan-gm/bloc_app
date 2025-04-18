@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc_app/core/common/paths/app_path.dart';
@@ -55,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: SizedBox(
                     height: 30,
                     width: 30,
-                    child: AppIcon.asset(AppPath.icSend)
+                    child: AppIcon.asset(Assets.iconsIcSend)
                   ),
                 ),
               ),

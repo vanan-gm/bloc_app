@@ -61,7 +61,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
           await supabaseClient.from('blogs').select('*, profiles (name, image_url)');
       return blogs
           .map((blog) => BlogModel.fromJson(blog)
-              .copyWith(posterName: blog['profiles']['name']))
+              .copyWith(posterName: blog['profiles']['name'], posterImage: blog['profiles']['image_url']))
           .toList();
     } on PostgrestException catch(e){
       throw ServerException(message: e.message);

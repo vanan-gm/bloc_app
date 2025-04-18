@@ -1,6 +1,8 @@
 import 'package:bloc_app/core/common/extesions/date_time_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
+import 'package:bloc_app/core/common/widgets/app_text_painter.dart';
+import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
 import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
 import 'package:bloc_app/core/common/widgets/long_text_painter.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
@@ -99,12 +101,16 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     ),
                     child: Row(
                       children: [
-                        if(widget.blog.imageUrl.isNotEmptyOrNull())
-                        Text(
-                          'By ${widget.blog.posterName}',
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: AppConstants.textMediumSize,
+                        if(widget.blog.posterImage.isNotEmptyOrNull())
+                        CircleAvatarImage(image: widget.blog.posterImage ?? '', radius: AppConstants.circleAvatarDetailPageSize),
+                        Padding(
+                          padding: EdgeInsets.only(left: AppConstants.paddingTiny),
+                          child: Text(
+                            'By ${widget.blog.posterName}',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: AppConstants.textMediumSize,
+                            ),
                           ),
                         )
                       ],
@@ -145,12 +151,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                       ),
                     ),
                   ),
-                  LongTextPainter(
-                    text: widget.blog.content,
-                    textStyle: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
-                  ),
+                  AppTextPainter(text: widget.blog.content, style: Theme.of(context).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),)
+
                 ],
               ),
             ),

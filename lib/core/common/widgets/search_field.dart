@@ -2,6 +2,7 @@ import 'package:bloc_app/core/common/paths/app_path.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 
 class SearchField extends StatefulWidget {
@@ -35,7 +36,7 @@ class _SearchFieldState extends State<SearchField> {
           child: Container(
             margin: EdgeInsets.all(5.0),
             transform: Matrix4.translationValues(-10.0, 0.0, 0.0),
-            child: AppIcon.asset(AppPath.icClose),
+            child: AppIcon.asset(Assets.iconsIcClose),
           ),
         );
       }else{
@@ -61,7 +62,7 @@ class _SearchFieldState extends State<SearchField> {
           minHeight: 20,
           minWidth: 20,
         ),
-        prefixIcon: AppIcon.asset(AppPath.icSearch),
+        prefixIcon: AppIcon.asset(Assets.iconsIcSearch),
         prefixIconConstraints: const BoxConstraints(
           minHeight: 20,
           minWidth: 40,

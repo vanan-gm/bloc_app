@@ -1,17 +1,6 @@
 class AppPath{
   AppPath._();
-
-  static const String iconPath = 'assets/icons';
-  static const String icLogout = '$iconPath/ic_logout.png';
-  static const String icReload = '$iconPath/ic_reload.png';
-  static const String icHome = '$iconPath/ic_home.png';
-  static const String icSearch = '$iconPath/ic_search.png';
-  static const String icFavorite = '$iconPath/ic_heart.png';
-  static const String icProfile = '$iconPath/ic_user.png';
-  static const String icClose = '$iconPath/ic_close.png';
-  static const String icFilter = '$iconPath/ic_filter.png';
-  static const String icSend = '$iconPath/ic_send.png';
-
+  
   static const String defaultUserImageUrl = 'https://img.freepik.com/premium-photo/woman-with-freckles-her-face-freckle-her-face_1103290-51920.jpg';
   static const String aboutProfileImageUrl = 'https://media.istockphoto.com/id/1500563478/photo/traveler-asian-woman-relax-and-travel-on-thai-longtail-boat-in-ratchaprapha-dam-at-khao-sok.jpg?s=612x612&w=0&k=20&c=_bb2PdPJMtY9KmNNBSFY6w_TOcC98we45LvsYoa48p8=';
 
