@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:bloc_app/core/enums/like_state.dart';
+import 'package:bloc_app/core/enums/update_state_type.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/features/blog/data/models/blog_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,6 +17,10 @@ abstract interface class BlogRemoteDataSource {
   Future<List<BlogModel>> getBlogsByUserId(String userId);
   
   Future<List<BlogModel>> getBlogsByKeyWord(String key);
+
+  Future<LikeState> getBlogLikeState(String blogId, String userId);
+
+  Future<LikeState> updateBlogLikeState(String blogId, String userId, UpdateStateType type);
 }
 
 class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
@@ -95,6 +101,41 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
           .map((blog) => BlogModel.fromJson(blog)
           .copyWith(posterName: blog['profiles']['name']))
           .toList();
+    } on PostgrestException catch(e){
+      throw ServerException(message: e.message);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<LikeState> getBlogLikeState(String blogId, String userId) async{
+    try {
+      final data = await supabaseClient.from('likes').select().eq('blog_id', blogId).eq('user_id', userId).maybeSingle();
+      return data != null ? LikeState.liked : LikeState.unliked;
+    } on PostgrestException catch(e){
+      throw ServerException(message: e.message);
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<LikeState> updateBlogLikeState(String blogId, String userId, UpdateStateType type) async{
+    try {
+      dynamic response;
+      if(type == UpdateStateType.setLike){
+        // Here is insert like record
+        response = await supabaseClient.from('likes').insert({
+          "blog_id": blogId,
+          "user_id": userId,
+        });
+        return response != null ? LikeState.liked : LikeState.unknown;
+      }else{
+        // Here is remove like record
+        response = await supabaseClient.from('likes').delete().eq('blog_id', blogId).eq('user_id', userId);
+      }
+      return response.error != null ? LikeState.unliked : LikeState.unknown;
     } on PostgrestException catch(e){
       throw ServerException(message: e.message);
     } catch (e) {

@@ -21,6 +21,7 @@ class AppConstants{
   static const double borderTab = 30.0;
   static const double borderImage = 10.0;
   static const double borderButton = 8.0;
+  static const double borderButton2 = 15.0;
   static const double borderRound = 50.0;
 
   // TextSize
@@ -52,6 +53,8 @@ class AppConstants{
   static const double circleAvatarSmallSize = 24;
   static const double circleAvatarMedSize = 30;
   static const double circleAvatarBigSize = 42;
+  static const double loadingLikeIconSize = 18;
+  static const double loadingStrokeWidth = 1.4;
 
   // Duration
   static const Duration refreshDuration = Duration(seconds: 2);

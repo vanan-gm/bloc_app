@@ -1,17 +1,24 @@
+import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/date_time_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
+import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text_painter.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
 import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
-import 'package:bloc_app/core/common/widgets/long_text_painter.dart';
+import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/enums/like_state.dart';
+import 'package:bloc_app/core/enums/update_state_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
+import 'package:bloc_app/generated/assets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlogDetailPage extends StatefulWidget {
   final Blog blog;
@@ -31,6 +38,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
   double _titleHeight = 0.0;
   bool _showFloatingButton = false;
   String _appBarTitle = '';
+  String _userId = '';
 
   @override
   void initState() {
@@ -57,6 +65,15 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
       }
       setState(() {});
     });
+    getBlogLikeState();
+  }
+
+  void getBlogLikeState(){
+    if(!mounted) return;
+    final userId = (context.read<AppUserCubit>().state as AppUserLoggedInState).userEntity.id;
+    _userId = userId;
+    context.read<BlogDetailBloc>().add(GetBlogLikeStateEvent(blogId: widget.blog.id, userId: userId));
+    setState(() {});
   }
 
   @override
@@ -89,9 +106,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                 children: [
                   Text(
                     widget.blog.title,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge!
+                        .copyWith(fontWeight: FontWeight.w700),
                     key: _key,
                   ),
                   Padding(
@@ -101,10 +117,16 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     ),
                     child: Row(
                       children: [
-                        if(widget.blog.posterImage.isNotEmptyOrNull())
-                        CircleAvatarImage(image: widget.blog.posterImage ?? '', radius: AppConstants.circleAvatarDetailPageSize),
+                        if (widget.blog.posterImage.isNotEmptyOrNull())
+                          CircleAvatarImage(
+                            image: widget.blog.posterImage ?? '',
+                            radius:
+                            AppConstants.circleAvatarDetailPageSize,
+                          ),
                         Padding(
-                          padding: EdgeInsets.only(left: AppConstants.paddingTiny),
+                          padding: EdgeInsets.only(
+                            left: AppConstants.paddingTiny,
+                          ),
                           child: Text(
                             'By ${widget.blog.posterName}',
                             style: const TextStyle(
@@ -112,7 +134,57 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                               fontSize: AppConstants.textMediumSize,
                             ),
                           ),
-                        )
+                        ),
+                        Spacer(),
+                        BlocBuilder<BlogDetailBloc, BlogDetailState>(
+                          builder: (context, state) {
+                            if(state is BlogDetailLoadingState){
+                              return SizedBox(
+                                width: AppConstants.loadingLikeIconSize,
+                                height: AppConstants.loadingLikeIconSize,
+                                child: LoadingWidget(strokeWidth: AppConstants.loadingStrokeWidth,),
+                              );
+                            }else if (state is GetBlogDetailLikeStateSuccessState) {
+                              return StatefulBuilder(
+                                builder: (context, setSt) {
+                                  final liked = state.state == LikeState.liked;
+                                  return AppIcon.asset(
+                                    liked
+                                        ? Assets.iconsIcFullHeart
+                                        : Assets.iconsIcHeart,
+                                    color: AppColors.white,
+                                    onClick: () {
+                                      context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
+                                        blogId: widget.blog.id,
+                                        userId: _userId,
+                                        type: liked ? UpdateStateType.removeLike : UpdateStateType.setLike));
+                                    },
+                                  );
+                                },
+                              );
+                            } else if(state is UpdateBlogDetailLikeStateSuccessState){
+                              final liked = state.state == LikeState.liked;
+                              return StatefulBuilder(
+                                builder: (context, setSt) {
+                                  return AppIcon.asset(
+                                    liked
+                                        ? Assets.iconsIcFullHeart
+                                        : Assets.iconsIcHeart,
+                                    color: AppColors.white,
+                                    onClick: () {
+                                      context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
+                                          blogId: widget.blog.id,
+                                          userId: _userId,
+                                          type: liked ? UpdateStateType.removeLike : UpdateStateType.setLike));
+                                    },
+                                  );
+                                },
+                              );
+                            }else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -130,9 +202,9 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     child: RippleEffect(
                       onTap:
                           () => AppDialog.showImageViewerDialog(
-                            context: context,
-                            imageUrl: widget.blog.imageUrl,
-                          ),
+                        context: context,
+                        imageUrl: widget.blog.imageUrl,
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(
                           AppConstants.borderImage,
@@ -144,15 +216,19 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                           height: AppConstants.containerCardHeight,
                           placeholder:
                               (context, url) => CustomShimmer(
-                                width: AppConstants.widthScreen,
-                                height: AppConstants.containerCardHeight,
-                              ),
+                            width: AppConstants.widthScreen,
+                            height: AppConstants.containerCardHeight,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  AppTextPainter(text: widget.blog.content, style: Theme.of(context).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),)
-
+                  AppTextPainter(
+                    text: widget.blog.content,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
+                  ),
                 ],
               ),
             ),

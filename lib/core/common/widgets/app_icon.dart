@@ -18,7 +18,7 @@ class AppIcon extends StatelessWidget {
       this.size = AppConstants.iconMediumSize,
       this.margin,
       this.onClick,
-      this.rippleRadius = 0})
+      this.rippleRadius = AppConstants.borderButton2})
       : super(key: key);
 
   AppIcon.asset(this.path,
@@ -27,7 +27,7 @@ class AppIcon extends StatelessWidget {
       this.size = AppConstants.iconMediumSmallSize,
       this.margin,
       this.onClick,
-      this.rippleRadius = 0,
+      this.rippleRadius = AppConstants.borderButton2,
       this.icon})
       : super(key: key);
 

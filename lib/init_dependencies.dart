@@ -15,10 +15,13 @@ import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source
 import 'package:bloc_app/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:bloc_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_user_id.dart';
+import 'package:bloc_app/features/blog/domain/usecases/update_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
@@ -97,12 +100,15 @@ void _initBlog() {
     ..registerFactory(() => GetAllBlogs(blogRepository: getIt()))
     ..registerFactory(() => GetBlogsByUserId(blogRepository: getIt()))
     ..registerFactory(() => GetBlogsByKeyWord(blogRepository: getIt()))
+    ..registerFactory(() => GetBlogLikeState(repository: getIt()))
+    ..registerFactory(() => UpdateBlogLikeState(repository: getIt()))
     // Bloc
     ..registerLazySingleton(
-      () => BlogBloc(uploadBlog: getIt(), getAllBlogs: getIt()),
+      () => BlogBloc(uploadBlog: getIt(), getAllBlogs: getIt(), getBlogLikeState: getIt()),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
-    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()));
+    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()))
+    ..registerFactory(() => BlogDetailBloc(getBlogLikeState: getIt(), updateBlogLikeState: getIt()));
 }
 
 void _initStreams() {

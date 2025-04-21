@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/enums/like_state.dart';
+import 'package:bloc_app/core/enums/update_state_type.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/core/error/failures.dart';
 import 'package:bloc_app/core/network/connection_checker.dart';
@@ -88,6 +90,34 @@ class BlogRepositoryImpl implements BlogRepository {
       }
       final blogs = await blogRemoteDataSource.getBlogsByKeyWord(key);
       return right(blogs);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LikeState>> getBlogLikeState(String blogId, String userId) async{
+    try {
+      // If there's no internet, we will display errors
+      if (!await connectionChecker.isInternetConnected) {
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      }
+      final state = await blogRemoteDataSource.getBlogLikeState(blogId, userId);
+      return right(state);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LikeState>> updateBlogLikeState(String blogId, String userId, UpdateStateType type) async {
+    try {
+      // If there's no internet, we will display errors
+      if (!await connectionChecker.isInternetConnected) {
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      }
+      final state = await blogRemoteDataSource.updateBlogLikeState(blogId, userId, type);
+      return right(state);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
     }
