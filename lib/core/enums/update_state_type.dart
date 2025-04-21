@@ -1,0 +1,1 @@
+enum UpdateStateType {setLike, removeLike}
