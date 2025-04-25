@@ -1,4 +1,11 @@
+import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloc_app/core/common/widgets/loading_widget.dart';
+import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/pages/blog_detail_page.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -8,8 +15,60 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    getFavoriteBlogs();
+  }
+
+  void getFavoriteBlogs(){
+    if(!mounted) return;
+    final userId = (context.read<AppUserCubit>().state as AppUserLoggedInState).userEntity.id;
+    context.read<FavoriteBlogBloc>().add(FavoriteBlogGetAllEvent(userId: userId));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Favorite Page'),);
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingSmall,
+        vertical: AppConstants.paddingSmall,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('My Favorite Blogs:', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w700),),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+              child: BlocBuilder<FavoriteBlogBloc, FavoriteBlogState>(
+                  builder: (context, state){
+                    if(state is FavoriteBlogLoadingState){
+                      return const LoadingWidget();
+                    }else if(state is FavoriteBlogGetAllSuccessState){
+                      return ListView.builder(
+                          itemCount: state.blogs.length,
+                          itemBuilder: (context, i) {
+                            final blog = state.blogs[i];
+                            return BlogCard(
+                              blog: blog,
+                              padding: EdgeInsets.only(bottom: AppConstants.paddingSmall),
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(BlogDetailPage.route(blog: blog));
+                              },
+                            );
+                          });
+                    }else{
+                      return SizedBox();
+                    }
+                  }
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

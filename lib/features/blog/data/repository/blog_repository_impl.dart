@@ -122,4 +122,18 @@ class BlogRepositoryImpl implements BlogRepository {
       return left(Failure(message: e.message.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<Blog>>> getFavoriteBlogs(String userId) async{
+    try {
+      // If there's no internet, we will display errors
+      if (!await connectionChecker.isInternetConnected) {
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      }
+      final blogs = await blogRemoteDataSource.getFavoriteBlogs(userId);
+      return right(blogs);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }
+  }
 }

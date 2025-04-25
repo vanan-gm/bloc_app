@@ -18,7 +18,7 @@ import 'package:bloc_app/core/enums/card_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart' as ab;
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
-import 'package:bloc_app/features/blog/presentation/bloc/profile_blog/profile_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_detail_page.dart';
 import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
 import 'package:bloc_app/init_dependencies.dart';

@@ -18,14 +18,16 @@ import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_user_id.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_favorite_blogs.dart';
 import 'package:bloc_app/features/blog/domain/usecases/update_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
-import 'package:bloc_app/features/blog/presentation/bloc/profile_blog/profile_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/search_bloc/search_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/streams/add_blog_stream.dart';
 
@@ -102,13 +104,15 @@ void _initBlog() {
     ..registerFactory(() => GetBlogsByKeyWord(blogRepository: getIt()))
     ..registerFactory(() => GetBlogLikeState(repository: getIt()))
     ..registerFactory(() => UpdateBlogLikeState(repository: getIt()))
+    ..registerFactory(() => GetFavoriteBlogs(repository: getIt()))
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(uploadBlog: getIt(), getAllBlogs: getIt(), getBlogLikeState: getIt()),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
     ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()))
-    ..registerFactory(() => BlogDetailBloc(getBlogLikeState: getIt(), updateBlogLikeState: getIt()));
+    ..registerFactory(() => BlogDetailBloc(getBlogLikeState: getIt(), updateBlogLikeState: getIt()))
+  ..registerFactory(() => FavoriteBlogBloc(favoriteBlogs: getIt()));
 }
 
 void _initStreams() {

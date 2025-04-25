@@ -4,7 +4,8 @@ import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
-import 'package:bloc_app/features/blog/presentation/bloc/profile_blog/profile_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/search_bloc/search_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/init_dependencies.dart';
@@ -23,6 +24,7 @@ void main() async {
     BlocProvider(create: (_) => getIt<SearchBloc>()),
     BlocProvider(create: (_) => getIt<ProfileBloc>()),
     BlocProvider(create: (_) => getIt<BlogDetailBloc>()),
+    BlocProvider(create: (_) => getIt<FavoriteBlogBloc>()),
   ], child: const MyApp()));
 }
 

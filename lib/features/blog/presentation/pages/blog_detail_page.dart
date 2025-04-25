@@ -152,7 +152,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                     liked
                                         ? Assets.iconsIcFullHeart
                                         : Assets.iconsIcHeart,
-                                    color: AppColors.white,
+                                    color: liked ? AppColors.red : AppColors.white,
                                     onClick: () {
                                       context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
                                         blogId: widget.blog.id,
@@ -170,7 +170,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                     liked
                                         ? Assets.iconsIcFullHeart
                                         : Assets.iconsIcHeart,
-                                    color: AppColors.white,
+                                    color: liked ? AppColors.red : AppColors.white,
                                     onClick: () {
                                       context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
                                           blogId: widget.blog.id,

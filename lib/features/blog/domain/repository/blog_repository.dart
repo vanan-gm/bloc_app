@@ -20,4 +20,5 @@ abstract class BlogRepository {
   Future<Either<Failure, List<Blog>>> getBlogsByKeyWord(String key);
   Future<Either<Failure, LikeState>> getBlogLikeState(String blogId, String userId);
   Future<Either<Failure, LikeState>> updateBlogLikeState(String blogId, String userId, UpdateStateType type);
+  Future<Either<Failure, List<Blog>>> getFavoriteBlogs(String userId);
 }
