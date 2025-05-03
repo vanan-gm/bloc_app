@@ -11,12 +11,19 @@ class Assets {
   static const String iconsIcFullHeart = 'assets/icons/ic_full_heart.png';
   static const String iconsIcHeart = 'assets/icons/ic_heart.png';
   static const String iconsIcHome = 'assets/icons/ic_home.png';
+  static const String iconsIcInfo = 'assets/icons/ic_info.png';
+  static const String iconsIcLanguage = 'assets/icons/ic_language.png';
+  static const String iconsIcLightMode = 'assets/icons/ic_light_mode.png';
   static const String iconsIcLogout = 'assets/icons/ic_logout.png';
+  static const String iconsIcRate = 'assets/icons/ic_rate.png';
   static const String iconsIcReload = 'assets/icons/ic_reload.png';
+  static const String iconsIcRightArrow = 'assets/icons/ic_right_arrow.png';
   static const String iconsIcSearch = 'assets/icons/ic_search.png';
+  static const String iconsIcSecure = 'assets/icons/ic_secure.png';
   static const String iconsIcSend = 'assets/icons/ic_send.png';
   static const String iconsIcSettings = 'assets/icons/ic_settings.png';
   static const String iconsIcShare = 'assets/icons/ic_share.png';
+  static const String iconsIcTrashBin = 'assets/icons/ic_trash_bin.png';
   static const String iconsIcUpArrow = 'assets/icons/ic_up_arrow.png';
   static const String iconsIcUser = 'assets/icons/ic_user.png';
 
