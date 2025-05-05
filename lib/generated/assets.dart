@@ -8,6 +8,7 @@ class Assets {
   static const String iconsIcClose = 'assets/icons/ic_close.png';
   static const String iconsIcComments = 'assets/icons/ic_comments.png';
   static const String iconsIcFilter = 'assets/icons/ic_filter.png';
+  static const String iconsIcFingerprint = 'assets/icons/ic_fingerprint.png';
   static const String iconsIcFullHeart = 'assets/icons/ic_full_heart.png';
   static const String iconsIcHeart = 'assets/icons/ic_heart.png';
   static const String iconsIcHome = 'assets/icons/ic_home.png';

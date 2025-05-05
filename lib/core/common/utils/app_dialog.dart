@@ -7,6 +7,38 @@ import 'package:bloc_app/core/theme/app_colors.dart';
 class AppDialog {
   AppDialog._();
 
+  static bool _isShowingLoading = false;
+
+  static void showLoadingDialog({required BuildContext context}){
+    if(_isShowingLoading) return;
+    _isShowingLoading = true;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.white,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: AppConstants.paddingHuge),
+                child: Center(child: CircularProgressIndicator(color: AppColors.gradient1,),),
+              ),
+            ],
+          )
+        );
+      },
+    );
+  }
+
+  static void hideLoadingDialog(BuildContext context){
+    if(_isShowingLoading){
+      _isShowingLoading = false;
+      Navigator.of(context).pop();
+    }
+  }
+
   static void showSignOutDialog({
     required BuildContext context,
     required VoidCallback onBack,

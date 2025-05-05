@@ -8,7 +8,6 @@ import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/page_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
-import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/add_blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/favorite_page.dart';
@@ -29,13 +28,12 @@ class _MasterPageState extends State<MasterPage> {
     PageType.home,
     PageType.search,
     PageType.favorite,
-    PageType.profile,
+    PageType.settings,
   ];
   final List<Widget> pages = [
     BlogPage(),
     SearchPage(),
     FavoritePage(),
-    ProfilePage(),
     SettingsPage(),
   ];
   int _currentTabIndex = 0;
@@ -114,22 +112,9 @@ class _MasterPageState extends State<MasterPage> {
             icon: Padding(
               padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
               child: AppIcon.asset(
-                Assets.iconsIcUser,
-                color:
-                    _currentTabIndex == 3
-                        ? AppPallete.gradient1
-                        : AppColors.white,
-              ),
-            ),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-              child: AppIcon.asset(
                 Assets.iconsIcSettings,
                 color:
-                _currentTabIndex == 4
+                _currentTabIndex == 3
                     ? AppPallete.gradient1
                     : AppColors.white,
               ),

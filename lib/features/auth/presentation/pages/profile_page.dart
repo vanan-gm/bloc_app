@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
 import 'package:bloc_app/generated/assets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -24,6 +25,7 @@ import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
 import 'package:bloc_app/init_dependencies.dart';
 
 class ProfilePage extends StatefulWidget {
+  static route() => CupertinoPageRoute(builder: (_) => const ProfilePage());
   const ProfilePage({super.key});
 
   @override
@@ -79,158 +81,167 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: AppConstants.paddingSmall,
-        bottom: AppConstants.paddingTiny,
+    return Scaffold(
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        title: Text("Profile", style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),),
+        centerTitle: true,
       ),
-      child: BlocListener<ab.AuthBloc, ab.AuthState>(
-        listener: (context, state) {
-          if (state is ab.AuthSuccessState) {
-            name = state.user.name;
-            image = state.user.imageUrl;
-            setState(() {});
-          }
-        },
-        child: BlocListener<ProfileBloc, ProfileState>(
-          listener: (context, state) {
-            if (state is GetProfileSuccessState) {
-              blogs = state.blogs;
-              setState(() {});
-            }
-          },
-          child: RefreshIndicator(
-            onRefresh: handleRefresh,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: CircleAvatarImage(
-                    image: image,
-                    radius: AppConstants.circleAvatarBigSize,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
-                  child: Row(
-                    children: [
-                      Spacer(),
-                      Text(
-                        name.upperFirstLetterWithSpace(),
-                        style: Theme.of(context).textTheme.titleMedium!
-                            .copyWith(fontWeight: FontWeight.w700),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: AppConstants.paddingSmall,
+            bottom: AppConstants.paddingTiny,
+          ),
+          child: BlocListener<ab.AuthBloc, ab.AuthState>(
+            listener: (context, state) {
+              if (state is ab.AuthSuccessState) {
+                name = state.user.name;
+                image = state.user.imageUrl;
+                setState(() {});
+              }
+            },
+            child: BlocListener<ProfileBloc, ProfileState>(
+              listener: (context, state) {
+                if (state is GetProfileSuccessState) {
+                  blogs = state.blogs;
+                  setState(() {});
+                }
+              },
+              child: RefreshIndicator(
+                onRefresh: handleRefresh,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: CircleAvatarImage(
+                        image: image,
+                        radius: AppConstants.circleAvatarBigSize,
                       ),
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            left: AppConstants.paddingTiny,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                      child: Row(
+                        children: [
+                          Spacer(),
+                          Text(
+                            name.upperFirstLetterWithSpace(),
+                            style: Theme.of(context).textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.w700),
                           ),
-                          child: RippleEffect(
-                            onTap: () => setDetailAppear.call(),
-                            child: TweenAnimationBuilder(
-                              tween: Tween<double>(begin: pi, end: showDetails ? pi : 0),
-                              duration: AppConstants.rotationDuration,
-                              builder: (context, value, child){
-                                return Transform.rotate(
-                                  angle: value,
-                                  child: AppIcon.asset(
-                                    Assets.iconsIcUpArrow,
-                                    color: AppColors.white,
-                                    size: AppConstants.iconMediumSize,
-                                  ),
-                                );
-                              }
+                          Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: AppConstants.paddingTiny,
+                              ),
+                              child: RippleEffect(
+                                onTap: () => setDetailAppear.call(),
+                                child: TweenAnimationBuilder(
+                                    tween: Tween<double>(begin: pi, end: showDetails ? pi : 0),
+                                    duration: AppConstants.rotationDuration,
+                                    builder: (context, value, child){
+                                      return Transform.rotate(
+                                        angle: value,
+                                        child: AppIcon.asset(
+                                          Assets.iconsIcUpArrow,
+                                          color: AppColors.white,
+                                          size: AppConstants.iconMediumSize,
+                                        ),
+                                      );
+                                    }
+                                ),
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    AnimatedContainer(
+                      duration: AppConstants.rotationDuration,
+                      height: showDetails ? AppConstants.containerDetailHeight : 0,
+                      curve: Curves.easeInOut,
+                      padding: EdgeInsets.only(
+                        top: AppConstants.paddingSmall,
+                        left: AppConstants.paddingMediumSmall,
+                        right: AppConstants.paddingMediumSmall,
+                      ),
+                      child: ClipRect(
+                        child: SingleChildScrollView(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              buildInfoSection("28K", 'Followers'),
+                              buildInfoSection("${blogs.length}", 'Posts'),
+                              buildInfoSection("734K", 'Likes'),
+                              buildInfoSection("983K", 'Views'),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                AnimatedContainer(
-                  duration: AppConstants.rotationDuration,
-                  height: showDetails ? AppConstants.containerDetailHeight : 0,
-                  curve: Curves.easeInOut,
-                  padding: EdgeInsets.only(
-                    top: AppConstants.paddingSmall,
-                    left: AppConstants.paddingMediumSmall,
-                    right: AppConstants.paddingMediumSmall,
-                  ),
-                  child: ClipRect(
-                    child: SingleChildScrollView(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          buildInfoSection("28K", 'Followers'),
-                          buildInfoSection("${blogs.length}", 'Posts'),
-                          buildInfoSection("734K", 'Likes'),
-                          buildInfoSection("983K", 'Views'),
-                        ],
-                      ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: AppConstants.paddingSmall),
-                    child: DefaultTabController(
-                      length: 3,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppConstants.paddingMediumSmall,
-                            ),
-                            child: Container(
-                              height: 35,
-                              child: TabBar(
-                                labelColor: AppColors.white,
-                                unselectedLabelColor: AppColors.white,
-                                indicatorColor: AppColors.transparentColor,
-                                labelStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                                unselectedLabelStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                                dividerColor: AppColors.transparentColor,
-                                splashBorderRadius: BorderRadius.circular(
-                                  AppConstants.borderTab,
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                        child: DefaultTabController(
+                          length: 3,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: AppConstants.paddingMediumSmall,
                                 ),
-                                indicatorSize: TabBarIndicatorSize.tab,
-                                indicator: BoxDecoration(
-                                  color: AppColors.gradient1,
-                                  borderRadius: BorderRadius.circular(
-                                    AppConstants.borderTab,
+                                child: Container(
+                                  height: 35,
+                                  child: TabBar(
+                                    labelColor: AppColors.white,
+                                    unselectedLabelColor: AppColors.white,
+                                    indicatorColor: AppColors.transparentColor,
+                                    labelStyle:
+                                    Theme.of(context).textTheme.bodyMedium,
+                                    unselectedLabelStyle:
+                                    Theme.of(context).textTheme.bodyMedium,
+                                    dividerColor: AppColors.transparentColor,
+                                    splashBorderRadius: BorderRadius.circular(
+                                      AppConstants.borderTab,
+                                    ),
+                                    indicatorSize: TabBarIndicatorSize.tab,
+                                    indicator: BoxDecoration(
+                                      color: AppColors.gradient1,
+                                      borderRadius: BorderRadius.circular(
+                                        AppConstants.borderTab,
+                                      ),
+                                    ),
+                                    tabs: [
+                                      Tab(text: "Updates"),
+                                      Tab(text: "Pictures"),
+                                      Tab(text: "About"),
+                                    ],
                                   ),
                                 ),
-                                tabs: [
-                                  Tab(text: "Updates"),
-                                  Tab(text: "Pictures"),
-                                  Tab(text: "About"),
-                                ],
                               ),
-                            ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: AppConstants.paddingTiny,
+                                  ),
+                                  child: TabBarView(
+                                    children: [
+                                      buildFirstTab(blogs),
+                                      buildSecondTab(),
+                                      buildThirdTab(name),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                top: AppConstants.paddingTiny,
-                              ),
-                              child: TabBarView(
-                                children: [
-                                  buildFirstTab(blogs),
-                                  buildSecondTab(),
-                                  buildThirdTab(name),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
