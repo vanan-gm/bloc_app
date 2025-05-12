@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/utils/pick_image.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
@@ -45,10 +46,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
   }
 
   void handleUploadBlog() {
-    final posterId =
-        (context.read<AppUserCubit>().state as AppUserLoggedInState)
-            .userEntity
-            .id;
+    final posterId = context.currentUserId;
     context.read<BlogBloc>().add(
       BlogUploadEvent(
         posterId: posterId,

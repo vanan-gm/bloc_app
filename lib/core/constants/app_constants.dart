@@ -83,4 +83,7 @@ class AppConstants{
   static const noConnectionErrorMessage = 'Not connected to a network!';
   static const userNotLoggedIn = 'User not logged in';
   static const userNotFound = 'Can not find this user';
+
+  // AppPreference Names
+  static const String userData = 'user_data';
 }

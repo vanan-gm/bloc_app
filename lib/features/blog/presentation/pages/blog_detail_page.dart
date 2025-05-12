@@ -1,4 +1,5 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/date_time_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
@@ -70,7 +71,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
 
   void getBlogLikeState(){
     if(!mounted) return;
-    final userId = (context.read<AppUserCubit>().state as AppUserLoggedInState).userEntity.id;
+    final userId = context.currentUserId;
     _userId = userId;
     context.read<BlogDetailBloc>().add(GetBlogLikeStateEvent(blogId: widget.blog.id, userId: userId));
     setState(() {});

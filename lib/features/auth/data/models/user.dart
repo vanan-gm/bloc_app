@@ -8,13 +8,29 @@ class UserModel extends UserEntity {
     required super.imageUrl,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> map){
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     var mapper = map['user_metadata'] ?? map;
     return UserModel(
       id: map['id'] ?? '',
       email: map['email'] ?? '',
       name: mapper['name'] ?? '',
       imageUrl: mapper['image_url'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'email': email,
+    'name': name,
+    'image_url': imageUrl,
+  };
+
+  static UserModel fromEntity(UserEntity userE) {
+    return UserModel(
+      id: userE.id,
+      email: userE.email,
+      name: userE.name,
+      imageUrl: userE.imageUrl,
     );
   }
 
