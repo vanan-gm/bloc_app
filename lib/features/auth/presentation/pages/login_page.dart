@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: CommonGradientButton(
                             onPressed: () {
-                              context.read<AuthBloc>().add(AuthLogin(
+                              context.read<AuthBloc>().add(LoginEvent(
                                   email: _emailCtrl.text.trim().toLowerCase(),
                                   password:
                                       _passWordCtrl.text.trim().toLowerCase()));

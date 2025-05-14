@@ -72,7 +72,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Navigator.of(context).pop();
                   }, onOk: (){
                     Navigator.of(context).pop();
-                    context.read<AuthBloc>().add(AuthSignOut());
+                    context.read<AuthBloc>().add(SignOutEvent());
                   });
                 }, width: AppConstants.widthScreen, alignment: Alignment.center, child: Text("Logout", style: Theme.of(context).textTheme.bodyMedium,)),
               ),

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:bloc_app/core/common/paths/app_path.dart';
+import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,6 +14,8 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel> loginWithEmailPassword(String email, String password);
   Future<UserModel?> getCurrentUserData();
   Future<void> signOut();
+
+  Future<bool> updateAvatar({required File image, required UserModel user});
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -59,7 +64,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData() async{
     try{
       if(currentUseSession == null) return null;
-      final userData = await supabaseClient.from('profiles').select().eq('id', currentUseSession!.user.id);
+      final userData = await supabaseClient.from(AppConstants.tableProfiles).select().eq('id', currentUseSession!.user.id);
       // Here we add copyWith function bc data get from table profiles only contains id and name
       return UserModel.fromJson(userData.first).copyWith(email: currentUseSession!.user.email);
     } on AuthException catch (e) {
@@ -76,6 +81,30 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     }on AuthException catch(e){
       throw ServerException(message: e.message);
     }catch (e){
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<bool> updateAvatar({required File image, required UserModel user}) async{
+    final filePath = '${user.id}/avatar_${DateTime.now().millisecondsSinceEpoch}.png';
+    try {
+      final storageRes = await supabaseClient.storage
+          .from(AppConstants.bucketUserImages)
+          .upload(filePath, image, fileOptions: const FileOptions(upsert: true));
+
+      if(storageRes.isEmpty){
+        throw ServerException(message: 'Fail to upload image');
+      }
+
+      final imageUrl = supabaseClient.storage.from(AppConstants.bucketUserImages).getPublicUrl(filePath);
+
+      final response = await supabaseClient.from(AppConstants.tableProfiles).update({'image_url': imageUrl}).eq('id', user.id);
+
+      return response != null ? true : false;
+    } on PostgrestException catch(e){
+      throw ServerException(message: e.message);
+    } catch (e) {
       throw ServerException(message: e.toString());
     }
   }

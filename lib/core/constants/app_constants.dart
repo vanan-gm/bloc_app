@@ -86,4 +86,11 @@ class AppConstants{
 
   // AppPreference Names
   static const String userData = 'user_data';
+
+  // Supabase constants
+  static const String tableBlogs = 'blogs';
+  static const String tableLikes = 'likes';
+  static const String tableProfiles = 'profiles';
+  static const String bucketBlogImages = 'blog_images';
+  static const String bucketUserImages = 'user-images';
 }

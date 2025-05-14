@@ -34,36 +34,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         super(AuthInitialState()) {
     // Here we handle for every events, we will emit LoadingState first for all of them
     on<AuthEvent>((_, emit) => emit(AuthLoadingState()));
-    on<AuthSignUp>(_onAuthSignUp);
-    on<AuthLogin>(_onAuthLogin);
-    on<AuthSignOut>(_onAuthSignOut);
-    on<AuthIsUserLoggedIn>(_onAuthIsUserLoggedIn);
+    on<SignUpEvent>(_onSignUp);
+    on<LoginEvent>(_onLogin);
+    on<SignOutEvent>(_onSignOut);
+    on<CheckUserLoggedInEvent>(_onCheckUserLoggedIn);
   }
 
-  FutureOr<dynamic> _onAuthSignUp(
-      AuthSignUp event, Emitter<AuthState> emit) async {
+  FutureOr<dynamic> _onSignUp(
+      SignUpEvent event, Emitter<AuthState> emit) async {
     final res = await _userSignUp.call(UserSignUpParams(
         name: event.name, email: event.email, password: event.password));
     res.fold((failure) => emit(AuthFailureState(message: failure.message)),
         (user) => _emitAuthSuccess(user, emit));
   }
 
-  FutureOr<void> _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
+  FutureOr<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     final res = await _userLogin
         .call(UserLoginParams(email: event.email, password: event.password));
     res.fold((failure) => emit(AuthFailureState(message: failure.message)),
         (user) => _emitAuthSuccess(user, emit));
   }
 
-  Future<void> _onAuthSignOut(
-      AuthSignOut event, Emitter<AuthState> emit) async {
+  Future<void> _onSignOut(
+      SignOutEvent event, Emitter<AuthState> emit) async {
     final res = await _userSignOut.call(NoParams());
     res.fold((failure) => emit(AuthFailureState(message: failure.message)),
         (_) => emit(AuthSignOutSuccessState()));
   }
 
-  FutureOr<void> _onAuthIsUserLoggedIn(
-      AuthIsUserLoggedIn event, Emitter<AuthState> emit) async {
+  FutureOr<void> _onCheckUserLoggedIn(
+      CheckUserLoggedInEvent event, Emitter<AuthState> emit) async {
     final res = await _getCurrentUser(NoParams());
     res.fold((failure) {
       emit(AuthFailureState(message: failure.message));

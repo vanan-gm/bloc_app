@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/core/error/failures.dart';
 import 'package:bloc_app/core/network/connection_checker.dart';
 import 'package:bloc_app/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:bloc_app/core/common/entities/user_entity.dart';
+import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:bloc_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
@@ -59,6 +62,22 @@ class AuthRepositoryImpl implements AuthRepository {
       return right(null);
     } on ServerException catch(e){
       return left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateUser(File image, UserEntity user) async{
+    try{
+      if(!await connectionChecker.isInternetConnected){
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      }else{
+        final resultUpdate = await authRemoteDataSource.updateAvatar(image: image, user: UserModel.fromEntity(user));
+        return resultUpdate ? right(true) : left(Failure(message: 'Unable to update user avatar'));
+      }
+    } on sb.AuthException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
     }
   }
 }

@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void callReads() {
-    context.read<ab.AuthBloc>().add(ab.AuthIsUserLoggedIn());
+    context.read<ab.AuthBloc>().add(ab.CheckUserLoggedInEvent());
     context.read<ProfileBloc>().add(
       GetProfileBlogsEvent(
         userId: getIt<SupabaseClient>().auth.currentSession!.user.id,

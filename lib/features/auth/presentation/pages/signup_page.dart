@@ -137,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: CommonGradientButton(
                             stream: signUpStream.submitS,
                             onPressed: () {
-                              context.read<AuthBloc>().add(AuthSignUp(
+                              context.read<AuthBloc>().add(SignUpEvent(
                                   name: _nameCtrl.text.trim().toLowerCase(),
                                   email: _emailCtrl.text.trim().toLowerCase(),
                                   password: _passWordCtrl.text.trim()));
