@@ -10,18 +10,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class BlogRemoteDataSource {
   Future<BlogModel> updateBlog(BlogModel blogModel);
 
-  Future<String> updateBlogImage(
-      {required File image, required BlogModel blogModel});
+  Future<String> updateBlogImage({
+    required File image,
+    required BlogModel blogModel,
+  });
 
   Future<List<BlogModel>> getAllBlogs();
 
   Future<List<BlogModel>> getBlogsByUserId(String userId);
-  
+
   Future<List<BlogModel>> getBlogsByKeyWord(String key);
 
   Future<LikeState> getBlogLikeState(String blogId, String userId);
 
-  Future<LikeState> updateBlogLikeState(String blogId, String userId, UpdateStateType type);
+  Future<LikeState> updateBlogLikeState(
+    String blogId,
+    String userId,
+    UpdateStateType type,
+  );
 
   Future<List<BlogModel>> getFavoriteBlogs(String userId);
 }
@@ -34,12 +40,13 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   @override
   Future<BlogModel> updateBlog(BlogModel blogModel) async {
     try {
-      final blogData = await supabaseClient
-          .from('blogs')
-          .insert(blogModel.toJson())
-          .select();
+      final blogData =
+          await supabaseClient
+              .from('blogs')
+              .insert(blogModel.toJson())
+              .select();
       return BlogModel.fromJson(blogData.first);
-    } on StorageException catch(e){
+    } on StorageException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -47,8 +54,10 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<String> updateBlogImage(
-      {required File image, required BlogModel blogModel}) async {
+  Future<String> updateBlogImage({
+    required File image,
+    required BlogModel blogModel,
+  }) async {
     try {
       await supabaseClient.storage
           .from(AppConstants.bucketBlogImages)
@@ -56,7 +65,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       return supabaseClient.storage
           .from(AppConstants.bucketBlogImages)
           .getPublicUrl(blogModel.id);
-    } on PostgrestException catch(e){
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -66,13 +75,18 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   @override
   Future<List<BlogModel>> getAllBlogs() async {
     try {
-      final blogs =
-          await supabaseClient.from(AppConstants.tableBlogs).select('*, profiles (name, image_url)');
+      final blogs = await supabaseClient
+          .from(AppConstants.tableBlogs)
+          .select('*, profiles (name, image_url)');
       return blogs
-          .map((blog) => BlogModel.fromJson(blog)
-              .copyWith(posterName: blog['profiles']['name'], posterImage: blog['profiles']['image_url']))
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              posterName: blog['profiles']['name'],
+              posterImage: blog['profiles']['image_url'],
+            ),
+          )
           .toList();
-    } on PostgrestException catch(e){
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -82,13 +96,19 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   @override
   Future<List<BlogModel>> getBlogsByUserId(String userId) async {
     try {
-      final blogs =
-          await supabaseClient.from(AppConstants.tableBlogs).select('*, profiles (name, image_url)').eq("poster_id", userId);
+      final blogs = await supabaseClient
+          .from(AppConstants.tableBlogs)
+          .select('*, profiles (name, image_url)')
+          .eq("poster_id", userId);
       return blogs
-          .map((blog) => BlogModel.fromJson(blog)
-          .copyWith(posterName: blog['profiles']['name'], posterImage: blog['profiles']['image_url']))
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              posterName: blog['profiles']['name'],
+              posterImage: blog['profiles']['image_url'],
+            ),
+          )
           .toList();
-    } on PostgrestException catch(e){
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -96,15 +116,21 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<List<BlogModel>> getBlogsByKeyWord(String key) async{
+  Future<List<BlogModel>> getBlogsByKeyWord(String key) async {
     try {
-      final blogs =
-      await supabaseClient.from(AppConstants.tableBlogs).select('*, profiles (name, image_url)').ilike("title", '%$key%');
+      final blogs = await supabaseClient
+          .from(AppConstants.tableBlogs)
+          .select('*, profiles (name, image_url)')
+          .ilike("title", '%$key%');
       return blogs
-          .map((blog) => BlogModel.fromJson(blog)
-          .copyWith(posterName: blog['profiles']['name'], posterImage: blog['profiles']['image_url']))
+          .map(
+            (blog) => BlogModel.fromJson(blog).copyWith(
+              posterName: blog['profiles']['name'],
+              posterImage: blog['profiles']['image_url'],
+            ),
+          )
           .toList();
-    } on PostgrestException catch(e){
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -112,11 +138,18 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<LikeState> getBlogLikeState(String blogId, String userId) async{
+  Future<LikeState> getBlogLikeState(String blogId, String userId) async {
     try {
-      final data = await supabaseClient.from(AppConstants.tableLikes).select('id').eq('blog_id', blogId).eq('user_id', userId).limit(1).maybeSingle();
+      final data =
+          await supabaseClient
+              .from(AppConstants.tableLikes)
+              .select('id')
+              .eq('blog_id', blogId)
+              .eq('user_id', userId)
+              .limit(1)
+              .maybeSingle();
       return data != null ? LikeState.liked : LikeState.unliked;
-    } on PostgrestException catch(e){
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -124,22 +157,31 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<LikeState> updateBlogLikeState(String blogId, String userId, UpdateStateType type) async{
+  Future<LikeState> updateBlogLikeState(
+    String blogId,
+    String userId,
+    UpdateStateType type,
+  ) async {
     try {
       dynamic response;
-      if(type == UpdateStateType.setLike){
+      if (type == UpdateStateType.setLike) {
         // Here is insert like record
-        response = await supabaseClient.from(AppConstants.tableLikes).insert({
-          "blog_id": blogId,
-          "user_id": userId,
-        });
+        response = await supabaseClient
+            .from(AppConstants.tableLikes)
+            .insert({"blog_id": blogId, "user_id": userId})
+            .select("id");
         return response != null ? LikeState.liked : LikeState.unknown;
-      }else{
+      } else {
         // Here is remove like record
-        response = await supabaseClient.from(AppConstants.tableLikes).delete().eq('blog_id', blogId).eq('user_id', userId);
+        response = await supabaseClient
+            .from(AppConstants.tableLikes)
+            .delete()
+            .eq('blog_id', blogId)
+            .eq('user_id', userId)
+            .select("id");
       }
-      return response.error != null ? LikeState.unliked : LikeState.unknown;
-    } on PostgrestException catch(e){
+      return response != null ? LikeState.unliked : LikeState.unknown;
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -147,11 +189,21 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<List<BlogModel>> getFavoriteBlogs(String userId) async{
+  Future<List<BlogModel>> getFavoriteBlogs(String userId) async {
     try {
-      final response = await supabaseClient.from(AppConstants.tableLikes).select('blog_id, blogs(*, profiles (name, image_url))').eq('user_id', userId);
-      return response.map((data) => BlogModel.fromJson(data['blogs']).copyWith(posterName: data['blogs']['profiles']['name'], posterImage: data['blogs']['profiles']['image_url'])).toList();
-    } on PostgrestException catch(e){
+      final response = await supabaseClient
+          .from(AppConstants.tableLikes)
+          .select('blog_id, blogs(*, profiles (name, image_url))')
+          .eq('user_id', userId);
+      return response
+          .map(
+            (data) => BlogModel.fromJson(data['blogs']).copyWith(
+              posterName: data['blogs']['profiles']['name'],
+              posterImage: data['blogs']['profiles']['image_url'],
+            ),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {
       throw ServerException(message: e.toString());

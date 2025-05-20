@@ -14,41 +14,60 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
   final ConnectionChecker connectionChecker;
-  AuthRepositoryImpl({required this.authRemoteDataSource, required this.connectionChecker});
+  AuthRepositoryImpl({
+    required this.authRemoteDataSource,
+    required this.connectionChecker,
+  });
 
   @override
   Future<Either<Failure, UserEntity>> loginWithEmailPassword(
-      String email, String password) async{
-    return _getUser(() async => await authRemoteDataSource.loginWithEmailPassword(email, password));
+    String email,
+    String password,
+  ) async {
+    return _getUser(
+      () async =>
+          await authRemoteDataSource.loginWithEmailPassword(email, password),
+    );
   }
 
   @override
   Future<Either<Failure, UserEntity>> signUpWithEmailPassword(
-      String name, String email, String password) async {
-    return _getUser(() async => await authRemoteDataSource.signUpWithEmailPassword(
-        name, email, password));
+    String name,
+    String email,
+    String password,
+  ) async {
+    return _getUser(
+      () async => await authRemoteDataSource.signUpWithEmailPassword(
+        name,
+        email,
+        password,
+      ),
+    );
   }
 
-  Future<Either<Failure, UserEntity>> _getUser(Future<UserEntity> Function() fn) async{
-    try{
-      if(!await connectionChecker.isInternetConnected){
+  Future<Either<Failure, UserEntity>> _getUser(
+    Future<UserEntity> Function() fn,
+  ) async {
+    try {
+      if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
-      }else{
+      } else {
         final user = await fn();
         return right(user);
       }
     } on sb.AuthException catch (e) {
       return left(Failure(message: e.message.toString()));
-    }on ServerException catch (e) {
+    } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async{
-    try{
+  Future<Either<Failure, UserEntity>> getCurrentUser() async {
+    try {
       final user = await authRemoteDataSource.getCurrentUserData();
-      if(user == null) return left(Failure(message: AppConstants.userNotLoggedIn));
+      if (user == null)
+        return left(Failure(message: AppConstants.userNotLoggedIn));
       return right(user);
     } on ServerException {
       return left(Failure(message: ''));
@@ -56,27 +75,56 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async{
-    try{
+  Future<Either<Failure, void>> signOut() async {
+    try {
       authRemoteDataSource.signOut();
       return right(null);
-    } on ServerException catch(e){
+    } on ServerException catch (e) {
       return left(Failure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> updateUser(File image, UserEntity user) async{
-    try{
-      if(!await connectionChecker.isInternetConnected){
+  Future<Either<Failure, bool>> updateUser(File image, UserEntity user) async {
+    try {
+      if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
-      }else{
-        final resultUpdate = await authRemoteDataSource.updateAvatar(image: image, user: UserModel.fromEntity(user));
-        return resultUpdate ? right(true) : left(Failure(message: 'Unable to update user avatar'));
+      } else {
+        final resultUpdate = await authRemoteDataSource.updateAvatar(
+          image: image,
+          user: UserModel.fromEntity(user),
+        );
+        return resultUpdate
+            ? right(true)
+            : left(Failure(message: 'Unable to update user avatar'));
       }
     } on sb.AuthException catch (e) {
       return left(Failure(message: e.message.toString()));
-    }on ServerException catch (e) {
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> changePassword(
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    try {
+      if (!await connectionChecker.isInternetConnected) {
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      } else {
+        final result = await authRemoteDataSource.changePassword(
+          newPassword: newPassword,
+          confirmPassword: confirmPassword,
+        );
+        return result
+            ? right(true)
+            : left(Failure(message: 'Unable to change password'));
+      }
+    } on sb.AuthException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
     }
   }

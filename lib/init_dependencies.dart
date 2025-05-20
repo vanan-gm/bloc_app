@@ -4,6 +4,7 @@ import 'package:bloc_app/core/secrets/app_secrets.dart';
 import 'package:bloc_app/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:bloc_app/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:bloc_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:bloc_app/features/auth/domain/usecases/change_password.dart';
 import 'package:bloc_app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_login.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_sign_out.dart';
@@ -72,6 +73,7 @@ void _initAuth() {
     ..registerFactory(() => UserLogin(authRepository: getIt()))
     ..registerFactory(() => GetCurrentUser(authRepository: getIt()))
     ..registerFactory(() => UserSignOut(authRepository: getIt()))
+    ..registerFactory(() => ChangePassword(authRepository: getIt()))
     // Bloc
     ..registerLazySingleton(
       () => AuthBloc(
@@ -80,6 +82,7 @@ void _initAuth() {
         getCurrentUser: getIt(),
         appUserCubit: getIt(),
         userSignOut: getIt(),
+        changePassword: getIt(),
       ),
     );
 }
@@ -107,12 +110,21 @@ void _initBlog() {
     ..registerFactory(() => GetFavoriteBlogs(repository: getIt()))
     // Bloc
     ..registerLazySingleton(
-      () => BlogBloc(uploadBlog: getIt(), getAllBlogs: getIt(), getBlogLikeState: getIt()),
+      () => BlogBloc(
+        uploadBlog: getIt(),
+        getAllBlogs: getIt(),
+        getBlogLikeState: getIt(),
+      ),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
     ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()))
-    ..registerFactory(() => BlogDetailBloc(getBlogLikeState: getIt(), updateBlogLikeState: getIt()))
-  ..registerFactory(() => FavoriteBlogBloc(favoriteBlogs: getIt()));
+    ..registerFactory(
+      () => BlogDetailBloc(
+        getBlogLikeState: getIt(),
+        updateBlogLikeState: getIt(),
+      ),
+    )
+    ..registerFactory(() => FavoriteBlogBloc(favoriteBlogs: getIt()));
 }
 
 void _initStreams() {

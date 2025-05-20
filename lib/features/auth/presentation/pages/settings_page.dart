@@ -5,6 +5,7 @@ import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bloc_app/features/auth/presentation/pages/change_password_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
 import 'package:bloc_app/generated/assets.dart';
@@ -20,11 +21,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  
-  void navigatePage(CupertinoPageRoute route){
+  void navigatePage(CupertinoPageRoute route) {
     Navigator.of(context).push(route);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,14 +33,24 @@ class _SettingsPageState extends State<SettingsPage> {
         horizontal: AppConstants.paddingMedium,
       ),
       child: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state){
-          if(state is AuthSignOutSuccessState){
+        listener: (context, state) {
+          if (state is AuthSignOutSuccessState) {
             AppDialog.hideLoadingDialog(context);
-            showCustomOverlay(context: context, isSuccessType: true, content: 'Signout successfully');
-            Navigator.of(context).pushAndRemoveUntil(LoginPage.route(), (route) => false);
-          }else if(state is AuthFailureState){
+            showCustomOverlay(
+              context: context,
+              isSuccessType: true,
+              content: 'Signout successfully',
+            );
+            Navigator.of(
+              context,
+            ).pushAndRemoveUntil(LoginPage.route(), (route) => false);
+          } else if (state is AuthFailureState) {
             AppDialog.hideLoadingDialog(context);
-            showCustomOverlay(context: context, isSuccessType: false, content: 'Encounter errors!!');
+            showCustomOverlay(
+              context: context,
+              isSuccessType: false,
+              content: 'Encounter errors!!',
+            );
           }
         },
         child: SingleChildScrollView(
@@ -49,36 +59,80 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-                child: Text('Account', style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),)),
-              itemBox(Assets.iconsIcUser, "Edit Profile", (){
+                child: Text(
+                  'Account',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              itemBox(Assets.iconsIcUser, "Edit Profile", () {
                 navigatePage(ProfilePage.route());
               }),
-              itemBox(Assets.iconsIcSecure, "Change Password", (){}),
+              itemBox(
+                Assets.iconsIcSecure,
+                "Change Password",
+                () => Navigator.of(context).push(ChangePasswordPage.route()),
+              ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSuperTiny),
-                child: Text('Preference', style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),)),
-              itemBox(Assets.iconsIcLanguage, "Language", (){}),
-              itemBox(Assets.iconsIcLightMode, "Light Mode", (){}),
-              itemBox(Assets.iconsIcFingerprint, "Enable Finger-Print", (){}),
+                padding: EdgeInsets.symmetric(
+                  vertical: AppConstants.paddingSuperTiny,
+                ),
+                child: Text(
+                  'Preference',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              itemBox(Assets.iconsIcLanguage, "Language", () {}),
+              itemBox(Assets.iconsIcLightMode, "Light Mode", () {}),
+              itemBox(Assets.iconsIcFingerprint, "Enable Finger-Print", () {}),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSuperTiny),
-                child: Text('About App', style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),)),
-              itemBox(Assets.iconsIcInfo, "About App", (){}),
-              itemBox(Assets.iconsIcRate, "Rate Us", (){}),
+                padding: EdgeInsets.symmetric(
+                  vertical: AppConstants.paddingSuperTiny,
+                ),
+                child: Text(
+                  'About App',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              itemBox(Assets.iconsIcInfo, "About App", () {}),
+              itemBox(Assets.iconsIcRate, "Rate Us", () {}),
               Padding(
                 padding: EdgeInsets.only(top: AppConstants.paddingMedium),
-                child: onTapItem(onTap: (){
-                  AppDialog.showSignOutDialog(context: context, onBack: (){
-                    Navigator.of(context).pop();
-                  }, onOk: (){
-                    Navigator.of(context).pop();
-                    context.read<AuthBloc>().add(SignOutEvent());
-                  });
-                }, width: AppConstants.widthScreen, alignment: Alignment.center, child: Text("Logout", style: Theme.of(context).textTheme.bodyMedium,)),
+                child: onTapItem(
+                  onTap: () {
+                    AppDialog.showSignOutDialog(
+                      context: context,
+                      onBack: () {
+                        Navigator.of(context).pop();
+                      },
+                      onOk: () {
+                        Navigator.of(context).pop();
+                        context.read<AuthBloc>().add(SignOutEvent());
+                      },
+                    );
+                  },
+                  width: AppConstants.widthScreen,
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Logout",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
               ),
               Align(
                 alignment: Alignment.center,
-                  child: Text("Version v1.1", style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.white.withValues(alpha: .5)),))
+                child: Text(
+                  "Version v1.1",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: AppColors.white.withValues(alpha: .5),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -86,21 +140,29 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget itemBox(String icon, String text, VoidCallback onTap){
-    return onTapItem(onTap: onTap, child: Row(
-      children: [
-        AppIcon.asset(icon, color: AppColors.white,),
-        Padding(
-          padding: EdgeInsets.only(left: AppConstants.paddingMedium),
-          child: Text(text, style: Theme.of(context).textTheme.bodyMedium,),
-        ),
-        Spacer(),
-        AppIcon.asset(Assets.iconsIcRightArrow, color: AppColors.white,),
-      ],
-    ));
+  Widget itemBox(String icon, String text, VoidCallback onTap) {
+    return onTapItem(
+      onTap: onTap,
+      child: Row(
+        children: [
+          AppIcon.asset(icon, color: AppColors.white),
+          Padding(
+            padding: EdgeInsets.only(left: AppConstants.paddingMedium),
+            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+          ),
+          Spacer(),
+          AppIcon.asset(Assets.iconsIcRightArrow, color: AppColors.white),
+        ],
+      ),
+    );
   }
 
-  Widget onTapItem({required VoidCallback onTap, required Widget child, double? width, AlignmentGeometry? alignment}){
+  Widget onTapItem({
+    required VoidCallback onTap,
+    required Widget child,
+    double? width,
+    AlignmentGeometry? alignment,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSuperTiny),
       child: RippleEffect(

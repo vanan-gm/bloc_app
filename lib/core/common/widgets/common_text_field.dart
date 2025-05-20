@@ -11,6 +11,7 @@ class CommonTextField extends StatefulWidget {
   final Function(String)? onChange;
   final Color? borderColor;
   final int? linesLimit;
+  final EdgeInsets? contentPadding;
 
   const CommonTextField({
     super.key,
@@ -21,6 +22,7 @@ class CommonTextField extends StatefulWidget {
     this.onChange,
     this.borderColor,
     this.linesLimit = 1,
+    this.contentPadding,
   });
 
   @override
@@ -48,84 +50,95 @@ class _CommonTextFieldState extends State<CommonTextField> {
     });
   }
 
-  Widget? _suffixIcon() => widget.isPasswordType
-      ? Padding(
-          padding: EdgeInsets.only(right: AppConstants.paddingSmall),
-          child: RippleEffect(
-            onTap: () {
-              setState(() {
-                _passwordVisible = !_passwordVisible;
-              });
-            },
-            radius: AppConstants.borderRound,
-            child: Icon(
-              _passwordVisible ? Icons.visibility : Icons.visibility_off,
+  Widget? _suffixIcon() =>
+      widget.isPasswordType
+          ? Padding(
+            padding: EdgeInsets.only(right: AppConstants.paddingSmall),
+            child: RippleEffect(
+              onTap: () {
+                setState(() {
+                  _passwordVisible = !_passwordVisible;
+                });
+              },
+              radius: AppConstants.borderRound,
+              child: Icon(
+                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
             ),
-          ),
-        )
-      : null;
+          )
+          : null;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: widget.stream,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              TextFormField(
-                controller: widget.controller,
-                focusNode: _focusNode,
-                onChanged: widget.onChange,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: widget.linesLimit,
-                decoration: InputDecoration(
-                    hintText: _hintText,
-                    hintStyle: Theme.of(context).textTheme.bodyMedium,
-                    errorBorder: customBorder(
-                        color: snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.borderColor),
-                    border: customBorder(),
-                    focusedBorder: customBorder(
-                        color: snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.gradient1),
-                    enabledBorder: customBorder(
-                        color: snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.borderColor),
-                    suffixIcon: _suffixIcon(),
-                    suffixIconConstraints: const BoxConstraints(
-                      minHeight: 20,
-                      minWidth: 20,
-                    )),
-                obscureText: widget.isPasswordType ? !_passwordVisible : false,
-              ),
-              if (snapshot.error != null)
-                SizedBox(
-                  height: AppConstants.paddingTiny,
+      stream: widget.stream,
+      builder: (context, snapshot) {
+        return Column(
+          children: [
+            TextFormField(
+              controller: widget.controller,
+              focusNode: _focusNode,
+              onChanged: widget.onChange,
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: widget.linesLimit,
+              decoration: InputDecoration(
+                hintText: _hintText,
+                hintStyle: Theme.of(context).textTheme.bodyMedium,
+                contentPadding: widget.contentPadding,
+                errorBorder: customBorder(
+                  color:
+                      snapshot.error != null
+                          ? AppColors.red
+                          : widget.borderColor ?? AppColors.borderColor,
                 ),
-              if (snapshot.error != null)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                        padding:
-                            EdgeInsets.only(right: AppConstants.paddingTiny),
-                        child: const Icon(
-                          Icons.error_outline,
-                          color: AppColors.red,
-                        )),
-                    Expanded(
-                        child: Text(
+                border: customBorder(),
+                focusedBorder: customBorder(
+                  color:
+                      snapshot.error != null
+                          ? AppColors.red
+                          : widget.borderColor ?? AppColors.gradient1,
+                ),
+                enabledBorder: customBorder(
+                  color:
+                      snapshot.error != null
+                          ? AppColors.red
+                          : widget.borderColor ?? AppColors.borderColor,
+                ),
+                suffixIcon: _suffixIcon(),
+                suffixIconConstraints: const BoxConstraints(
+                  minHeight: 20,
+                  minWidth: 20,
+                ),
+              ),
+              obscureText: widget.isPasswordType ? !_passwordVisible : false,
+            ),
+            if (snapshot.error != null)
+              SizedBox(height: AppConstants.paddingTiny),
+            if (snapshot.error != null)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: AppConstants.paddingTiny),
+                    child: const Icon(
+                      Icons.error_outline,
+                      color: AppColors.red,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
                       snapshot.error.toString(),
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.red),
-                    ))
-                  ],
-                )
-            ],
-          );
-        });
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium!.copyWith(color: AppColors.red),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
   }
 
   InputBorder customBorder({Color color = AppColors.borderColor}) =>
