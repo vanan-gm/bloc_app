@@ -10,6 +10,7 @@ import 'package:bloc_app/features/auth/domain/usecases/user_login.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:bloc_app/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bloc_app/features/auth/presentation/streams/change_password_stream.dart';
 import 'package:bloc_app/features/auth/presentation/streams/login_stream.dart';
 import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
 import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source.dart';
@@ -131,4 +132,5 @@ void _initStreams() {
   getIt.registerFactory<LoginStream>(() => LoginStream());
   getIt.registerFactory<SignupStream>(() => SignupStream());
   getIt.registerFactory<AddBlogStream>(() => AddBlogStream());
+  getIt.registerFactory<ChangePasswordStream>(() => ChangePasswordStream());
 }
