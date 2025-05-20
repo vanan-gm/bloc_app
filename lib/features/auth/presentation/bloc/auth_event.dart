@@ -24,7 +24,11 @@ final class SignOutEvent extends AuthEvent {}
 
 final class CheckUserLoggedInEvent extends AuthEvent {}
 
-final class UpdateUserAvatarEvent extends AuthEvent {}
+final class UpdateUserAvatarEvent extends AuthEvent {
+  final String userId;
+  final File imageFile;
+  UpdateUserAvatarEvent({required this.userId, required this.imageFile});
+}
 
 final class ChangePasswordEvent extends AuthEvent {
   final String newPassword;

@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
+import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +35,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String name = "";
-  bool showDetails = true;
-  String image = AppPath.defaultUserImageUrl;
+  final ValueNotifier<UserModel?> _user = ValueNotifier(null);
+  bool _showDetails = true;
+  final ValueNotifier<String> _image = ValueNotifier(
+    AppPath.defaultUserImageUrl,
+  );
+  final ValueNotifier<bool> _isLoading = ValueNotifier(false);
   final List<String> images = [
     AppPath.picturesProfileImageUrl1,
     AppPath.picturesProfileImageUrl2,
@@ -73,9 +78,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void setDetailAppear(){
+  void setDetailAppear() {
     setState(() {
-      showDetails = !showDetails;
+      _showDetails = !_showDetails;
     });
   }
 
@@ -84,7 +89,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
-        title: Text("Profile", style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),),
+        title: Text(
+          "Profile",
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -96,9 +106,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child: BlocListener<ab.AuthBloc, ab.AuthState>(
             listener: (context, state) {
               if (state is ab.AuthSuccessState) {
-                name = state.user.name;
-                image = state.user.imageUrl;
-                setState(() {});
+                _isLoading.value = false;
+                _user.value = UserModel.fromEntity(state.user);
+                _image.value = state.user.imageUrl;
+              } else if (state is ab.AuthLoadingState) {
+                _isLoading.value = true;
+              } else if (state is ab.AuthUpdateAvatarSuccessState) {
+                _isLoading.value = false;
+                _image.value = state.imageUrl;
               }
             },
             child: BlocListener<ProfileBloc, ProfileState>(
@@ -108,139 +123,206 @@ class _ProfilePageState extends State<ProfilePage> {
                   setState(() {});
                 }
               },
-              child: RefreshIndicator(
-                onRefresh: handleRefresh,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: CircleAvatarImage(
-                        image: image,
-                        radius: AppConstants.circleAvatarBigSize,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: AppConstants.paddingSmall),
-                      child: Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            name.upperFirstLetterWithSpace(),
-                            style: Theme.of(context).textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          Flexible(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: AppConstants.paddingTiny,
-                              ),
-                              child: RippleEffect(
-                                onTap: () => setDetailAppear.call(),
-                                child: TweenAnimationBuilder(
-                                    tween: Tween<double>(begin: pi, end: showDetails ? pi : 0),
-                                    duration: AppConstants.rotationDuration,
-                                    builder: (context, value, child){
-                                      return Transform.rotate(
-                                        angle: value,
-                                        child: AppIcon.asset(
-                                          Assets.iconsIcUpArrow,
-                                          color: AppColors.white,
-                                          size: AppConstants.iconMediumSize,
-                                        ),
-                                      );
-                                    }
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: AppConstants.rotationDuration,
-                      height: showDetails ? AppConstants.containerDetailHeight : 0,
-                      curve: Curves.easeInOut,
-                      padding: EdgeInsets.only(
-                        top: AppConstants.paddingSmall,
-                        left: AppConstants.paddingMediumSmall,
-                        right: AppConstants.paddingMediumSmall,
-                      ),
-                      child: ClipRect(
-                        child: SingleChildScrollView(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: ValueListenableBuilder(
+                valueListenable: _isLoading,
+                builder: (context, isLoading, _) {
+                  return AbsorbPointer(
+                    absorbing: isLoading,
+                    child: RefreshIndicator(
+                      onRefresh: handleRefresh,
+                      child: ValueListenableBuilder(
+                        valueListenable: _user,
+                        builder: (context, user, _) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              buildInfoSection("28K", 'Followers'),
-                              buildInfoSection("${blogs.length}", 'Posts'),
-                              buildInfoSection("734K", 'Likes'),
-                              buildInfoSection("983K", 'Views'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: AppConstants.paddingSmall),
-                        child: DefaultTabController(
-                          length: 3,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: AppConstants.paddingMediumSmall,
-                                ),
-                                child: Container(
-                                  height: 35,
-                                  child: TabBar(
-                                    labelColor: AppColors.white,
-                                    unselectedLabelColor: AppColors.white,
-                                    indicatorColor: AppColors.transparentColor,
-                                    labelStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                                    unselectedLabelStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                                    dividerColor: AppColors.transparentColor,
-                                    splashBorderRadius: BorderRadius.circular(
-                                      AppConstants.borderTab,
+                              ValueListenableBuilder(
+                                valueListenable: _image,
+                                builder: (context, image, _) {
+                                  return Align(
+                                    alignment: Alignment.center,
+                                    child: CircleAvatarImage(
+                                      image: image,
+                                      radius: AppConstants.circleAvatarBigSize,
+                                      onTap: () async {
+                                        final pickedImage =
+                                            await getIt<ImagePickerService>()
+                                                .pickFromGallery();
+                                        if (pickedImage == null) return;
+                                        if (!context.mounted) return;
+                                        context.read<ab.AuthBloc>().add(
+                                          ab.UpdateUserAvatarEvent(
+                                            userId: _user.value!.id,
+                                            imageFile: pickedImage,
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    indicatorSize: TabBarIndicatorSize.tab,
-                                    indicator: BoxDecoration(
-                                      color: AppColors.gradient1,
-                                      borderRadius: BorderRadius.circular(
-                                        AppConstants.borderTab,
+                                  );
+                                },
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: AppConstants.paddingSmall,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Spacer(),
+                                    Text(
+                                      user != null
+                                          ? user.name
+                                              .upperFirstLetterWithSpace()
+                                          : "",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium!.copyWith(
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    tabs: [
-                                      Tab(text: "Updates"),
-                                      Tab(text: "Pictures"),
-                                      Tab(text: "About"),
-                                    ],
+                                    Flexible(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: AppConstants.paddingTiny,
+                                        ),
+                                        child: RippleEffect(
+                                          onTap: () => setDetailAppear.call(),
+                                          child: TweenAnimationBuilder(
+                                            tween: Tween<double>(
+                                              begin: pi,
+                                              end: _showDetails ? pi : 0,
+                                            ),
+                                            duration:
+                                                AppConstants.rotationDuration,
+                                            builder: (context, value, child) {
+                                              return Transform.rotate(
+                                                angle: value,
+                                                child: AppIcon.asset(
+                                                  Assets.iconsIcUpArrow,
+                                                  color: AppColors.white,
+                                                  size:
+                                                      AppConstants
+                                                          .iconMediumSize,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: AppConstants.rotationDuration,
+                                height:
+                                    _showDetails
+                                        ? AppConstants.containerDetailHeight
+                                        : 0,
+                                curve: Curves.easeInOut,
+                                padding: EdgeInsets.only(
+                                  top: AppConstants.paddingSmall,
+                                  left: AppConstants.paddingMediumSmall,
+                                  right: AppConstants.paddingMediumSmall,
+                                ),
+                                child: ClipRect(
+                                  child: SingleChildScrollView(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        buildInfoSection("28K", 'Followers'),
+                                        buildInfoSection(
+                                          "${blogs.length}",
+                                          'Posts',
+                                        ),
+                                        buildInfoSection("734K", 'Likes'),
+                                        buildInfoSection("983K", 'Views'),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                               Expanded(
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                    top: AppConstants.paddingTiny,
+                                    top: AppConstants.paddingSmall,
                                   ),
-                                  child: TabBarView(
-                                    children: [
-                                      buildFirstTab(blogs),
-                                      buildSecondTab(),
-                                      buildThirdTab(name),
-                                    ],
+                                  child: DefaultTabController(
+                                    length: 3,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                AppConstants.paddingMediumSmall,
+                                          ),
+                                          child: SizedBox(
+                                            height: 35,
+                                            child: TabBar(
+                                              labelColor: AppColors.white,
+                                              unselectedLabelColor:
+                                                  AppColors.white,
+                                              indicatorColor:
+                                                  AppColors.transparentColor,
+                                              labelStyle:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
+                                              unselectedLabelStyle:
+                                                  Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
+                                              dividerColor:
+                                                  AppColors.transparentColor,
+                                              splashBorderRadius:
+                                                  BorderRadius.circular(
+                                                    AppConstants.borderTab,
+                                                  ),
+                                              indicatorSize:
+                                                  TabBarIndicatorSize.tab,
+                                              indicator: BoxDecoration(
+                                                color: AppColors.gradient1,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      AppConstants.borderTab,
+                                                    ),
+                                              ),
+                                              tabs: [
+                                                Tab(text: "Updates"),
+                                                Tab(text: "Pictures"),
+                                                Tab(text: "About"),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              top: AppConstants.paddingTiny,
+                                            ),
+                                            child: TabBarView(
+                                              children: [
+                                                buildFirstTab(blogs),
+                                                buildSecondTab(),
+                                                buildThirdTab(
+                                                  user != null ? user.name : "",
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ),

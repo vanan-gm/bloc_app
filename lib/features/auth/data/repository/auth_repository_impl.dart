@@ -66,8 +66,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
       final user = await authRemoteDataSource.getCurrentUserData();
-      if (user == null)
+      if (user == null) {
         return left(Failure(message: AppConstants.userNotLoggedIn));
+      }
       return right(user);
     } on ServerException {
       return left(Failure(message: ''));
@@ -85,17 +86,20 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateUser(File image, UserEntity user) async {
+  Future<Either<Failure, String>> updateUserAvatar(
+    File image,
+    String userId,
+  ) async {
     try {
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       } else {
-        final resultUpdate = await authRemoteDataSource.updateAvatar(
+        final imageUrl = await authRemoteDataSource.updateAvatar(
           image: image,
-          user: UserModel.fromEntity(user),
+          userId: userId,
         );
-        return resultUpdate
-            ? right(true)
+        return imageUrl.isNotEmpty
+            ? right(imageUrl)
             : left(Failure(message: 'Unable to update user avatar'));
       }
     } on sb.AuthException catch (e) {

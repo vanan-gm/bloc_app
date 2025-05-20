@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/utils/pick_image.dart';
+import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
@@ -37,7 +37,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
   File? image;
 
   void selectImage() async {
-    final pickedImage = await pickImage();
+    final pickedImage = await getIt<ImagePickerService>().pickFromGallery();
     if (pickedImage != null) {
       setState(() {
         image = pickedImage;
@@ -58,8 +58,13 @@ class _AddBlogPageState extends State<AddBlogPage> {
     );
   }
 
-  bool get checkBeforeAddBlog => image != null && _selectedTopics.isNotEmpty && _titleCtrl.text.trim().isNotEmpty && _titleCtrl.text.trim().length >= 6
-  && _contentCtrl.text.trim().isNotEmpty && _contentCtrl.text.trim().length >= 6;
+  bool get checkBeforeAddBlog =>
+      image != null &&
+      _selectedTopics.isNotEmpty &&
+      _titleCtrl.text.trim().isNotEmpty &&
+      _titleCtrl.text.trim().length >= 6 &&
+      _contentCtrl.text.trim().isNotEmpty &&
+      _contentCtrl.text.trim().length >= 6;
 
   @override
   void dispose() {
@@ -77,7 +82,13 @@ class _AddBlogPageState extends State<AddBlogPage> {
         actions: [
           IconButton(
             onPressed: checkBeforeAddBlog ? handleUploadBlog : null,
-            icon: Icon(Icons.done_rounded, color: checkBeforeAddBlog ? AppColors.white : AppColors.white.withValues(alpha: .4),),
+            icon: Icon(
+              Icons.done_rounded,
+              color:
+                  checkBeforeAddBlog
+                      ? AppColors.white
+                      : AppColors.white.withValues(alpha: .4),
+            ),
           ),
         ],
       ),

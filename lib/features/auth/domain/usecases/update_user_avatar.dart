@@ -6,19 +6,18 @@ import 'package:bloc_app/core/usercase/usecase.dart';
 import 'package:bloc_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UpdateUserAvatar implements UserCase<bool, UpdateAvatarParams>{
-  final AuthRepository repository;
-  UpdateUserAvatar({required this.repository});
+class UpdateUserAvatar implements UserCase<String, UpdateAvatarParams> {
+  final AuthRepository authRepository;
+  UpdateUserAvatar({required this.authRepository});
 
   @override
-  Future<Either<Failure, bool>> call(UpdateAvatarParams params) async{
-    return await repository.updateUser(params.image, params.user);
+  Future<Either<Failure, String>> call(UpdateAvatarParams params) async {
+    return await authRepository.updateUserAvatar(params.image, params.userId);
   }
-
 }
 
-class UpdateAvatarParams{
-  final UserEntity user;
+class UpdateAvatarParams {
+  final String userId;
   final File image;
-  UpdateAvatarParams({required this.user, required this.image});
+  UpdateAvatarParams({required this.userId, required this.image});
 }
