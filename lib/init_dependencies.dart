@@ -1,4 +1,5 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloc_app/core/common/service/shared_preference_service.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/network/connection_checker.dart';
 import 'package:bloc_app/core/secrets/app_secrets.dart';
@@ -28,7 +29,11 @@ import 'package:bloc_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
+import 'package:bloc_app/features/language/data/repository/language_repository_impl.dart';
+import 'package:bloc_app/features/language/domain/repository/language_repository.dart';
+import 'package:bloc_app/features/language/presentation/cubit/language_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/profile_bloc/profile_bloc.dart';
@@ -41,6 +46,10 @@ Future<void> initDependencies() async {
   _initAuth();
   _initBlog();
   _initStreams();
+  _initLanguage();
+
+  final prefs = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton(() => prefs);
 
   final supaBase = await Supabase.initialize(
     url: AppSecrets.supaBaseUrl,
@@ -138,4 +147,13 @@ void _initStreams() {
   getIt.registerFactory<SignupStream>(() => SignupStream());
   getIt.registerFactory<AddBlogStream>(() => AddBlogStream());
   getIt.registerFactory<ChangePasswordStream>(() => ChangePasswordStream());
+}
+
+void _initLanguage() {
+  getIt
+    ..registerLazySingleton(() => SharedPreferenceService(preferences: getIt()))
+    ..registerFactory<LanguageRepository>(
+      () => LanguageRepositoryImpl(service: getIt()),
+    )
+    ..registerLazySingleton(() => LanguageCubit(languageRepository: getIt()));
 }

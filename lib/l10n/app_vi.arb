@@ -49,6 +49,9 @@
   "aboutApp": "Giới Thiệu Ứng Dụng",
   "rateUs": "Đánh Giá",
   "logout": "Đăng Xuất",
+  "logoutOfYourAccount": "Đăng Xuất Tài Khoản",
+  "logoutWarning": "Đăng xuất sẽ tạm thời ẩn tất cả các bài blog. Để xem lại, hãy đăng nhập lại vào tài khoản của bạn.",
+  "cancel": "Hủy",
   "version": "Phiên Bản",
   "by": "Viết bởi",
   "selectYourImage": "Chọn ảnh của bạn",
@@ -65,5 +68,8 @@
   "science": "Khoa Học",
   "social": "Xã Hội",
   "blogTitle": "Tiêu đề blog",
-  "blogContent": "Nội dung blog"
+  "blogContent": "Nội dung blog",
+  "selectLanguage": "Chọn ngôn ngữ",
+  "english": "Tiếng Anh",
+  "vietnamese": "Tiếng Việt"
 }

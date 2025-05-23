@@ -1,7 +1,6 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppConstants{
-
+class AppConstants {
   static double widthScreen = ScreenUtil().screenWidth;
   static double heightScreen = ScreenUtil().screenHeight;
 
@@ -84,13 +83,17 @@ class AppConstants{
   static const userNotLoggedIn = 'User not logged in';
   static const userNotFound = 'Can not find this user';
 
-  // AppPreference Names
-  static const String userData = 'user_data';
-
   // Supabase constants
   static const String tableBlogs = 'blogs';
   static const String tableLikes = 'likes';
   static const String tableProfiles = 'profiles';
   static const String bucketBlogImages = 'blog_images';
   static const String bucketUserImages = 'user-images';
+
+  // SharedPreference constants
+  static const String appLocale = 'app_locale';
+
+  // App Constants
+  static const String localeEn = 'en';
+  static const String localeVi = 'vi';
 }

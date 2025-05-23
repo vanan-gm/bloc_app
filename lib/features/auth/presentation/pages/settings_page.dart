@@ -1,4 +1,6 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
+import 'package:bloc_app/core/common/utils/app_modal.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
@@ -8,6 +10,7 @@ import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/change_password_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
+import 'package:bloc_app/features/language/presentation/cubit/language_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,18 +63,18 @@ class _SettingsPageState extends State<SettingsPage> {
               Padding(
                 padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
                 child: Text(
-                  'Account',
+                  context.translate.account,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              itemBox(Assets.iconsIcUser, "Edit Profile", () {
+              itemBox(Assets.iconsIcUser, context.translate.editProfile, () {
                 navigatePage(ProfilePage.route());
               }),
               itemBox(
                 Assets.iconsIcSecure,
-                "Change Password",
+                context.translate.changePassword,
                 () => Navigator.of(context).push(ChangePasswordPage.route()),
               ),
               Padding(
@@ -79,28 +82,43 @@ class _SettingsPageState extends State<SettingsPage> {
                   vertical: AppConstants.paddingSuperTiny,
                 ),
                 child: Text(
-                  'Preference',
+                  context.translate.preference,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              itemBox(Assets.iconsIcLanguage, "Language", () {}),
-              itemBox(Assets.iconsIcLightMode, "Light Mode", () {}),
-              itemBox(Assets.iconsIcFingerprint, "Enable Finger-Print", () {}),
+              itemBox(Assets.iconsIcLanguage, context.translate.language, () {
+                AppModal.showBottomSheet(
+                  context: context,
+                  onSelected: (localeCode) {
+                    context.read<LanguageCubit>().changeLocale(localeCode);
+                  },
+                );
+              }),
+              itemBox(
+                Assets.iconsIcLightMode,
+                context.translate.lightMode,
+                () {},
+              ),
+              itemBox(
+                Assets.iconsIcFingerprint,
+                context.translate.enableFingerPrint,
+                () {},
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: AppConstants.paddingSuperTiny,
                 ),
                 child: Text(
-                  'About App',
+                  context.translate.aboutApp,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              itemBox(Assets.iconsIcInfo, "About App", () {}),
-              itemBox(Assets.iconsIcRate, "Rate Us", () {}),
+              itemBox(Assets.iconsIcInfo, context.translate.aboutApp, () {}),
+              itemBox(Assets.iconsIcRate, context.translate.rateUs, () {}),
               Padding(
                 padding: EdgeInsets.only(top: AppConstants.paddingMedium),
                 child: onTapItem(
@@ -119,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: AppConstants.widthScreen,
                   alignment: Alignment.center,
                   child: Text(
-                    "Logout",
+                    context.translate.logout,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -127,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "Version v1.1",
+                  "${context.translate.version} v1.1",
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: AppColors.white.withValues(alpha: .5),
                   ),

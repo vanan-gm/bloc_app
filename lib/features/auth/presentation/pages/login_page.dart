@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
@@ -45,16 +46,17 @@ class _LoginPageState extends State<LoginPage> {
             child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthSuccessState) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MasterPage.route(),
-                    (route) => false,
-                  );
+                  Navigator.of(
+                    context,
+                  ).pushAndRemoveUntil(MasterPage.route(), (route) => false);
                 } else if (state is AuthFailureState) {
-                  if(state.message.isNotEmpty && state.message != AppConstants.userNotLoggedIn){
+                  if (state.message.isNotEmpty &&
+                      state.message != AppConstants.userNotLoggedIn) {
                     showCustomOverlay(
-                        context: context,
-                        content: state.message,
-                        isSuccessType: false);
+                      context: context,
+                      content: state.message,
+                      isSuccessType: false,
+                    );
                   }
                 }
               },
@@ -67,8 +69,9 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Sign In',
-                          style: Theme.of(context).textTheme.displayLarge!.copyWith(fontWeight: FontWeight.w700),
+                          context.translate.signIn,
+                          style: Theme.of(context).textTheme.displayLarge!
+                              .copyWith(fontWeight: FontWeight.w700),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -88,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                             vertical: AppConstants.paddingSmall,
                           ),
                           child: CommonTextField(
-                            hintText: 'Password',
+                            hintText: context.translate.password,
                             controller: _passWordCtrl,
                             stream: loginStream.passwordS,
                             onChange: loginStream.passwordChange,
@@ -102,35 +105,44 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: CommonGradientButton(
                             onPressed: () {
-                              context.read<AuthBloc>().add(LoginEvent(
+                              context.read<AuthBloc>().add(
+                                LoginEvent(
                                   email: _emailCtrl.text.trim().toLowerCase(),
                                   password:
-                                      _passWordCtrl.text.trim().toLowerCase()));
+                                      _passWordCtrl.text.trim().toLowerCase(),
+                                ),
+                              );
                             },
-                            text: 'Sign In',
+                            text: context.translate.signIn,
                             stream: loginStream.submitS,
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingSmall),
+                            vertical: AppConstants.paddingSmall,
+                          ),
                           child: RichText(
                             text: TextSpan(
-                                text: 'Don\'t have an account? ',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                children: [
-                                  TextSpan(
-                                      text: 'Sign Up',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                              color: AppPallete.gradient2,
-                                              fontWeight: FontWeight.bold),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () => Navigator.of(context)
-                                            .push(SignUpPage.route()))
-                                ]),
+                              text: '${context.translate.dontHaveAnAccount}? ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              children: [
+                                TextSpan(
+                                  text: context.translate.signUp,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    color: AppPallete.gradient2,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap =
+                                            () => Navigator.of(
+                                              context,
+                                            ).push(SignUpPage.route()),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

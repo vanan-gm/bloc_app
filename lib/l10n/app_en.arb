@@ -49,6 +49,9 @@
   "aboutApp": "About App",
   "rateUs": "Rate Us",
   "logout": "Logout",
+  "logoutOfYourAccount": "Log Out of Your Account",
+  "logoutWarning": "Logging out will temporarily hide all blogs. To see them again, log back in to your account.",
+  "cancel": "Cancel",
   "version": "Version",
   "by": "By",
   "selectYourImage": "Select your image",
@@ -65,5 +68,8 @@
   "science": "Science",
   "social": "Social",
   "blogTitle": "Blog title",
-  "blogContent": "Blog content"
+  "blogContent": "Blog content",
+  "selectLanguage": "Select language",
+  "english": "English",
+  "vietnamese": "Vietnamese"
 }
