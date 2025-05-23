@@ -159,6 +159,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                         blogId: widget.blog.id,
                                         userId: _userId,
                                         type: liked ? UpdateStateType.removeLike : UpdateStateType.setLike));
+
                                     },
                                   );
                                 },

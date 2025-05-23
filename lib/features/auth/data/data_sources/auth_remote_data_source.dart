@@ -18,7 +18,7 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData();
   Future<void> signOut();
 
-  Future<bool> updateAvatar({required File image, required UserModel user});
+  Future<String> updateAvatar({required File image, required String userId});
   Future<bool> changePassword({
     required String newPassword,
     required String confirmPassword,
@@ -108,12 +108,12 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<bool> updateAvatar({
+  Future<String> updateAvatar({
     required File image,
-    required UserModel user,
+    required String userId,
   }) async {
     final filePath =
-        '${user.id}/avatar_${DateTime.now().millisecondsSinceEpoch}.png';
+        '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.png';
     try {
       final storageRes = await supabaseClient.storage
           .from(AppConstants.bucketUserImages)
@@ -131,12 +131,12 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
           .from(AppConstants.bucketUserImages)
           .getPublicUrl(filePath);
 
-      final response = await supabaseClient
+      await supabaseClient
           .from(AppConstants.tableProfiles)
           .update({'image_url': imageUrl})
-          .eq('id', user.id);
+          .eq('id', userId);
 
-      return response != null ? true : false;
+      return imageUrl;
     } on PostgrestException catch (e) {
       throw ServerException(message: e.message);
     } catch (e) {

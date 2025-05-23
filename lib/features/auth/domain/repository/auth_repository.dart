@@ -20,7 +20,7 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, void>> signOut();
 
-  Future<Either<Failure, bool>> updateUser(File image, UserEntity user);
+  Future<Either<Failure, String>> updateUserAvatar(File image, String userId);
 
   Future<Either<Failure, bool>> changePassword(
     String newPassword,

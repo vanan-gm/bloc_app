@@ -7,12 +7,18 @@ import 'package:bloc_app/core/theme/app_colors.dart';
 class CircleAvatarImage extends StatelessWidget {
   final String image;
   final double radius;
-  const CircleAvatarImage({super.key, required this.image, required this.radius});
+  final VoidCallback? onTap;
+  const CircleAvatarImage({
+    super.key,
+    required this.image,
+    required this.radius,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return RippleEffect(
-      onTap: () {},
+      onTap: onTap,
       radius: AppConstants.borderRound,
       child: CircleAvatar(
         backgroundImage: CachedNetworkImageProvider(image),
