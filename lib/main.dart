@@ -12,20 +12,27 @@ import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
   await initDependencies();
-  runApp(MultiBlocProvider(providers: [
-    BlocProvider(create: (_) => getIt<AppUserCubit>()),
-    BlocProvider(create: (_) => getIt<AuthBloc>()),
-    BlocProvider(create: (_) => getIt<BlogBloc>()),
-    BlocProvider(create: (_) => getIt<SearchBloc>()),
-    BlocProvider(create: (_) => getIt<ProfileBloc>()),
-    BlocProvider(create: (_) => getIt<BlogDetailBloc>()),
-    BlocProvider(create: (_) => getIt<FavoriteBlogBloc>()),
-  ], child: const MyApp()));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<AppUserCubit>()),
+        BlocProvider(create: (_) => getIt<AuthBloc>()),
+        BlocProvider(create: (_) => getIt<BlogBloc>()),
+        BlocProvider(create: (_) => getIt<SearchBloc>()),
+        BlocProvider(create: (_) => getIt<ProfileBloc>()),
+        BlocProvider(create: (_) => getIt<BlogDetailBloc>()),
+        BlocProvider(create: (_) => getIt<FavoriteBlogBloc>()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -53,14 +60,21 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           title: 'Bloc App',
           theme: AppTheme.darkThemeMode,
+          locale: const Locale('en'),
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           home: BlocSelector<AppUserCubit, AppUserState, bool>(
-            selector: (state){
+            selector: (state) {
               return state is AppUserLoggedInState;
             },
-            builder: (context, isLoggedIn){
-              if(isLoggedIn){
+            builder: (context, isLoggedIn) {
+              if (isLoggedIn) {
                 return const MasterPage();
-              }else{
+              } else {
                 return const LoginPage();
               }
             },
