@@ -2,6 +2,7 @@
   "@@locale": "en",
   "signIn": "Sign In",
   "dontHaveAnAccount": "Don/'t have an account",
+  "createAccountSuccessfully": "Create account successfully",
   "signUp": "Sign Up",
   "name": "Name",
   "password": "Password",
@@ -18,6 +19,7 @@
   "mins": "mins",
   "searchBlogsHere": "Search blogs here...",
   "account": "Account",
+  "profile": "Profile",
   "editProfile": "Edit Profile",
   "followers": "Followers",
   "posts": "Posts",
@@ -26,8 +28,8 @@
   "updates": "Updates",
   "pictures": "Pictures",
   "about": "About",
-  "aboutDescription": "Hi, I'm $name, a passionate traveler, storyteller, and blogger with an insatiable curiosity for exploring the world. Traveling isn't just a hobby for me—it's a way of life. From wandering through ancient streets filled with history to relaxing on pristine, untouched beaches, every journey fuels my desire to discover and share.",
-  "@aboutDescription": {
+  "aboutDescription1": "Hi, I'm {name}, a passionate traveler, storyteller, and blogger with an insatiable curiosity for exploring the world. Traveling isn't just a hobby for me—it's a way of life. From wandering through ancient streets filled with history to relaxing on pristine, untouched beaches, every journey fuels my desire to discover and share.",
+  "@aboutDescription1": {
     "description": "About section with the user's name.",
     "placeholders": {
       "name": {
@@ -35,6 +37,7 @@
       }
     }
   },
+  "aboutDescription2": "Through my blog, I bring my experiences to life with vivid storytelling, stunning photography, and practical travel tips. I love uncovering hidden gems, immersing myself in diverse cultures, and capturing the essence of each place I visit. Whether it's solo adventures, cultural deep dives, food explorations, or road trips to breathtaking landscapes, I believe every journey has a story worth telling.",
   "changePassword": "Change Password",
   "changePasswordDescription1": "Your new password must be different from previous password",
   "changePasswordDescription2": "The new password must satisfy the password policy",
@@ -42,6 +45,8 @@
   "changePasswordDescription4": "The password must contain at least 1 special character, such as @, &, %, TM,…",
   "changePasswordDescription5": "The password must contain at least 3 different kinds of characters, such as uppercase letters, lowercase letter, numeric digits, and punctuation marks.",
   "confirmChange": "Confirm Change",
+  "failedToChangePassword": "Failed to change password",
+  "changePasswordSuccessMessage": "Change password successfully",
   "preference": "Preference",
   "language": "Language",
   "lightMode": "Light Mode",
@@ -51,6 +56,11 @@
   "logout": "Logout",
   "logoutOfYourAccount": "Log Out of Your Account",
   "logoutWarning": "Logging out will temporarily hide all blogs. To see them again, log back in to your account.",
+  "signOutSuccessMessage": "Signout successfully",
+  "encounterError": "Encounter errors!!",
+  "notification": "Notification",
+  "featureInProgressMessage": "This feature is currently in progress, please comeback later.",
+  "ok": "Ok",
   "cancel": "Cancel",
   "version": "Version",
   "by": "By",

@@ -41,6 +41,7 @@ class AppConstants {
   static const double iconLargeSize = 28;
   static const double iconBigSize = 34;
   static const double iconHugeSize = 40;
+  static const double iconGiantSize = 48;
 
   // Custom
   static const double containerHeight = 150;

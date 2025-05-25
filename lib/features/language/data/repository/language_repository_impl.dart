@@ -8,11 +8,11 @@ class LanguageRepositoryImpl implements LanguageRepository {
 
   @override
   String? getSavedLocale() {
-    return service.getData(AppConstants.appLocale);
+    return service.getData<String>(AppConstants.appLocale);
   }
 
   @override
   Future<void> setLocale(String localeCode) async {
-    await service.setData(AppConstants.appLocale, localeCode);
+    await service.setData<String>(AppConstants.appLocale, localeCode);
   }
 }

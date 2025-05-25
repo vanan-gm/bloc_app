@@ -27,5 +27,5 @@ class Assets {
   static const String iconsIcTrashBin = 'assets/icons/ic_trash_bin.png';
   static const String iconsIcUpArrow = 'assets/icons/ic_up_arrow.png';
   static const String iconsIcUser = 'assets/icons/ic_user.png';
-
+  static const String iconsIcWarning = 'assets/icons/ic_warning.png';
 }

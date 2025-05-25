@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
@@ -90,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: Text(
-          "Profile",
+          context.translate.profile,
           style: Theme.of(
             context,
           ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
@@ -230,13 +231,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        buildInfoSection("28K", 'Followers'),
+                                        buildInfoSection(
+                                          "28K",
+                                          context.translate.followers,
+                                        ),
                                         buildInfoSection(
                                           "${blogs.length}",
-                                          'Posts',
+                                          context.translate.posts,
                                         ),
-                                        buildInfoSection("734K", 'Likes'),
-                                        buildInfoSection("983K", 'Views'),
+                                        buildInfoSection(
+                                          "734K",
+                                          context.translate.likes,
+                                        ),
+                                        buildInfoSection(
+                                          "983K",
+                                          context.translate.views,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -288,9 +298,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     ),
                                               ),
                                               tabs: [
-                                                Tab(text: "Updates"),
-                                                Tab(text: "Pictures"),
-                                                Tab(text: "About"),
+                                                Tab(
+                                                  text:
+                                                      context.translate.updates,
+                                                ),
+                                                Tab(
+                                                  text:
+                                                      context
+                                                          .translate
+                                                          .pictures,
+                                                ),
+                                                Tab(
+                                                  text: context.translate.about,
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -395,9 +415,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             Text(
-              "Hi, I'm $name, a passionate traveler, storyteller, and blogger with an insatiable curiosity for exploring the world. "
-              "Traveling isn't just a hobby for me—it's a way of life. From wandering through ancient streets filled with history to relaxing on pristine,"
-              " untouched beaches, every journey fuels my desire to discover and share.",
+              context.translate.aboutDescription1(name),
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium!.copyWith(height: 1.7),
@@ -409,9 +427,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CachedNetworkImg(imageUrl: AppPath.aboutProfileImageUrl),
             ),
             Text(
-              "Through my blog, I bring my experiences to life with vivid storytelling, "
-              "stunning photography, and practical travel tips. I love uncovering hidden gems, immersing myself in diverse cultures, and capturing the essence of each place I visit."
-              " Whether it's solo adventures, cultural deep dives, food explorations, or road trips to breathtaking landscapes, I believe every journey has a story worth telling.",
+              context.translate.aboutDescription2,
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium!.copyWith(height: 1.7),

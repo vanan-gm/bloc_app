@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
             showCustomOverlay(
               context: context,
               isSuccessType: true,
-              content: 'Signout successfully',
+              content: context.translate.signOutSuccessMessage,
             );
             Navigator.of(
               context,
@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
             showCustomOverlay(
               context: context,
               isSuccessType: false,
-              content: 'Encounter errors!!',
+              content: context.translate.encounterError,
             );
           }
         },
@@ -104,7 +104,10 @@ class _SettingsPageState extends State<SettingsPage> {
               itemBox(
                 Assets.iconsIcFingerprint,
                 context.translate.enableFingerPrint,
-                () {},
+                () => AppDialog.showFunctionInProgressDialog(
+                  context: context,
+                  onOk: () => Navigator.of(context).pop(),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(

@@ -2,6 +2,7 @@
   "@@locale": "vi",
   "signIn": "Đăng Nhập",
   "dontHaveAnAccount": "Chưa có tài khoản",
+  "createAccountSuccessfully": "Tạo tài khoản thành công",
   "signUp": "Đăng Ký",
   "name": "Tên",
   "password": "Mật khẩu",
@@ -18,6 +19,7 @@
   "mins": "phút",
   "searchBlogsHere": "Tìm blogs ở đây...",
   "account": "Tài Khoản",
+  "profile": "Hồ Sơ",
   "editProfile": "Chỉnh Sửa Thông Tin",
   "followers": "Theo Dõi",
   "posts": "Bài Đăng",
@@ -26,8 +28,8 @@
   "updates": "Cập Nhật",
   "pictures": "Hình Ảnh",
   "about": "Giới Thiệu",
-  "aboutDescription": "Xin chào, tôi là $name, một người đam mê du lịch, kể chuyện và viết blog với niềm tò mò vô tận về việc khám phá thế giới. Du lịch không chỉ là sở thích của tôi — đó là cách sống. Từ việc dạo bước trên những con phố cổ đầy lịch sử đến thư giãn trên những bãi biển hoang sơ, mỗi chuyến đi đều nuôi dưỡng khát khao khám phá và chia sẻ của tôi.",
-  "@aboutDescription": {
+  "aboutDescription1": "Xin chào, tôi là {name}, một người đam mê du lịch, kể chuyện và viết blog với niềm tò mò vô tận về việc khám phá thế giới. Du lịch không chỉ là sở thích của tôi — đó là cách sống. Từ việc dạo bước trên những con phố cổ đầy lịch sử đến thư giãn trên những bãi biển hoang sơ, mỗi chuyến đi đều nuôi dưỡng khát khao khám phá và chia sẻ của tôi.",
+  "@aboutDescription1": {
     "description": "Phần giới thiệu có tên người dùng.",
     "placeholders": {
       "name": {
@@ -35,6 +37,7 @@
       }
     }
   },
+  "aboutDescription2": "Thông qua blog của mình, tôi mang những trải nghiệm đến với cuộc sống bằng những câu chuyện sống động, nhiếp ảnh tuyệt đẹp và các mẹo du lịch thiết thực. Tôi yêu việc khám phá những viên ngọc ẩn, đắm mình trong các nền văn hóa đa dạng và ghi lại tinh hoa của mỗi nơi tôi đặt chân đến. Dù là những chuyến phiêu lưu một mình, hành trình khám phá văn hóa, trải nghiệm ẩm thực hay những chuyến đi qua các cảnh quan ngoạn mục, tôi tin rằng mỗi chuyến đi đều có một câu chuyện đáng để kể.",
   "changePassword": "Thay Đổi Mật Khẩu",
   "changePasswordDescription1": "Mật khẩu mới của bạn phải khác với mật khẩu trước đó",
   "changePasswordDescription2": "Mật khẩu mới phải tuân thủ chính sách mật khẩu.",
@@ -42,6 +45,8 @@
   "changePasswordDescription4": "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt, ví dụ như @, &, %, ™, ...",
   "changePasswordDescription5": "Mật khẩu phải chứa ít nhất 3 loại ký tự khác nhau, chẳng hạn như chữ hoa, chữ thường, chữ số và dấu câu.",
   "confirmChange": "Xác Nhận",
+  "failedToChangePassword": "Đổi mật khẩu không thành công",
+  "changePasswordSuccessMessage": "Đổi mật khẩu thành công",
   "preference": "Tùy Chọn",
   "language": "Ngôn Ngữ",
   "lightMode": "Chế Độ Ban Ngày",
@@ -52,6 +57,11 @@
   "logoutOfYourAccount": "Đăng Xuất Tài Khoản",
   "logoutWarning": "Đăng xuất sẽ tạm thời ẩn tất cả các bài blog. Để xem lại, hãy đăng nhập lại vào tài khoản của bạn.",
   "cancel": "Hủy",
+  "signOutSuccessMessage": "Đăng xuất thành công",
+  "encounterError": "Đã xảy ra lỗi!!",
+  "notification": "Thông Báo",
+  "featureInProgressMessage": "Tính năng này đang được phát triển, vui lòng quay lại sau.",
+  "ok": "Ok",
   "version": "Phiên Bản",
   "by": "Viết bởi",
   "selectYourImage": "Chọn ảnh của bạn",

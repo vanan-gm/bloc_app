@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
@@ -40,7 +41,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Change Password",
+          context.translate.changePassword,
           style: Theme.of(
             context,
           ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
@@ -60,14 +61,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 showCustomOverlay(
                   context: context,
                   isSuccessType: false,
-                  content: "Failed to change password",
+                  content: context.translate.failedToChangePassword,
                 );
               } else if (state is AuthChangePasswordSuccessState) {
                 _isLoading.value = false;
                 showCustomOverlay(
                   context: context,
                   isSuccessType: true,
-                  content: "Change password successfully",
+                  content: context.translate.changePasswordSuccessMessage,
                 );
                 Navigator.of(context).pop();
               }

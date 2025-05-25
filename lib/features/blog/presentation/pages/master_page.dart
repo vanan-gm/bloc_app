@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,7 +81,7 @@ class _MasterPageState extends State<MasterPage> {
                         : AppColors.white,
               ),
             ),
-            label: 'Home',
+            label: context.translate.home,
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -93,7 +94,7 @@ class _MasterPageState extends State<MasterPage> {
                         : AppColors.white,
               ),
             ),
-            label: 'Search',
+            label: context.translate.search,
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -106,7 +107,7 @@ class _MasterPageState extends State<MasterPage> {
                         : AppColors.white,
               ),
             ),
-            label: 'Favorite',
+            label: context.translate.favorite,
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -114,12 +115,12 @@ class _MasterPageState extends State<MasterPage> {
               child: AppIcon.asset(
                 Assets.iconsIcSettings,
                 color:
-                _currentTabIndex == 3
-                    ? AppPallete.gradient1
-                    : AppColors.white,
+                    _currentTabIndex == 3
+                        ? AppPallete.gradient1
+                        : AppColors.white,
               ),
             ),
-            label: 'Settings',
+            label: context.translate.settings,
           ),
         ],
       ),
