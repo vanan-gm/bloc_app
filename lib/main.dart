@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
               title: 'Bloc App',
               theme: AppTheme.darkThemeMode,
               locale: locale,
-              supportedLocales: const [Locale('en'), Locale('vi')],
+              supportedLocales: AppLocalizations.supportedLocales,
               localizationsDelegates: [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,

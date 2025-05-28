@@ -1,3 +1,5 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppConstants {
@@ -65,19 +67,28 @@ class AppConstants {
   // Elevation
   static const double elevationZero = 0.0;
 
-  static const List<String> topics = [
-    'Technology',
-    'Business',
-    'Programming',
-    'Entertainment',
-    'Planetary',
-    'Music',
-    'Travelling',
-    'Nature',
-    'Communication',
-    'Education',
-    'Science',
-    'Social',
+  static List<String> topics(BuildContext context) => [
+    context.translate.technology,
+    context.translate.business,
+    context.translate.programming,
+    context.translate.entertainment,
+    context.translate.planetary,
+    context.translate.music,
+    context.translate.travelling,
+    context.translate.nature,
+    context.translate.communication,
+    context.translate.education,
+    context.translate.science,
+    context.translate.social,
+    context.translate.health,
+    context.translate.selfImprovement,
+    context.translate.history,
+    context.translate.cultureAndTraditions,
+    context.translate.gaming,
+    context.translate.photography,
+    context.translate.moviesAndTvShows,
+    context.translate.spaceAndAstronomy,
+    context.translate.aiAndMachineLearning,
   ];
 
   static const noConnectionErrorMessage = 'Not connected to a network!';

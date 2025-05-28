@@ -29,6 +29,11 @@ class _LoginPageState extends State<LoginPage> {
   final loginStream = getIt<LoginStream>();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _emailCtrl.dispose();

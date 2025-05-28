@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,8 +39,8 @@ class _SearchPageState extends State<SearchPage> {
               Expanded(
                 child: SearchField(
                   controller: _searchCtrl,
-                  hintText: "Search blogs here...",
-                  onClear: (){
+                  hintText: context.translate.searchBlogsHere,
+                  onClear: () {
                     setState(() {
                       blogs = [];
                     });
@@ -49,14 +50,16 @@ class _SearchPageState extends State<SearchPage> {
               Padding(
                 padding: EdgeInsets.only(left: AppConstants.paddingTiny),
                 child: RippleEffect(
-                  onTap: (){
+                  onTap: () {
                     FocusManager.instance.primaryFocus!.unfocus();
-                    context.read<SearchBloc>().add(SearchBlogsEvent(keyword: _searchCtrl.text.trim()));
+                    context.read<SearchBloc>().add(
+                      SearchBlogsEvent(keyword: _searchCtrl.text.trim()),
+                    );
                   },
                   child: SizedBox(
                     height: 30,
                     width: 30,
-                    child: AppIcon.asset(Assets.iconsIcSend)
+                    child: AppIcon.asset(Assets.iconsIcSend),
                   ),
                 ),
               ),
@@ -66,30 +69,34 @@ class _SearchPageState extends State<SearchPage> {
             child: Padding(
               padding: EdgeInsets.only(top: AppConstants.paddingSmall),
               child: BlocBuilder<SearchBloc, SearchState>(
-                builder: (context, state){
-                  if(state is SearchBlogsLoadingState){
+                builder: (context, state) {
+                  if (state is SearchBlogsLoadingState) {
                     return const LoadingWidget();
-                  }else if(state is SearchBlogsSuccessState){
+                  } else if (state is SearchBlogsSuccessState) {
                     return ListView.builder(
-                        itemCount: state.blogs.length,
-                        itemBuilder: (context, i) {
-                          final blog = state.blogs[i];
-                          return BlogCard(
-                            blog: blog,
-                            padding: EdgeInsets.only(bottom: AppConstants.paddingSmall),
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(BlogDetailPage.route(blog: blog));
-                            },
-                          );
-                        });
-                  }else{
+                      itemCount: state.blogs.length,
+                      itemBuilder: (context, i) {
+                        final blog = state.blogs[i];
+                        return BlogCard(
+                          blog: blog,
+                          padding: EdgeInsets.only(
+                            bottom: AppConstants.paddingSmall,
+                          ),
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                            ).push(BlogDetailPage.route(blog: blog));
+                          },
+                        );
+                      },
+                    );
+                  } else {
                     return SizedBox();
                   }
-                }
+                },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

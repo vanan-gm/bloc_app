@@ -1,5 +1,7 @@
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extesions/object_ext.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:bloc_app/features/blog/presentation/pages/add_blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/favorite_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/search_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MasterPage extends StatefulWidget {
   static route() =>
@@ -127,8 +130,13 @@ class _MasterPageState extends State<MasterPage> {
       floatingActionButton:
           _currentTabIndex == 0
               ? FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(AddBlogPage.route());
+                onPressed: () async {
+                  final result = await Navigator.of(
+                    context,
+                  ).push(AddBlogPage.route());
+                  if (result.isNotNull && context.mounted) {
+                    context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
+                  }
                 },
                 mini: true,
                 backgroundColor: AppColors.black.withValues(alpha: .8),

@@ -1,14 +1,22 @@
 import 'dart:async';
 
-class CommonValidator{
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:flutter/material.dart';
 
-  final notEmptyAndOverSixCharsValidation = StreamTransformer<String, String>.fromHandlers(handleData: (str, sink){
-    if(str.isNotEmpty && str.trim().length >= 6){
-      sink.add(str);
-    }else if(str.trim().isEmpty){
-      sink.addError('Field must be non-empty');
-    }else if(str.trim().length < 6){
-      sink.addError('Field must be over 6 characters');
-    }
-  });
+class CommonValidator {
+  StreamTransformer<String, String> notEmptyAndOverSixCharsValidation({
+    required BuildContext context,
+  }) {
+    return StreamTransformer<String, String>.fromHandlers(
+      handleData: (str, sink) {
+        if (str.isNotEmpty && str.trim().length >= 6) {
+          sink.add(str);
+        } else if (str.trim().isEmpty) {
+          sink.addError(context.translate.fieldMustBeNonEmpty);
+        } else if (str.trim().length < 6) {
+          sink.addError(context.translate.fieldMustBeOver6Char);
+        }
+      },
+    );
+  }
 }

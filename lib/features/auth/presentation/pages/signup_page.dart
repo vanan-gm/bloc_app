@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
@@ -14,7 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
-  static route() => CupertinoPageRoute(builder: (context) => const SignUpPage());
+  static route() =>
+      CupertinoPageRoute(builder: (context) => const SignUpPage());
   const SignUpPage({super.key});
 
   @override
@@ -50,17 +52,18 @@ class _SignUpPageState extends State<SignUpPage> {
                 listener: (context, state) {
                   if (state is AuthSuccessState) {
                     showCustomOverlay(
-                        context: context,
-                        content: 'Create account successfully');
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MasterPage.route(),
-                      (route) => false,
+                      context: context,
+                      content: context.translate.createAccountSuccessfully,
                     );
+                    Navigator.of(
+                      context,
+                    ).pushAndRemoveUntil(MasterPage.route(), (route) => false);
                   } else if (state is AuthFailureState) {
                     showCustomOverlay(
-                        context: context,
-                        content: state.message,
-                        isSuccessType: false);
+                      context: context,
+                      content: state.message,
+                      isSuccessType: false,
+                    );
                   }
                 },
                 builder: (context, state) {
@@ -70,9 +73,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                         Text(
+                        Text(
                           'Sign Up',
-                          style: Theme.of(context).textTheme.displayLarge!.copyWith(fontWeight: FontWeight.w700),
+                          style: Theme.of(context).textTheme.displayLarge!
+                              .copyWith(fontWeight: FontWeight.w700),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -121,10 +125,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             controller: _passWordConfirmCtrl,
                             isPasswordType: true,
                             stream: signUpStream.passwordConfirmS,
-                            onChange: (value){
+                            onChange: (value) {
                               signUpStream.passwordConfirmChange({
                                 "password": _passWordCtrl.text.trim(),
-                                "password_confirm": _passWordConfirmCtrl.text.trim(),
+                                "password_confirm":
+                                    _passWordConfirmCtrl.text.trim(),
                               });
                             },
                           ),
@@ -137,35 +142,44 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: CommonGradientButton(
                             stream: signUpStream.submitS,
                             onPressed: () {
-                              context.read<AuthBloc>().add(SignUpEvent(
+                              context.read<AuthBloc>().add(
+                                SignUpEvent(
                                   name: _nameCtrl.text.trim().toLowerCase(),
                                   email: _emailCtrl.text.trim().toLowerCase(),
-                                  password: _passWordCtrl.text.trim()));
+                                  password: _passWordCtrl.text.trim(),
+                                ),
+                              );
                             },
                             text: 'Sign Up',
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingMedium),
+                            vertical: AppConstants.paddingMedium,
+                          ),
                           child: RichText(
                             text: TextSpan(
-                                text: 'Already have an account? ',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                children: [
-                                  TextSpan(
-                                    text: 'Sign In',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                            color: AppPallete.gradient2,
-                                            fontWeight: FontWeight.bold),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () =>
-                                          Navigator.of(context).maybePop(),
-                                  )
-                                ]),
+                              text: 'Already have an account? ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              children: [
+                                TextSpan(
+                                  text: 'Sign In',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    color: AppPallete.gradient2,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap =
+                                            () =>
+                                                Navigator.of(
+                                                  context,
+                                                ).maybePop(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

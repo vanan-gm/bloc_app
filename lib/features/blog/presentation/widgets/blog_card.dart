@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
 import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
@@ -30,12 +31,15 @@ class BlogCard extends StatelessWidget {
       padding: padding ?? EdgeInsets.zero,
       child: RippleEffect(
         onTap: onTap,
-        child: cardType == CardType.vertical ? buildVertical(context) : buildHorizontal(context),
+        child:
+            cardType == CardType.vertical
+                ? buildVertical(context)
+                : buildHorizontal(context),
       ),
     );
   }
 
-  Widget buildVertical(BuildContext context){
+  Widget buildVertical(BuildContext context) {
     return Stack(
       children: [
         CachedNetworkImg(imageUrl: blog.imageUrl),
@@ -53,32 +57,39 @@ class BlogCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: blog.topics
-                          .map(
-                            (e) => Padding(
-                          padding:
-                          EdgeInsets.all(AppConstants.paddingSmall)
-                              .copyWith(left: 0.0, top: 0.0),
-                          child: Chip(
-                            label: Text(e, style: Theme.of(context).textTheme.bodySmall,),
+                  SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: blog.topics.length,
+                      itemBuilder: (context, i) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            right: AppConstants.paddingSmall,
                           ),
-                        ),
-                      )
-                          .toList(),
+                          child: Chip(
+                            label: Text(
+                              blog.topics[i],
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Text(
                     blog.title,
                     maxLines: 2,
-                    style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
-              Text('${blog.content.toReadingTime()} mins', style: Theme.of(context).textTheme.bodySmall,),
+              Text(
+                '${blog.content.toReadingTime()} ${context.translate.mins}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
           ),
         ),
@@ -86,10 +97,10 @@ class BlogCard extends StatelessWidget {
     );
   }
 
-  Widget buildHorizontal(BuildContext context){
+  Widget buildHorizontal(BuildContext context) {
     return Row(
       children: [
-        CachedNetworkImg(imageUrl: blog.imageUrl, width: 150, height: 100,),
+        CachedNetworkImg(imageUrl: blog.imageUrl, width: 150, height: 100),
         Expanded(
           child: Container(
             margin: EdgeInsets.only(left: AppConstants.paddingTiny),
@@ -98,12 +109,24 @@ class BlogCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(blog.title, style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w700), maxLines: 3, overflow: TextOverflow.ellipsis,),
-                Text("Read more  >", style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.whiteColor.withValues(alpha: .8)),)
+                Text(
+                  blog.title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w700),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "Read more  >",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: AppColors.whiteColor.withValues(alpha: .8),
+                  ),
+                ),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

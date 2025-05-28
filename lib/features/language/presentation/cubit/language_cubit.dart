@@ -6,12 +6,15 @@ class LanguageCubit extends Cubit<Locale> {
   final LanguageRepository languageRepository;
 
   LanguageCubit({required this.languageRepository}) : super(Locale('en')) {
-    _loadSavedLocale();
+    loadSavedLocale();
   }
 
-  void _loadSavedLocale() {
-    final savedCode = languageRepository.getSavedLocale() ?? 'en';
-    emit(Locale(savedCode));
+  void loadSavedLocale() async {
+    try {
+      final savedCode = languageRepository.getSavedLocale() ?? 'en';
+      await Future.delayed(Duration.zero);
+      emit(Locale(savedCode));
+    } catch (e) {}
   }
 
   Future<void> changeLocale(String localeCode) async {

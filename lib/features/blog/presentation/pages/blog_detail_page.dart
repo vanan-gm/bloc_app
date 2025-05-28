@@ -1,9 +1,10 @@
-import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/date_time_ext.dart';
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
+import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/core/common/widgets/app_text_painter.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
 import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
@@ -69,11 +70,13 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     getBlogLikeState();
   }
 
-  void getBlogLikeState(){
-    if(!mounted) return;
+  void getBlogLikeState() {
+    if (!mounted) return;
     final userId = context.currentUserId;
     _userId = userId;
-    context.read<BlogDetailBloc>().add(GetBlogLikeStateEvent(blogId: widget.blog.id, userId: userId));
+    context.read<BlogDetailBloc>().add(
+      GetBlogLikeStateEvent(blogId: widget.blog.id, userId: userId),
+    );
     setState(() {});
   }
 
@@ -105,11 +108,38 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.blog.title,
-                    style: Theme.of(context).textTheme.titleLarge!
-                        .copyWith(fontWeight: FontWeight.w700),
+                  AppText.padding(
+                    text: widget.blog.title,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                     key: _key,
+                    padding: EdgeInsets.only(bottom: AppConstants.paddingTiny),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: widget.blog.topics.length,
+                      itemBuilder: (context, i) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            right: AppConstants.paddingSmall,
+                          ),
+                          child: Chip(
+                            label: Text(
+                              widget.blog.topics[i],
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            color: WidgetStateProperty.resolveWith((
+                              Set<WidgetState> states,
+                            ) {
+                              return AppColors.gradient1.withValues(alpha: .6);
+                            }),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -121,15 +151,14 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                         if (widget.blog.posterImage.isNotEmptyOrNull())
                           CircleAvatarImage(
                             image: widget.blog.posterImage ?? '',
-                            radius:
-                            AppConstants.circleAvatarDetailPageSize,
+                            radius: AppConstants.circleAvatarDetailPageSize,
                           ),
                         Padding(
                           padding: EdgeInsets.only(
                             left: AppConstants.paddingTiny,
                           ),
                           child: Text(
-                            'By ${widget.blog.posterName}',
+                            '${context.translate.by} ${widget.blog.posterName}',
                             style: const TextStyle(
                               color: AppColors.white,
                               fontSize: AppConstants.textMediumSize,
@@ -139,13 +168,16 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                         Spacer(),
                         BlocBuilder<BlogDetailBloc, BlogDetailState>(
                           builder: (context, state) {
-                            if(state is BlogDetailLoadingState){
+                            if (state is BlogDetailLoadingState) {
                               return SizedBox(
                                 width: AppConstants.loadingLikeIconSize,
                                 height: AppConstants.loadingLikeIconSize,
-                                child: LoadingWidget(strokeWidth: AppConstants.loadingStrokeWidth,),
+                                child: LoadingWidget(
+                                  strokeWidth: AppConstants.loadingStrokeWidth,
+                                ),
                               );
-                            }else if (state is GetBlogDetailLikeStateSuccessState) {
+                            } else if (state
+                                is GetBlogDetailLikeStateSuccessState) {
                               return StatefulBuilder(
                                 builder: (context, setSt) {
                                   final liked = state.state == LikeState.liked;
@@ -153,18 +185,25 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                     liked
                                         ? Assets.iconsIcFullHeart
                                         : Assets.iconsIcHeart,
-                                    color: liked ? AppColors.red : AppColors.white,
+                                    color:
+                                        liked ? AppColors.red : AppColors.white,
                                     onClick: () {
-                                      context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
-                                        blogId: widget.blog.id,
-                                        userId: _userId,
-                                        type: liked ? UpdateStateType.removeLike : UpdateStateType.setLike));
-
+                                      context.read<BlogDetailBloc>().add(
+                                        UpdateBlogLikeStateEvent(
+                                          blogId: widget.blog.id,
+                                          userId: _userId,
+                                          type:
+                                              liked
+                                                  ? UpdateStateType.removeLike
+                                                  : UpdateStateType.setLike,
+                                        ),
+                                      );
                                     },
                                   );
                                 },
                               );
-                            } else if(state is UpdateBlogDetailLikeStateSuccessState){
+                            } else if (state
+                                is UpdateBlogDetailLikeStateSuccessState) {
                               final liked = state.state == LikeState.liked;
                               return StatefulBuilder(
                                 builder: (context, setSt) {
@@ -172,17 +211,24 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                     liked
                                         ? Assets.iconsIcFullHeart
                                         : Assets.iconsIcHeart,
-                                    color: liked ? AppColors.red : AppColors.white,
+                                    color:
+                                        liked ? AppColors.red : AppColors.white,
                                     onClick: () {
-                                      context.read<BlogDetailBloc>().add(UpdateBlogLikeStateEvent(
+                                      context.read<BlogDetailBloc>().add(
+                                        UpdateBlogLikeStateEvent(
                                           blogId: widget.blog.id,
                                           userId: _userId,
-                                          type: liked ? UpdateStateType.removeLike : UpdateStateType.setLike));
+                                          type:
+                                              liked
+                                                  ? UpdateStateType.removeLike
+                                                  : UpdateStateType.setLike,
+                                        ),
+                                      );
                                     },
                                   );
                                 },
                               );
-                            }else {
+                            } else {
                               return const SizedBox();
                             }
                           },
@@ -204,9 +250,9 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     child: RippleEffect(
                       onTap:
                           () => AppDialog.showImageViewerDialog(
-                        context: context,
-                        imageUrl: widget.blog.imageUrl,
-                      ),
+                            context: context,
+                            imageUrl: widget.blog.imageUrl,
+                          ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(
                           AppConstants.borderImage,
@@ -218,9 +264,9 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                           height: AppConstants.containerCardHeight,
                           placeholder:
                               (context, url) => CustomShimmer(
-                            width: AppConstants.widthScreen,
-                            height: AppConstants.containerCardHeight,
-                          ),
+                                width: AppConstants.widthScreen,
+                                height: AppConstants.containerCardHeight,
+                              ),
                         ),
                       ),
                     ),
@@ -246,7 +292,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeIn,
               ),
-          backgroundColor: AppColors.black.withOpacity(.7),
+          backgroundColor: AppColors.black.withValues(alpha: .7),
           mini: true,
           shape: const CircleBorder(),
           child: const RotatedBox(

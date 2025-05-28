@@ -90,10 +90,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         Expanded(
                           child: SingleChildScrollView(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Your new password must be different from previous password",
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  context.translate.changePasswordDescription1,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
@@ -101,7 +102,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   ),
                                   child: CommonTextField(
                                     controller: _passwordCtrl,
-                                    hintText: "New password",
+                                    hintText: context.translate.newPassword,
                                     isPasswordType: true,
                                     stream: changePassStream.passwordS,
                                     onChange: changePassStream.passwordChange,
@@ -113,7 +114,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   ),
                                   child: CommonTextField(
                                     controller: _confirmCtrl,
-                                    hintText: "Confirm password",
+                                    hintText: context.translate.confirmPassword,
                                     isPasswordType: true,
                                     stream: changePassStream.passwordConfirmS,
                                     onChange: (value) {
@@ -130,9 +131,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     top: AppConstants.paddingMediumSmall,
                                   ),
                                   child: Text(
-                                    "The new password must satisfy the password policy.",
+                                    context
+                                        .translate
+                                        .changePasswordDescription2,
                                     style:
-                                        Theme.of(context).textTheme.bodyLarge,
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
                                 Padding(
@@ -144,14 +147,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       buildCondition(
-                                        "The password must have at least 08 characters.",
+                                        context
+                                            .translate
+                                            .changePasswordDescription3,
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
                                           top: AppConstants.paddingTiny,
                                         ),
                                         child: buildCondition(
-                                          "The password must contain at least 1 special character, such as @, &, %, TM,…",
+                                          context
+                                              .translate
+                                              .changePasswordDescription4,
                                         ),
                                       ),
                                       Padding(
@@ -159,7 +166,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                           top: AppConstants.paddingTiny,
                                         ),
                                         child: buildCondition(
-                                          "The password must contain at least 3 different kinds of characters, such as uppercase letters, lowercase letter, numeric digits, and punctuation marks.",
+                                          context
+                                              .translate
+                                              .changePasswordDescription5,
                                         ),
                                       ),
                                     ],
@@ -191,10 +200,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     ),
                                   )
                                   : Text(
-                                    "Confirm Change",
+                                    context.translate.confirmChange,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodyLarge!
+                                        .bodyMedium!
                                         .copyWith(fontWeight: FontWeight.w700),
                                   ),
                         ),
@@ -215,7 +224,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: AppConstants.paddingTiny),
+          padding: EdgeInsets.only(top: AppConstants.paddingSuperTiny * 1.5),
           child: dot,
         ),
         Expanded(
@@ -223,7 +232,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             padding: EdgeInsets.only(left: AppConstants.paddingSmall),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
               maxLines: 4,
             ),

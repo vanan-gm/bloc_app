@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
+import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
 import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:bloc_app/generated/assets.dart';
@@ -73,9 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void callReads() {
     context.read<ab.AuthBloc>().add(ab.CheckUserLoggedInEvent());
     context.read<ProfileBloc>().add(
-      GetProfileBlogsEvent(
-        userId: getIt<SupabaseClient>().auth.currentSession!.user.id,
-      ),
+      GetProfileBlogsEvent(userId: context.currentUserId),
     );
   }
 
@@ -357,26 +357,35 @@ class _ProfilePageState extends State<ProfilePage> {
         if (state is ProfileLoadingState) {
           return const LoadingWidget();
         } else if (state is GetProfileSuccessState) {
-          return ListView.builder(
-            itemCount: blogs.length,
-            itemBuilder: (context, i) {
-              return BlogCard(
-                blog: blogs[i],
-                cardType: CardType.horizontal,
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppConstants.paddingSmall,
-                ).copyWith(
-                  bottom:
-                      i < blogs.length - 1 ? AppConstants.paddingSmall : 0.0,
-                ),
-                onTap: () {
-                  Navigator.of(
-                    context,
-                  ).push(BlogDetailPage.route(blog: blogs[i]));
+          return blogs.isNotEmpty
+              ? ListView.builder(
+                itemCount: blogs.length,
+                itemBuilder: (context, i) {
+                  return BlogCard(
+                    blog: blogs[i],
+                    cardType: CardType.horizontal,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppConstants.paddingSmall,
+                    ).copyWith(
+                      bottom:
+                          i < blogs.length - 1
+                              ? AppConstants.paddingSmall
+                              : 0.0,
+                    ),
+                    onTap: () {
+                      Navigator.of(
+                        context,
+                      ).push(BlogDetailPage.route(blog: blogs[i]));
+                    },
+                  );
                 },
+              )
+              : Center(
+                child: AppText(
+                  text: "This user has no updates recently.",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               );
-            },
-          );
         } else {
           return SizedBox();
         }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
@@ -12,6 +13,7 @@ import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
+import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/features/blog/presentation/streams/add_blog_stream.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,16 +34,16 @@ class AddBlogPage extends StatefulWidget {
 class _AddBlogPageState extends State<AddBlogPage> {
   final TextEditingController _titleCtrl = TextEditingController();
   final TextEditingController _contentCtrl = TextEditingController();
-  final List<String> _selectedTopics = [];
+  final ValueNotifier<bool> _enableSaveButton = ValueNotifier(false);
+  final ValueNotifier<List<String>> _selectedTopics = ValueNotifier([]);
   final addBlogStream = getIt<AddBlogStream>();
-  File? image;
+  final ValueNotifier<File?> _image = ValueNotifier(null);
 
   void selectImage() async {
     final pickedImage = await getIt<ImagePickerService>().pickFromGallery();
     if (pickedImage != null) {
-      setState(() {
-        image = pickedImage;
-      });
+      _image.value = pickedImage;
+      setValueForSaveButton();
     }
   }
 
@@ -52,19 +54,30 @@ class _AddBlogPageState extends State<AddBlogPage> {
         posterId: posterId,
         title: _titleCtrl.text.trim(),
         content: _contentCtrl.text.trim(),
-        image: image!,
-        topics: _selectedTopics,
+        image: _image.value!,
+        topics: _selectedTopics.value,
       ),
     );
   }
 
   bool get checkBeforeAddBlog =>
-      image != null &&
-      _selectedTopics.isNotEmpty &&
+      _image.value != null &&
+      _selectedTopics.value.isNotEmpty &&
       _titleCtrl.text.trim().isNotEmpty &&
       _titleCtrl.text.trim().length >= 6 &&
       _contentCtrl.text.trim().isNotEmpty &&
       _contentCtrl.text.trim().length >= 6;
+
+  void setValueForSaveButton() {
+    _enableSaveButton.value = checkBeforeAddBlog;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _titleCtrl.addListener(setValueForSaveButton);
+    _contentCtrl.addListener(setValueForSaveButton);
+  }
 
   @override
   void dispose() {
@@ -80,15 +93,20 @@ class _AddBlogPageState extends State<AddBlogPage> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         actions: [
-          IconButton(
-            onPressed: checkBeforeAddBlog ? handleUploadBlog : null,
-            icon: Icon(
-              Icons.done_rounded,
-              color:
-                  checkBeforeAddBlog
-                      ? AppColors.white
-                      : AppColors.white.withValues(alpha: .4),
-            ),
+          ValueListenableBuilder(
+            valueListenable: _enableSaveButton,
+            builder: (context, enableButton, _) {
+              return IconButton(
+                onPressed: enableButton ? handleUploadBlog : null,
+                icon: Icon(
+                  Icons.done_rounded,
+                  color:
+                      enableButton
+                          ? AppColors.white
+                          : AppColors.white.withValues(alpha: .4),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -101,12 +119,10 @@ class _AddBlogPageState extends State<AddBlogPage> {
                 showCustomOverlay(
                   context: context,
                   isSuccessType: false,
-                  content: 'Failed to upload blog',
+                  content: context.translate.failedToUploadBlog,
                 );
               } else if (state is BlogSuccessState) {
-                Navigator.of(
-                  context,
-                ).pushAndRemoveUntil(BlogPage.route(), (route) => false);
+                Navigator.of(context).pop(true);
               }
             },
             builder: (context, state) {
@@ -116,108 +132,141 @@ class _AddBlogPageState extends State<AddBlogPage> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      image == null
-                          ? RippleEffect(
-                            onTap: () {
-                              selectImage();
-                            },
-                            child: DottedBorder(
-                              color: AppPallete.borderColor,
-                              dashPattern: const [10, 4],
-                              radius: const Radius.circular(
-                                AppConstants.borderImage,
-                              ),
-                              borderType: BorderType.RRect,
-                              strokeCap: StrokeCap.round,
-                              child: SizedBox(
-                                height: AppConstants.containerHeight,
-                                width: AppConstants.widthScreen,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.folder_open,
-                                      size: AppConstants.iconHugeSize,
-                                    ),
-                                    SizedBox(height: AppConstants.paddingSmall),
-                                    Text(
-                                      'Select your image',
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
-                          : RippleEffect(
-                            onTap: selectImage,
-                            child: SizedBox(
-                              width: AppConstants.widthScreen,
-                              height: AppConstants.containerHeight,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  AppConstants.borderImage,
-                                ),
-                                child: Image.file(image!, fit: BoxFit.cover),
-                              ),
-                            ),
-                          ),
-                      SizedBox(height: AppConstants.paddingSmall),
-                      SizedBox(
-                        height: AppConstants.containerTopicHeight,
-                        child: ListView.builder(
-                          itemCount: AppConstants.topics.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, i) {
-                            final item = AppConstants.topics[i];
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                right:
-                                    i != AppConstants.topics.length - 1
-                                        ? AppConstants.paddingTiny
-                                        : 0.0,
-                              ),
-                              child: RippleEffect(
+                      ValueListenableBuilder(
+                        valueListenable: _image,
+                        builder: (context, image, _) {
+                          return image == null
+                              ? RippleEffect(
                                 onTap: () {
-                                  if (!_selectedTopics.contains(item)) {
-                                    _selectedTopics.add(item);
-                                  } else if (_selectedTopics.contains(item)) {
-                                    _selectedTopics.remove(item);
-                                  }
-                                  setState(() {});
+                                  selectImage();
                                 },
-                                padding: EdgeInsets.symmetric(
-                                  vertical: AppConstants.paddingTiny,
-                                ),
-                                child: Chip(
-                                  label: Text(
-                                    item,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                child: DottedBorder(
+                                  color: AppPallete.borderColor,
+                                  dashPattern: const [10, 4],
+                                  radius: const Radius.circular(
+                                    AppConstants.borderImage,
                                   ),
-                                  color:
-                                      _selectedTopics.contains(item)
-                                          ? const WidgetStatePropertyAll(
-                                            AppPallete.gradient1,
-                                          )
-                                          : null,
-                                  side: const BorderSide(
-                                    color: AppPallete.borderColor,
+                                  borderType: BorderType.RRect,
+                                  strokeCap: StrokeCap.round,
+                                  child: SizedBox(
+                                    height: AppConstants.containerHeight,
+                                    width: AppConstants.widthScreen,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.folder_open,
+                                          size: AppConstants.iconHugeSize,
+                                        ),
+                                        SizedBox(
+                                          height: AppConstants.paddingSmall,
+                                        ),
+                                        Text(
+                                          context.translate.selectYourImage,
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              )
+                              : RippleEffect(
+                                onTap: selectImage,
+                                child: SizedBox(
+                                  width: AppConstants.widthScreen,
+                                  height: AppConstants.containerHeight,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      AppConstants.borderImage,
+                                    ),
+                                    child: Image.file(image, fit: BoxFit.cover),
+                                  ),
+                                ),
+                              );
+                        },
+                      ),
+                      SizedBox(height: AppConstants.paddingSmall),
+                      ValueListenableBuilder(
+                        valueListenable: _selectedTopics,
+                        builder: (context, selectedTopics, _) {
+                          return SizedBox(
+                            height: AppConstants.containerTopicHeight,
+                            child: ListView.builder(
+                              itemCount: AppConstants.topics(context).length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, i) {
+                                final item = AppConstants.topics(context)[i];
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    right:
+                                        i !=
+                                                AppConstants.topics(
+                                                      context,
+                                                    ).length -
+                                                    1
+                                            ? AppConstants.paddingTiny
+                                            : 0.0,
+                                  ),
+                                  child: RippleEffect(
+                                    onTap: () {
+                                      if (!_selectedTopics.value.contains(
+                                        item,
+                                      )) {
+                                        _selectedTopics.value = [
+                                          ..._selectedTopics.value,
+                                          item,
+                                        ];
+                                      } else if (_selectedTopics.value.contains(
+                                        item,
+                                      )) {
+                                        _selectedTopics.value =
+                                            _selectedTopics.value
+                                                .where(
+                                                  (e) =>
+                                                      e.trim().toLowerCase() !=
+                                                      item.trim().toLowerCase(),
+                                                )
+                                                .toList();
+                                      }
+                                      setValueForSaveButton();
+                                    },
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: AppConstants.paddingTiny,
+                                    ),
+                                    child: Chip(
+                                      label: Text(
+                                        item,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                      ),
+                                      color:
+                                          selectedTopics.contains(item)
+                                              ? const WidgetStatePropertyAll(
+                                                AppPallete.gradient1,
+                                              )
+                                              : null,
+                                      side: const BorderSide(
+                                        color: AppPallete.borderColor,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: AppConstants.paddingSmall),
                       CommonTextField(
                         controller: _titleCtrl,
-                        hintText: 'Blog title',
-                        stream: addBlogStream.blogTitleStreamS,
+                        hintText: context.translate.blogTitle,
+                        stream: addBlogStream.blogTitleStreamS(context),
                         onChange: addBlogStream.blogTitleChange,
                         borderColor: AppColors.white.withValues(alpha: .2),
                         linesLimit: null,
@@ -225,8 +274,8 @@ class _AddBlogPageState extends State<AddBlogPage> {
                       SizedBox(height: AppConstants.paddingSmall),
                       CommonTextField(
                         controller: _contentCtrl,
-                        hintText: 'Blog content',
-                        stream: addBlogStream.blogContentStreams,
+                        hintText: context.translate.blogContent,
+                        stream: addBlogStream.blogContentStreams(context),
                         onChange: addBlogStream.blogContentChange,
                         borderColor: AppColors.white.withValues(alpha: .2),
                         linesLimit: null,

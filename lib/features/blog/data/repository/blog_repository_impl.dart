@@ -44,7 +44,9 @@ class BlogRepositoryImpl implements BlogRepository {
         updatedAt: DateTime.now(),
       );
       final imageUrl = await blogRemoteDataSource.updateBlogImage(
-          image: image, blogModel: blogModel);
+        image: image,
+        blogModel: blogModel,
+      );
       blogModel = blogModel.copyWith(imageUrl: imageUrl);
       final blogData = await blogRemoteDataSource.updateBlog(blogModel);
       return right(blogData);
@@ -68,13 +70,13 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getBlogsByUserId(String userId) async{
+  Future<Either<Failure, List<Blog>>> getBlogsByUserId(String userId) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       }
-      final blogs = await blogRemoteDataSource.getAllBlogs();
+      final blogs = await blogRemoteDataSource.getBlogsByUserId(userId);
       return right(blogs);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
@@ -82,7 +84,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord(String key) async{
+  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord(String key) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {
@@ -96,7 +98,10 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, LikeState>> getBlogLikeState(String blogId, String userId) async{
+  Future<Either<Failure, LikeState>> getBlogLikeState(
+    String blogId,
+    String userId,
+  ) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {
@@ -110,13 +115,21 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, LikeState>> updateBlogLikeState(String blogId, String userId, UpdateStateType type) async {
+  Future<Either<Failure, LikeState>> updateBlogLikeState(
+    String blogId,
+    String userId,
+    UpdateStateType type,
+  ) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       }
-      final state = await blogRemoteDataSource.updateBlogLikeState(blogId, userId, type);
+      final state = await blogRemoteDataSource.updateBlogLikeState(
+        blogId,
+        userId,
+        type,
+      );
       return right(state);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
@@ -124,7 +137,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getFavoriteBlogs(String userId) async{
+  Future<Either<Failure, List<Blog>>> getFavoriteBlogs(String userId) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {

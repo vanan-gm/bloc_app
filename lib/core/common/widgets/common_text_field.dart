@@ -83,7 +83,9 @@ class _CommonTextFieldState extends State<CommonTextField> {
               maxLines: widget.linesLimit,
               decoration: InputDecoration(
                 hintText: _hintText,
-                hintStyle: Theme.of(context).textTheme.bodyMedium,
+                hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: AppColors.whiteColor.withValues(alpha: .6),
+                ),
                 contentPadding: widget.contentPadding,
                 errorBorder: customBorder(
                   color:

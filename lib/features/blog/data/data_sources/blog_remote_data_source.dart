@@ -77,7 +77,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     try {
       final blogs = await supabaseClient
           .from(AppConstants.tableBlogs)
-          .select('*, profiles (name, image_url)');
+          .select('*, profiles (name, image_url)')
+          .order('updated_at');
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog).copyWith(
@@ -99,7 +100,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       final blogs = await supabaseClient
           .from(AppConstants.tableBlogs)
           .select('*, profiles (name, image_url)')
-          .eq("poster_id", userId);
+          .eq("poster_id", userId)
+          .order('updated_at');
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog).copyWith(
@@ -121,7 +123,8 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
       final blogs = await supabaseClient
           .from(AppConstants.tableBlogs)
           .select('*, profiles (name, image_url)')
-          .ilike("title", '%$key%');
+          .ilike("title", '%$key%')
+          .order('updated_at');
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog).copyWith(
