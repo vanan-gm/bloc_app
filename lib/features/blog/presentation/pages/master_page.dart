@@ -1,12 +1,13 @@
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/extesions/object_ext.dart';
+import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/generated/assets.dart';
+import 'package:bottom_bar/bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
-import 'package:bloc_app/core/common/widgets/bottom_nav_app.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/page_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
@@ -69,61 +70,90 @@ class _MasterPageState extends State<MasterPage> {
       body: SafeArea(
         child: IndexedStack(index: _currentTabIndex, children: pages),
       ),
-      bottomNavigationBar: BottomNavApp(
-        currentIndex: _currentTabIndex,
+      bottomNavigationBar: BottomBar(
+        selectedIndex: _currentTabIndex,
         onTap: changeTabIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-              child: AppIcon.asset(
-                Assets.iconsIcHome,
+        height: 75,
+        items: <BottomBarItem>[
+          BottomBarItem(
+            icon: AppIcon.asset(
+              Assets.iconsIcHome,
+              size: AppConstants.iconLargeSize,
+              color:
+                  _currentTabIndex == 0
+                      ? AppPallete.gradient1
+                      : AppColors.white,
+            ),
+            title: AppText(
+              text: context.translate.home,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color:
                     _currentTabIndex == 0
                         ? AppPallete.gradient1
                         : AppColors.white,
               ),
             ),
-            label: context.translate.home,
+            activeColor: AppColors.gradient1,
           ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-              child: AppIcon.asset(
-                Assets.iconsIcSearch,
+          BottomBarItem(
+            icon: AppIcon.asset(
+              Assets.iconsIcSearch,
+              size: AppConstants.iconLargeSize,
+              color:
+                  _currentTabIndex == 1
+                      ? AppPallete.gradient1
+                      : AppColors.white,
+            ),
+            title: AppText(
+              text: context.translate.search,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color:
                     _currentTabIndex == 1
                         ? AppPallete.gradient1
                         : AppColors.white,
               ),
             ),
-            label: context.translate.search,
+            activeColor: AppColors.gradient1,
           ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-              child: AppIcon.asset(
-                Assets.iconsIcHeart,
+          BottomBarItem(
+            icon: AppIcon.asset(
+              Assets.iconsIcHeart,
+              size: AppConstants.iconLargeSize,
+              color:
+                  _currentTabIndex == 2
+                      ? AppPallete.gradient1
+                      : AppColors.white,
+            ),
+            title: AppText(
+              text: context.translate.favorite,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color:
                     _currentTabIndex == 2
                         ? AppPallete.gradient1
                         : AppColors.white,
               ),
             ),
-            label: context.translate.favorite,
+            activeColor: AppColors.gradient1,
           ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
-              child: AppIcon.asset(
-                Assets.iconsIcSettings,
+          BottomBarItem(
+            icon: AppIcon.asset(
+              Assets.iconsIcSettings,
+              size: AppConstants.iconLargeSize,
+              color:
+                  _currentTabIndex == 3
+                      ? AppPallete.gradient1
+                      : AppColors.white,
+            ),
+            title: AppText(
+              text: context.translate.settings,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color:
                     _currentTabIndex == 3
                         ? AppPallete.gradient1
                         : AppColors.white,
               ),
             ),
-            label: context.translate.settings,
+            activeColor: AppColors.gradient1,
           ),
         ],
       ),
