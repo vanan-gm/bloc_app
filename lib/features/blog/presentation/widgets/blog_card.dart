@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
@@ -70,8 +71,19 @@ class BlogCard extends StatelessWidget {
                           child: Chip(
                             label: Text(
                               blog.topics[i],
-                              style: Theme.of(context).textTheme.bodySmall,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodySmall!.copyWith(
+                                color:
+                                    context.isLightMode
+                                        ? AppColors.gradient1
+                                        : AppColors.white,
+                              ),
                             ),
+                            backgroundColor:
+                                context.isLightMode
+                                    ? AppColors.white
+                                    : AppColors.gradient1,
                           ),
                         );
                       },

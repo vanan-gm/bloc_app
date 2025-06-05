@@ -71,111 +71,104 @@ class _LoginPageState extends State<LoginPage> {
                 if (state is AuthLoadingState) {
                   return const LoadingWidget();
                 } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          context.translate.signIn,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.displayLarge!.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color:
-                                context.isLightMode
-                                    ? AppColors.black
-                                    : AppColors.whiteColor,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppConstants.paddingSmall,
-                            vertical: AppConstants.paddingSmall,
-                          ),
-                          child: CommonTextField(
-                            hintText: 'Email',
-                            controller: _emailCtrl,
-                            stream: loginStream.emailS,
-                            onChange: loginStream.emailChange,
-                            borderColor:
-                                context.isLightMode
-                                    ? AppColors.blue
-                                    : AppColors.gradient1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppConstants.paddingSmall,
-                            vertical: AppConstants.paddingSmall,
-                          ),
-                          child: CommonTextField(
-                            hintText: context.translate.password,
-                            controller: _passWordCtrl,
-                            stream: loginStream.passwordS,
-                            onChange: loginStream.passwordChange,
-                            isPasswordType: true,
-                            borderColor:
-                                context.isLightMode
-                                    ? AppColors.blue
-                                    : AppColors.gradient1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppConstants.paddingSmall,
-                            horizontal: AppConstants.paddingSmall,
-                          ),
-                          child: CommonGradientButton(
-                            onPressed: () {
-                              context.read<AuthBloc>().add(
-                                LoginEvent(
-                                  email: _emailCtrl.text.trim().toLowerCase(),
-                                  password:
-                                      _passWordCtrl.text.trim().toLowerCase(),
-                                ),
-                              );
-                            },
-                            text: context.translate.signIn,
-                            stream: loginStream.submitS,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppConstants.paddingSmall,
-                          ),
-                          child: RichText(
-                            text: TextSpan(
-                              text: '${context.translate.dontHaveAnAccount}? ',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              children: [
-                                TextSpan(
-                                  text: context.translate.signUp,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium!.copyWith(
-                                    color: AppPallete.gradient2,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  recognizer:
-                                      TapGestureRecognizer()
-                                        ..onTap =
-                                            () => Navigator.of(
-                                              context,
-                                            ).push(SignUpPage.route()),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return SingleChildScrollView(child: buildContent());
                 }
               },
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          context.translate.signIn,
+          style: Theme.of(context).textTheme.displayLarge!.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.isLightMode ? AppColors.black : AppColors.whiteColor,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.paddingSmall,
+            vertical: AppConstants.paddingSmall,
+          ),
+          child: CommonTextField(
+            hintText: 'Email',
+            controller: _emailCtrl,
+            stream: loginStream.emailS,
+            onChange: loginStream.emailChange,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: AppConstants.paddingSmallPlus,
+              horizontal: AppConstants.paddingSmall,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.paddingSmall,
+            vertical: AppConstants.paddingSmall,
+          ),
+          child: CommonTextField(
+            hintText: context.translate.password,
+            controller: _passWordCtrl,
+            stream: loginStream.passwordS,
+            onChange: loginStream.passwordChange,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: AppConstants.paddingSmallPlus,
+              horizontal: AppConstants.paddingSmall,
+            ),
+            isPasswordType: true,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: AppConstants.paddingSmall,
+            horizontal: AppConstants.paddingSmall,
+          ),
+          child: CommonGradientButton(
+            onPressed: () {
+              context.read<AuthBloc>().add(
+                LoginEvent(
+                  email: _emailCtrl.text.trim().toLowerCase(),
+                  password: _passWordCtrl.text.trim().toLowerCase(),
+                ),
+              );
+            },
+            text: context.translate.signIn,
+            stream: loginStream.submitS,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSmall),
+          child: RichText(
+            text: TextSpan(
+              text: '${context.translate.dontHaveAnAccount}? ',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: context.isLightMode ? AppColors.black : AppColors.white,
+              ),
+              children: [
+                TextSpan(
+                  text: context.translate.signUp,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: AppPallete.gradient2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  recognizer:
+                      TapGestureRecognizer()
+                        ..onTap =
+                            () =>
+                                Navigator.of(context).push(SignUpPage.route()),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

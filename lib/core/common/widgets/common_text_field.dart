@@ -89,40 +89,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                           : AppColors.whiteColor,
                 ),
                 maxLines: widget.linesLimit,
-                decoration: InputDecoration(
-                  hintText: _hintText,
-                  hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color:
-                        context.isLightMode
-                            ? AppColors.blue.withValues(alpha: .8)
-                            : AppColors.whiteColor.withValues(alpha: .6),
-                  ),
-                  contentPadding: widget.contentPadding,
-                  errorBorder: customBorder(
-                    color:
-                        snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.borderColor,
-                  ),
-                  border: customBorder(),
-                  focusedBorder: customBorder(
-                    color:
-                        snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.gradient1,
-                  ),
-                  enabledBorder: customBorder(
-                    color:
-                        snapshot.error != null
-                            ? AppColors.red
-                            : widget.borderColor ?? AppColors.borderColor,
-                  ),
-                  suffixIcon: _suffixIcon(),
-                  suffixIconConstraints: const BoxConstraints(
-                    minHeight: 20,
-                    minWidth: 20,
-                  ),
-                ),
+                decoration: inputDecoration(snapshot),
                 obscureText: widget.isPasswordType ? !_passwordVisible : false,
               ),
               if (snapshot.error != null)
@@ -157,7 +124,47 @@ class _CommonTextFieldState extends State<CommonTextField> {
 
   InputBorder customBorder({Color color = AppColors.borderColor}) =>
       OutlineInputBorder(
-        borderSide: BorderSide(color: color, width: 2),
-        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide(color: color, width: 1.4),
+        borderRadius: BorderRadius.circular(AppConstants.borderButton),
+      );
+
+  InputDecoration inputDecoration(AsyncSnapshot<String> snapshot) =>
+      InputDecoration(
+        labelText: _hintText,
+        labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+          color:
+              context.isLightMode
+                  ? AppColors.black.withValues(alpha: .4)
+                  : AppColors.white.withValues(alpha: .4),
+        ),
+        contentPadding: widget.contentPadding,
+        errorBorder: customBorder(
+          color:
+              snapshot.error != null
+                  ? AppColors.red
+                  : widget.borderColor ?? AppColors.borderColor,
+        ),
+        border: customBorder(
+          color: context.isLightMode ? AppColors.black : AppColors.white,
+        ),
+        focusedBorder: customBorder(
+          color:
+              snapshot.error != null
+                  ? AppColors.red
+                  : widget.borderColor ?? AppColors.gradient1,
+        ),
+        enabledBorder: customBorder(
+          color:
+              snapshot.error != null
+                  ? AppColors.red
+                  : context.isLightMode
+                  ? AppColors.black
+                  : AppColors.borderColor,
+        ),
+        suffixIcon: _suffixIcon(),
+        suffixIconConstraints: const BoxConstraints(
+          minHeight: 20,
+          minWidth: 20,
+        ),
       );
 }

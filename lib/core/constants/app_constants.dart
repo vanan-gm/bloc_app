@@ -11,6 +11,7 @@ class AppConstants {
   static double paddingSuperTiny = 5.w;
   static double paddingTiny = 10.w;
   static double paddingSmall = 15.w;
+  static double paddingSmallPlus = 18.w;
   static double paddingMediumSmall = 25.w;
   static double paddingMedium = 30.w;
   static double paddingLarge = 45.w;

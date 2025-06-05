@@ -1,5 +1,6 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
+import 'package:bloc_app/core/theme/app_theme.dart';
 import 'package:bloc_app/core/theme/theme.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
@@ -71,8 +72,8 @@ class _MyAppState extends State<MyApp> {
                   title: 'Bloc App',
                   theme:
                       themeMode.isLightMode
-                          ? AppTheme.lightThemeMode
-                          : AppTheme.darkThemeMode,
+                          ? AppFlexTheme.light
+                          : AppFlexTheme.dark,
                   locale: locale,
                   supportedLocales: AppLocalizations.supportedLocales,
                   localizationsDelegates: [
