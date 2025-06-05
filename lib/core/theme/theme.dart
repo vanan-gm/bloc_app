@@ -30,9 +30,9 @@ class AppTheme {
   static final darkThemeMode = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: AppColors.backgroundColor,
     textTheme: textTheme,
-    appBarTheme: const AppBarTheme(backgroundColor: AppPallete.backgroundColor),
+    appBarTheme: const AppBarTheme(backgroundColor: AppColors.backgroundColor),
     chipTheme: const ChipThemeData(
-      color: WidgetStatePropertyAll(AppPallete.backgroundColor),
+      color: WidgetStatePropertyAll(AppColors.backgroundColor),
       side: BorderSide.none,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -40,6 +40,22 @@ class AppTheme {
       enabledBorder: customBorder(),
       border: customBorder(),
       focusedBorder: customBorder(color: AppColors.gradient1),
+    ),
+  );
+
+  static final lightThemeMode = ThemeData.light().copyWith(
+    scaffoldBackgroundColor: AppColors.whiteColor,
+    textTheme: textTheme,
+    appBarTheme: AppBarTheme(backgroundColor: AppColors.whiteColor),
+    chipTheme: const ChipThemeData(
+      color: WidgetStatePropertyAll(AppColors.whiteColor),
+      side: BorderSide.none,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      contentPadding: EdgeInsets.all(AppConstants.paddingMediumSmall),
+      enabledBorder: customBorder(),
+      border: customBorder(),
+      focusedBorder: customBorder(color: AppColors.blue),
     ),
   );
 

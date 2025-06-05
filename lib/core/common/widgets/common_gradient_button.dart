@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
@@ -8,8 +9,12 @@ class CommonGradientButton extends StatelessWidget {
   final String text;
   final Stream<bool>? stream;
 
-  const CommonGradientButton(
-      {super.key, required this.onPressed, required this.text, this.stream});
+  const CommonGradientButton({
+    super.key,
+    required this.onPressed,
+    required this.text,
+    this.stream,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,24 +23,33 @@ class CommonGradientButton extends StatelessWidget {
       builder: (context, snapshot) {
         return Container(
           decoration: BoxDecoration(
-            gradient: stream != null
-                ? snapshot.error == null && snapshot.data != null
-                    ? snapshot.data! ? gGradientColor
-                    : null
-                : null : null,
-            color: stream != null
-                ? snapshot.error == null && snapshot.data != null
-                    ? snapshot.data! ? gColor
-                    : null
-                : null : null,
+            gradient:
+                stream != null
+                    ? snapshot.error == null && snapshot.data != null
+                        ? snapshot.data!
+                            ? gGradientColor
+                            : null
+                        : null
+                    : null,
+            color:
+                stream != null
+                    ? snapshot.error == null && snapshot.data != null
+                        ? snapshot.data!
+                            ? gColor(context)
+                            : null
+                        : null
+                    : null,
             borderRadius: BorderRadius.circular(AppConstants.borderImage),
           ),
           child: ElevatedButton(
-            onPressed: stream != null
-                ? snapshot.error == null && snapshot.data != null
-                    ? snapshot.data! ? onPressed
-                    : null
-                : null : null,
+            onPressed:
+                stream != null
+                    ? snapshot.error == null && snapshot.data != null
+                        ? snapshot.data!
+                            ? onPressed
+                            : null
+                        : null
+                    : null,
             style: ElevatedButton.styleFrom(
               fixedSize: const Size(400, 50),
               shape: RoundedRectangleBorder(
@@ -46,7 +60,9 @@ class CommonGradientButton extends StatelessWidget {
             ),
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
         );
@@ -54,10 +70,12 @@ class CommonGradientButton extends StatelessWidget {
     );
   }
 
-  Gradient get gGradientColor => const LinearGradient(colors: [
-        AppPallete.gradient1,
-        AppPallete.gradient2,
-      ], begin: Alignment.bottomLeft, end: Alignment.topRight);
+  Gradient get gGradientColor => const LinearGradient(
+    colors: [AppPallete.gradient1, AppPallete.gradient2],
+    begin: Alignment.bottomLeft,
+    end: Alignment.topRight,
+  );
 
-  Color get gColor => AppColors.greyColor;
+  Color gColor(BuildContext context) =>
+      context.isLightMode ? AppColors.black : AppColors.greyColor;
 }

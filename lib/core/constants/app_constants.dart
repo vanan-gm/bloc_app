@@ -104,6 +104,9 @@ class AppConstants {
 
   // SharedPreference constants
   static const String appLocale = 'app_locale';
+  static const String appTheme = 'app_theme';
+  static const String darkTheme = 'dark_theme';
+  static const String lightTheme = 'light_theme';
 
   // App Constants
   static const String localeEn = 'en';

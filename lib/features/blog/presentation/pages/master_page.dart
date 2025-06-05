@@ -78,7 +78,7 @@ class _MasterPageState extends State<MasterPage> {
           BottomBarItem(
             icon: AppIcon.asset(
               Assets.iconsIcHome,
-              size: AppConstants.iconLargeSize,
+              size: AppConstants.iconMediumSize,
               color:
                   _currentTabIndex == 0
                       ? AppPallete.gradient1
@@ -86,7 +86,7 @@ class _MasterPageState extends State<MasterPage> {
             ),
             title: AppText(
               text: context.translate.home,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 color:
                     _currentTabIndex == 0
                         ? AppPallete.gradient1
@@ -98,7 +98,7 @@ class _MasterPageState extends State<MasterPage> {
           BottomBarItem(
             icon: AppIcon.asset(
               Assets.iconsIcSearch,
-              size: AppConstants.iconLargeSize,
+              size: AppConstants.iconMediumSize,
               color:
                   _currentTabIndex == 1
                       ? AppPallete.gradient1
@@ -106,7 +106,7 @@ class _MasterPageState extends State<MasterPage> {
             ),
             title: AppText(
               text: context.translate.search,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 color:
                     _currentTabIndex == 1
                         ? AppPallete.gradient1
@@ -118,7 +118,7 @@ class _MasterPageState extends State<MasterPage> {
           BottomBarItem(
             icon: AppIcon.asset(
               Assets.iconsIcHeart,
-              size: AppConstants.iconLargeSize,
+              size: AppConstants.iconMediumSize,
               color:
                   _currentTabIndex == 2
                       ? AppPallete.gradient1
@@ -126,7 +126,7 @@ class _MasterPageState extends State<MasterPage> {
             ),
             title: AppText(
               text: context.translate.favorite,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 color:
                     _currentTabIndex == 2
                         ? AppPallete.gradient1
@@ -138,7 +138,7 @@ class _MasterPageState extends State<MasterPage> {
           BottomBarItem(
             icon: AppIcon.asset(
               Assets.iconsIcSettings,
-              size: AppConstants.iconLargeSize,
+              size: AppConstants.iconMediumSize,
               color:
                   _currentTabIndex == 3
                       ? AppPallete.gradient1
@@ -146,7 +146,7 @@ class _MasterPageState extends State<MasterPage> {
             ),
             title: AppText(
               text: context.translate.settings,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 color:
                     _currentTabIndex == 3
                         ? AppPallete.gradient1

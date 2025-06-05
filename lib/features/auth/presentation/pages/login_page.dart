@@ -1,9 +1,11 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/signup_page.dart';
@@ -75,8 +77,15 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           context.translate.signIn,
-                          style: Theme.of(context).textTheme.displayLarge!
-                              .copyWith(fontWeight: FontWeight.w700),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displayLarge!.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color:
+                                context.isLightMode
+                                    ? AppColors.black
+                                    : AppColors.whiteColor,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -88,6 +97,10 @@ class _LoginPageState extends State<LoginPage> {
                             controller: _emailCtrl,
                             stream: loginStream.emailS,
                             onChange: loginStream.emailChange,
+                            borderColor:
+                                context.isLightMode
+                                    ? AppColors.blue
+                                    : AppColors.gradient1,
                           ),
                         ),
                         Padding(
@@ -101,6 +114,10 @@ class _LoginPageState extends State<LoginPage> {
                             stream: loginStream.passwordS,
                             onChange: loginStream.passwordChange,
                             isPasswordType: true,
+                            borderColor:
+                                context.isLightMode
+                                    ? AppColors.blue
+                                    : AppColors.gradient1,
                           ),
                         ),
                         Padding(

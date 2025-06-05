@@ -1,4 +1,6 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/utils/app_modal.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
@@ -10,7 +12,10 @@ import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/change_password_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
-import 'package:bloc_app/features/language/presentation/cubit/language_cubit.dart';
+import 'package:bloc_app/features/auth/presentation/widgets/setting_item.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:bloc_app/core/enums/theme_mode.dart' as tm;
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +29,25 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final ValueNotifier<bool> _isLightTheme = ValueNotifier(false);
+
   void navigatePage(CupertinoPageRoute route) {
     Navigator.of(context).push(route);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setThemeIcon();
+  }
+
+  void setThemeIcon() {
+    final state = context.getThemeMode;
+    if (state.isLightMode) {
+      _isLightTheme.value = true;
+    } else {
+      _isLightTheme.value = false;
+    }
   }
 
   @override
@@ -96,10 +118,23 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 );
               }),
-              itemBox(
-                Assets.iconsIcLightMode,
-                context.translate.lightMode,
-                () {},
+              ValueListenableBuilder(
+                valueListenable: _isLightTheme,
+                builder: (context, isLightTheme, _) {
+                  return switchThemeBox(
+                    Assets.iconsIcLightMode,
+                    context.translate.lightMode,
+                    isLightTheme,
+                    () {
+                      context.read<ThemeCubit>().changeTheme(
+                        isLightTheme
+                            ? tm.ThemeMode.darkMode
+                            : tm.ThemeMode.lightMode,
+                      );
+                      _isLightTheme.value = !_isLightTheme.value;
+                    },
+                  );
+                },
               ),
               itemBox(
                 Assets.iconsIcFingerprint,
@@ -124,7 +159,7 @@ class _SettingsPageState extends State<SettingsPage> {
               itemBox(Assets.iconsIcRate, context.translate.rateUs, () {}),
               Padding(
                 padding: EdgeInsets.only(top: AppConstants.paddingMedium),
-                child: onTapItem(
+                child: SettingsItem(
                   onTap: () {
                     AppDialog.showSignOutDialog(
                       context: context,
@@ -162,7 +197,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget itemBox(String icon, String text, VoidCallback onTap) {
-    return onTapItem(
+    return SettingsItem(
       onTap: onTap,
       child: Row(
         children: [
@@ -178,30 +213,40 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget onTapItem({
-    required VoidCallback onTap,
-    required Widget child,
-    double? width,
-    AlignmentGeometry? alignment,
-  }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSuperTiny),
-      child: RippleEffect(
-        onTap: onTap,
-        child: Container(
-          width: width,
-          padding: EdgeInsets.symmetric(
-            horizontal: AppConstants.paddingSmall,
-            vertical: AppConstants.paddingSmall,
+  Widget switchThemeBox(
+    String icon,
+    String text,
+    bool isLightMode,
+    VoidCallback onTap,
+  ) {
+    return SettingsItem(
+      onTap: onTap,
+      child: Row(
+        children: [
+          AppIcon.asset(icon, color: AppColors.white),
+          Padding(
+            padding: EdgeInsets.only(left: AppConstants.paddingMedium),
+            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
           ),
-          decoration: BoxDecoration(
-            color: AppColors.gradient1.withValues(alpha: .15),
-            // border: Border.all(color: AppColors.gradient1, width: 1.0),
-            borderRadius: BorderRadius.circular(AppConstants.borderImage),
+          Spacer(),
+          AnimatedCrossFade(
+            firstChild: AppIcon.asset(
+              Assets.iconsIcLightMode,
+              color: AppColors.whiteColor,
+              size: AppConstants.iconMediumSize,
+            ),
+            secondChild: AppIcon.asset(
+              Assets.iconsIcDarkMode,
+              color: AppColors.whiteColor,
+              size: AppConstants.iconMediumSize,
+            ),
+            crossFadeState:
+                isLightMode
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+            duration: AppConstants.fadeDuration,
           ),
-          alignment: alignment,
-          child: child,
-        ),
+        ],
       ),
     );
   }

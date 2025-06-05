@@ -1,24 +1,24 @@
-import 'package:bloc_app/features/language/domain/repository/language_repository.dart';
+import 'package:bloc_app/features/settings/domain/repository/settings_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
 class LanguageCubit extends Cubit<Locale> {
-  final LanguageRepository languageRepository;
+  final SettingsRepository settingsRepository;
 
-  LanguageCubit({required this.languageRepository}) : super(Locale('en')) {
+  LanguageCubit({required this.settingsRepository}) : super(Locale('en')) {
     loadSavedLocale();
   }
 
   void loadSavedLocale() async {
     try {
-      final savedCode = languageRepository.getSavedLocale() ?? 'en';
+      final savedCode = settingsRepository.getSavedLocale() ?? 'en';
       await Future.delayed(Duration.zero);
       emit(Locale(savedCode));
     } catch (e) {}
   }
 
   Future<void> changeLocale(String localeCode) async {
-    await languageRepository.setLocale(localeCode);
+    await settingsRepository.setLocale(localeCode);
     emit(Locale(localeCode));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
@@ -73,71 +74,82 @@ class _CommonTextFieldState extends State<CommonTextField> {
     return StreamBuilder(
       stream: widget.stream,
       builder: (context, snapshot) {
-        return Column(
-          children: [
-            TextFormField(
-              controller: widget.controller,
-              focusNode: _focusNode,
-              onChanged: widget.onChange,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: widget.linesLimit,
-              decoration: InputDecoration(
-                hintText: _hintText,
-                hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: AppColors.whiteColor.withValues(alpha: .6),
-                ),
-                contentPadding: widget.contentPadding,
-                errorBorder: customBorder(
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: widget.controller,
+                focusNode: _focusNode,
+                onChanged: widget.onChange,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color:
-                      snapshot.error != null
-                          ? AppColors.red
-                          : widget.borderColor ?? AppColors.borderColor,
+                      context.isLightMode
+                          ? AppColors.black
+                          : AppColors.whiteColor,
                 ),
-                border: customBorder(),
-                focusedBorder: customBorder(
-                  color:
-                      snapshot.error != null
-                          ? AppColors.red
-                          : widget.borderColor ?? AppColors.gradient1,
-                ),
-                enabledBorder: customBorder(
-                  color:
-                      snapshot.error != null
-                          ? AppColors.red
-                          : widget.borderColor ?? AppColors.borderColor,
-                ),
-                suffixIcon: _suffixIcon(),
-                suffixIconConstraints: const BoxConstraints(
-                  minHeight: 20,
-                  minWidth: 20,
-                ),
-              ),
-              obscureText: widget.isPasswordType ? !_passwordVisible : false,
-            ),
-            if (snapshot.error != null)
-              SizedBox(height: AppConstants.paddingTiny),
-            if (snapshot.error != null)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: AppConstants.paddingTiny),
-                    child: const Icon(
-                      Icons.error_outline,
-                      color: AppColors.red,
-                    ),
+                maxLines: widget.linesLimit,
+                decoration: InputDecoration(
+                  hintText: _hintText,
+                  hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color:
+                        context.isLightMode
+                            ? AppColors.blue.withValues(alpha: .8)
+                            : AppColors.whiteColor.withValues(alpha: .6),
                   ),
-                  Expanded(
-                    child: Text(
-                      snapshot.error.toString(),
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium!.copyWith(color: AppColors.red),
-                    ),
+                  contentPadding: widget.contentPadding,
+                  errorBorder: customBorder(
+                    color:
+                        snapshot.error != null
+                            ? AppColors.red
+                            : widget.borderColor ?? AppColors.borderColor,
                   ),
-                ],
+                  border: customBorder(),
+                  focusedBorder: customBorder(
+                    color:
+                        snapshot.error != null
+                            ? AppColors.red
+                            : widget.borderColor ?? AppColors.gradient1,
+                  ),
+                  enabledBorder: customBorder(
+                    color:
+                        snapshot.error != null
+                            ? AppColors.red
+                            : widget.borderColor ?? AppColors.borderColor,
+                  ),
+                  suffixIcon: _suffixIcon(),
+                  suffixIconConstraints: const BoxConstraints(
+                    minHeight: 20,
+                    minWidth: 20,
+                  ),
+                ),
+                obscureText: widget.isPasswordType ? !_passwordVisible : false,
               ),
-          ],
+              if (snapshot.error != null)
+                SizedBox(height: AppConstants.paddingTiny),
+              if (snapshot.error != null)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: AppConstants.paddingTiny),
+                      child: const Icon(
+                        Icons.error_outline,
+                        color: AppColors.red,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        snapshot.error.toString(),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium!.copyWith(color: AppColors.red),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         );
       },
     );

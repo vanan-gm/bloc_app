@@ -29,9 +29,10 @@ import 'package:bloc_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
-import 'package:bloc_app/features/language/data/repository/language_repository_impl.dart';
-import 'package:bloc_app/features/language/domain/repository/language_repository.dart';
-import 'package:bloc_app/features/language/presentation/cubit/language_cubit.dart';
+import 'package:bloc_app/features/settings/data/repository/settings_repository_impl.dart';
+import 'package:bloc_app/features/settings/domain/repository/settings_repository.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -152,8 +153,9 @@ void _initStreams() {
 void _initLanguage() {
   getIt
     ..registerLazySingleton(() => SharedPreferenceService(preferences: getIt()))
-    ..registerFactory<LanguageRepository>(
-      () => LanguageRepositoryImpl(service: getIt()),
+    ..registerFactory<SettingsRepository>(
+      () => SettingsRepositoryImpl(service: getIt()),
     )
-    ..registerLazySingleton(() => LanguageCubit(languageRepository: getIt()));
+    ..registerLazySingleton(() => LanguageCubit(settingsRepository: getIt()))
+    ..registerLazySingleton(() => ThemeCubit(settingsRepository: getIt()));
 }
