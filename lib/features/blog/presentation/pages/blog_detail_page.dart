@@ -116,167 +116,10 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     key: _key,
                     padding: EdgeInsets.only(bottom: AppConstants.paddingTiny),
                   ),
-                  SizedBox(
-                    height: 40,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: widget.blog.topics.length,
-                      itemBuilder: (context, i) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            right: AppConstants.paddingSmall,
-                          ),
-                          child: Chip(
-                            label: Text(
-                              widget.blog.topics[i],
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            color: WidgetStateProperty.resolveWith((
-                              Set<WidgetState> states,
-                            ) {
-                              return AppColors.gradient1.withValues(alpha: .6);
-                            }),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: AppConstants.paddingSmall,
-                      bottom: AppConstants.paddingTiny,
-                    ),
-                    child: Row(
-                      children: [
-                        if (widget.blog.posterImage.isNotEmptyOrNull())
-                          CircleAvatarImage(
-                            image: widget.blog.posterImage ?? '',
-                            radius: AppConstants.circleAvatarDetailPageSize,
-                          ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: AppConstants.paddingTiny,
-                          ),
-                          child: Text(
-                            '${context.translate.by} ${widget.blog.posterName}',
-                            style: const TextStyle(
-                              color: AppColors.white,
-                              fontSize: AppConstants.textMediumSize,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        BlocBuilder<BlogDetailBloc, BlogDetailState>(
-                          builder: (context, state) {
-                            if (state is BlogDetailLoadingState) {
-                              return SizedBox(
-                                width: AppConstants.loadingLikeIconSize,
-                                height: AppConstants.loadingLikeIconSize,
-                                child: LoadingWidget(
-                                  strokeWidth: AppConstants.loadingStrokeWidth,
-                                ),
-                              );
-                            } else if (state
-                                is GetBlogDetailLikeStateSuccessState) {
-                              return StatefulBuilder(
-                                builder: (context, setSt) {
-                                  final liked = state.state == LikeState.liked;
-                                  return AppIcon.asset(
-                                    liked
-                                        ? Assets.iconsIcFullHeart
-                                        : Assets.iconsIcHeart,
-                                    color:
-                                        liked ? AppColors.red : AppColors.white,
-                                    onClick: () {
-                                      context.read<BlogDetailBloc>().add(
-                                        UpdateBlogLikeStateEvent(
-                                          blogId: widget.blog.id,
-                                          userId: _userId,
-                                          type:
-                                              liked
-                                                  ? UpdateStateType.removeLike
-                                                  : UpdateStateType.setLike,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            } else if (state
-                                is UpdateBlogDetailLikeStateSuccessState) {
-                              final liked = state.state == LikeState.liked;
-                              return StatefulBuilder(
-                                builder: (context, setSt) {
-                                  return AppIcon.asset(
-                                    liked
-                                        ? Assets.iconsIcFullHeart
-                                        : Assets.iconsIcHeart,
-                                    color:
-                                        liked ? AppColors.red : AppColors.white,
-                                    onClick: () {
-                                      context.read<BlogDetailBloc>().add(
-                                        UpdateBlogLikeStateEvent(
-                                          blogId: widget.blog.id,
-                                          userId: _userId,
-                                          type:
-                                              liked
-                                                  ? UpdateStateType.removeLike
-                                                  : UpdateStateType.setLike,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    '${widget.blog.updatedAt.formatDMY()}. ${widget.blog.content.toReadingTime()} mins',
-                    style: TextStyle(
-                      color: AppColors.white.withValues(alpha: .8),
-                      fontSize: AppConstants.textMediumSize,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: AppConstants.paddingSmall,
-                    ),
-                    child: RippleEffect(
-                      onTap:
-                          () => AppDialog.showImageViewerDialog(
-                            context: context,
-                            imageUrl: widget.blog.imageUrl,
-                          ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          AppConstants.borderImage,
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.blog.imageUrl,
-                          fit: BoxFit.cover,
-                          width: AppConstants.widthScreen,
-                          height: AppConstants.containerCardHeight,
-                          placeholder:
-                              (context, url) => CustomShimmer(
-                                width: AppConstants.widthScreen,
-                                height: AppConstants.containerCardHeight,
-                              ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  AppTextPainter(
-                    text: widget.blog.content,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
-                  ),
+                  categoryRenderWidget,
+                  authorRenderWidget,
+                  imageRenderWidget,
+                  contentRenderWidget,
                 ],
               ),
             ),
@@ -301,6 +144,176 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget get contentRenderWidget {
+    return AppTextPainter(
+      text: widget.blog.content,
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
+    );
+  }
+
+  Widget get categoryRenderWidget {
+    return SizedBox(
+      height: 40,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.blog.topics.length,
+        itemBuilder: (context, i) {
+          return Padding(
+            padding: EdgeInsets.only(right: AppConstants.paddingSmall),
+            child: Chip(
+              label: Text(
+                widget.blog.topics[i],
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall!.copyWith(color: AppColors.white),
+              ),
+              color: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                return AppColors.gradient1;
+              }),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget get imageRenderWidget {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSmall),
+      child: RippleEffect(
+        onTap:
+            () => AppDialog.showImageViewerDialog(
+              context: context,
+              imageUrl: widget.blog.imageUrl,
+            ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppConstants.borderImage),
+          child: CachedNetworkImage(
+            imageUrl: widget.blog.imageUrl,
+            fit: BoxFit.cover,
+            width: AppConstants.widthScreen,
+            height: AppConstants.containerCardHeight,
+            placeholder:
+                (context, url) => CustomShimmer(
+                  width: AppConstants.widthScreen,
+                  height: AppConstants.containerCardHeight,
+                ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget get authorRenderWidget {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            top: AppConstants.paddingSmall,
+            bottom: AppConstants.paddingTiny,
+          ),
+          child: Row(
+            children: [
+              if (widget.blog.posterImage.isNotEmptyOrNull())
+                CircleAvatarImage(
+                  image: widget.blog.posterImage ?? '',
+                  radius: AppConstants.circleAvatarDetailPageSize,
+                ),
+              Padding(
+                padding: EdgeInsets.only(left: AppConstants.paddingTiny),
+                child: Text(
+                  '${context.translate.by} ${widget.blog.posterName}',
+                  style: const TextStyle(fontSize: AppConstants.textMediumSize),
+                ),
+              ),
+              Spacer(),
+              BlocBuilder<BlogDetailBloc, BlogDetailState>(
+                builder: (context, state) {
+                  if (state is BlogDetailLoadingState) {
+                    return SizedBox(
+                      width: AppConstants.loadingLikeIconSize,
+                      height: AppConstants.loadingLikeIconSize,
+                      child: LoadingWidget(
+                        strokeWidth: AppConstants.loadingStrokeWidth,
+                      ),
+                    );
+                  } else if (state is GetBlogDetailLikeStateSuccessState) {
+                    return StatefulBuilder(
+                      builder: (context, setSt) {
+                        final liked = state.state == LikeState.liked;
+                        return AppIcon.asset(
+                          liked ? Assets.iconsIcFullHeart : Assets.iconsIcHeart,
+                          color:
+                              liked
+                                  ? AppColors.red
+                                  : (context.isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white),
+                          onClick: () {
+                            context.read<BlogDetailBloc>().add(
+                              UpdateBlogLikeStateEvent(
+                                blogId: widget.blog.id,
+                                userId: _userId,
+                                type:
+                                    liked
+                                        ? UpdateStateType.removeLike
+                                        : UpdateStateType.setLike,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  } else if (state is UpdateBlogDetailLikeStateSuccessState) {
+                    final liked = state.state == LikeState.liked;
+                    return StatefulBuilder(
+                      builder: (context, setSt) {
+                        return AppIcon.asset(
+                          liked ? Assets.iconsIcFullHeart : Assets.iconsIcHeart,
+                          color:
+                              liked
+                                  ? AppColors.red
+                                  : (context.isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white),
+                          onClick: () {
+                            context.read<BlogDetailBloc>().add(
+                              UpdateBlogLikeStateEvent(
+                                blogId: widget.blog.id,
+                                userId: _userId,
+                                type:
+                                    liked
+                                        ? UpdateStateType.removeLike
+                                        : UpdateStateType.setLike,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        Text(
+          '${widget.blog.updatedAt.formatDMY()}. ${widget.blog.content.toReadingTime()} mins',
+          style: TextStyle(
+            color:
+                context.isLightMode
+                    ? AppColors.black.withValues(alpha: .8)
+                    : AppColors.white.withValues(alpha: .8),
+            fontSize: AppConstants.textMediumSize,
+          ),
+        ),
+      ],
     );
   }
 }

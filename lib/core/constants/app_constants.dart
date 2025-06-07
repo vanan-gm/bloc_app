@@ -23,6 +23,7 @@ class AppConstants {
   static const double borderTab = 30.0;
   static const double borderImage = 10.0;
   static const double borderButton = 8.0;
+  static const double borderSmall = 5.0;
   static const double borderButton2 = 15.0;
   static const double borderRound = 50.0;
 
@@ -110,6 +111,7 @@ class AppConstants {
   static const String lightTheme = 'light_theme';
 
   // App Constants
+  static const String emptyString = "";
   static const String localeEn = 'en';
   static const String localeVi = 'vi';
 }

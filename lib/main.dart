@@ -1,7 +1,6 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
 import 'package:bloc_app/core/theme/app_theme.dart';
-import 'package:bloc_app/core/theme/theme.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';

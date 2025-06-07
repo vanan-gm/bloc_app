@@ -2,14 +2,11 @@ import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/extesions/string_ext.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
-import 'package:bloc_app/core/common/widgets/custom_shimmer.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/card_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BlogCard extends StatelessWidget {
@@ -17,6 +14,8 @@ class BlogCard extends StatelessWidget {
   final VoidCallback onTap;
   final CardType cardType;
   final EdgeInsets? padding;
+  final Color? chipBackgroudColor;
+  final Color? chipTextColor;
 
   const BlogCard({
     super.key,
@@ -24,6 +23,8 @@ class BlogCard extends StatelessWidget {
     required this.onTap,
     this.cardType = CardType.vertical,
     this.padding,
+    this.chipBackgroudColor,
+    this.chipTextColor,
   });
 
   @override
@@ -75,15 +76,25 @@ class BlogCard extends StatelessWidget {
                                 context,
                               ).textTheme.bodySmall!.copyWith(
                                 color:
-                                    context.isLightMode
+                                    chipTextColor ??
+                                    (context.isLightMode
                                         ? AppColors.gradient1
-                                        : AppColors.white,
+                                        : AppColors.white),
                               ),
                             ),
                             backgroundColor:
-                                context.isLightMode
+                                chipBackgroudColor ??
+                                (context.isLightMode
                                     ? AppColors.white
-                                    : AppColors.gradient1,
+                                    : AppColors.gradient1),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: AppColors.transparentColor,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                AppConstants.borderSmall,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -94,13 +105,16 @@ class BlogCard extends StatelessWidget {
                     maxLines: 2,
                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       fontWeight: FontWeight.w700,
+                      color: AppColors.white,
                     ),
                   ),
                 ],
               ),
               Text(
                 '${blog.content.toReadingTime()} ${context.translate.mins}',
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall!.copyWith(color: AppColors.white),
               ),
             ],
           ),
@@ -132,7 +146,10 @@ class BlogCard extends StatelessWidget {
                 Text(
                   "Read more  >",
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.whiteColor.withValues(alpha: .8),
+                    color:
+                        context.isLightMode
+                            ? AppColors.black.withValues(alpha: .8)
+                            : AppColors.white.withValues(alpha: .8),
                   ),
                 ),
               ],

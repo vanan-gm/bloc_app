@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
           context.translate.signIn,
           style: Theme.of(context).textTheme.displayLarge!.copyWith(
             fontWeight: FontWeight.w700,
-            color: context.isLightMode ? AppColors.black : AppColors.whiteColor,
+            color: context.isLightMode ? AppColors.black : AppColors.white,
           ),
         ),
         Padding(

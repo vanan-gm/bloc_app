@@ -44,11 +44,11 @@ class AppTheme {
   );
 
   static final lightThemeMode = ThemeData.light().copyWith(
-    scaffoldBackgroundColor: AppColors.whiteColor,
+    scaffoldBackgroundColor: AppColors.white,
     textTheme: textTheme,
-    appBarTheme: AppBarTheme(backgroundColor: AppColors.whiteColor),
+    appBarTheme: AppBarTheme(backgroundColor: AppColors.white),
     chipTheme: const ChipThemeData(
-      color: WidgetStatePropertyAll(AppColors.whiteColor),
+      color: WidgetStatePropertyAll(AppColors.white),
       side: BorderSide.none,
     ),
     inputDecorationTheme: InputDecorationTheme(

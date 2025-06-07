@@ -54,9 +54,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: AppConstants.paddingSmall,
         horizontal: AppConstants.paddingMedium,
-      ),
+      ).copyWith(top: AppConstants.paddingSmall),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSignOutSuccessState) {
@@ -86,18 +85,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 padding: EdgeInsets.only(bottom: AppConstants.paddingSuperTiny),
                 child: Text(
                   context.translate.account,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color:
+                        context.isLightMode ? AppColors.black : AppColors.white,
+                  ),
                 ),
               ),
-              itemBox(Assets.iconsIcUser, context.translate.editProfile, () {
-                navigatePage(ProfilePage.route());
-              }),
               itemBox(
-                Assets.iconsIcSecure,
-                context.translate.changePassword,
-                () => Navigator.of(context).push(ChangePasswordPage.route()),
+                context: context,
+                icon: Assets.iconsIcUser,
+                text: context.translate.editProfile,
+                onTap: () {
+                  navigatePage(ProfilePage.route());
+                },
+              ),
+              itemBox(
+                context: context,
+                icon: Assets.iconsIcSecure,
+                text: context.translate.changePassword,
+                onTap:
+                    () =>
+                        Navigator.of(context).push(ChangePasswordPage.route()),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -110,22 +119,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              itemBox(Assets.iconsIcLanguage, context.translate.language, () {
-                AppModal.showBottomSheet(
-                  context: context,
-                  onSelected: (localeCode) {
-                    context.read<LanguageCubit>().changeLocale(localeCode);
-                  },
-                );
-              }),
+              itemBox(
+                context: context,
+                icon: Assets.iconsIcLanguage,
+                text: context.translate.language,
+                onTap: () {
+                  AppModal.showBottomSheet(
+                    context: context,
+                    onSelected: (localeCode) {
+                      context.read<LanguageCubit>().changeLocale(localeCode);
+                    },
+                  );
+                },
+              ),
               ValueListenableBuilder(
                 valueListenable: _isLightTheme,
                 builder: (context, isLightTheme, _) {
                   return switchThemeBox(
-                    Assets.iconsIcLightMode,
-                    context.translate.lightMode,
-                    isLightTheme,
-                    () {
+                    context: context,
+                    icon: Assets.iconsIcLightMode,
+                    text: context.translate.lightMode,
+                    isLightMode: isLightTheme,
+                    onTap: () {
                       context.read<ThemeCubit>().changeTheme(
                         isLightTheme
                             ? tm.ThemeMode.darkMode
@@ -137,12 +152,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               itemBox(
-                Assets.iconsIcFingerprint,
-                context.translate.enableFingerPrint,
-                () => AppDialog.showFunctionInProgressDialog(
-                  context: context,
-                  onOk: () => Navigator.of(context).pop(),
-                ),
+                context: context,
+                icon: Assets.iconsIcFingerprint,
+                text: context.translate.enableFingerPrint,
+                onTap:
+                    () => AppDialog.showFunctionInProgressDialog(
+                      context: context,
+                      onOk: () => Navigator.of(context).pop(),
+                    ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -155,8 +172,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   ).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
-              itemBox(Assets.iconsIcInfo, context.translate.aboutApp, () {}),
-              itemBox(Assets.iconsIcRate, context.translate.rateUs, () {}),
+              itemBox(
+                context: context,
+                icon: Assets.iconsIcInfo,
+                text: context.translate.aboutApp,
+                onTap:
+                    () => AppDialog.showAboutAppDialog(
+                      context: context,
+                      onOk: () => Navigator.of(context).pop(),
+                    ),
+              ),
+              itemBox(
+                context: context,
+                icon: Assets.iconsIcRate,
+                text: context.translate.rateUs,
+                onTap: () {},
+              ),
               Padding(
                 padding: EdgeInsets.only(top: AppConstants.paddingMedium),
                 child: SettingsItem(
@@ -176,7 +207,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   alignment: Alignment.center,
                   child: Text(
                     context.translate.logout,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color:
+                          context.isLightMode
+                              ? AppColors.black
+                              : AppColors.white,
+                    ),
                   ),
                 ),
               ),
@@ -185,7 +221,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text(
                   "${context.translate.version} v1.1",
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: AppColors.white.withValues(alpha: .5),
+                    color:
+                        context.isLightMode
+                            ? AppColors.black.withValues(alpha: .5)
+                            : AppColors.white.withValues(alpha: .5),
                   ),
                 ),
               ),
@@ -196,34 +235,52 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget itemBox(String icon, String text, VoidCallback onTap) {
-    return SettingsItem(
-      onTap: onTap,
-      child: Row(
-        children: [
-          AppIcon.asset(icon, color: AppColors.white),
-          Padding(
-            padding: EdgeInsets.only(left: AppConstants.paddingMedium),
-            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
-          ),
-          Spacer(),
-          AppIcon.asset(Assets.iconsIcRightArrow, color: AppColors.white),
-        ],
+  Widget itemBox({
+    required BuildContext context,
+    required String icon,
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: .5),
+      child: SettingsItem(
+        onTap: onTap,
+        child: Row(
+          children: [
+            AppIcon.asset(
+              icon,
+              color: context.isLightMode ? AppColors.black : AppColors.white,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: AppConstants.paddingMedium),
+              child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+            ),
+            Spacer(),
+            AppIcon.asset(
+              Assets.iconsIcRightArrow,
+              color: context.isLightMode ? AppColors.black : AppColors.white,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget switchThemeBox(
-    String icon,
-    String text,
-    bool isLightMode,
-    VoidCallback onTap,
-  ) {
+  Widget switchThemeBox({
+    required BuildContext context,
+    required String icon,
+    required String text,
+    required bool isLightMode,
+    required VoidCallback onTap,
+  }) {
     return SettingsItem(
       onTap: onTap,
       child: Row(
         children: [
-          AppIcon.asset(icon, color: AppColors.white),
+          AppIcon.asset(
+            icon,
+            color: context.isLightMode ? AppColors.black : AppColors.white,
+          ),
           Padding(
             padding: EdgeInsets.only(left: AppConstants.paddingMedium),
             child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
@@ -232,13 +289,13 @@ class _SettingsPageState extends State<SettingsPage> {
           AnimatedCrossFade(
             firstChild: AppIcon.asset(
               Assets.iconsIcLightMode,
-              color: AppColors.whiteColor,
-              size: AppConstants.iconMediumSize,
+              color: context.isLightMode ? AppColors.black : AppColors.white,
+              size: AppConstants.iconMediumSmallSize,
             ),
             secondChild: AppIcon.asset(
               Assets.iconsIcDarkMode,
-              color: AppColors.whiteColor,
-              size: AppConstants.iconMediumSize,
+              color: context.isLightMode ? AppColors.black : AppColors.white,
+              size: AppConstants.iconMediumSmallSize,
             ),
             crossFadeState:
                 isLightMode

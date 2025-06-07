@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/object_ext.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
@@ -24,21 +25,34 @@ class SettingsItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: AppConstants.paddingSuperTiny),
       child:
           onTap.isNotNull
-              ? RippleEffect(onTap: onTap, child: buildChild)
-              : buildChild,
+              ? RippleEffect(onTap: onTap, child: buildChild(context))
+              : buildChild(context),
     );
   }
 
-  Widget get buildChild => Container(
+  Widget buildChild(BuildContext context) => Container(
     width: width,
     padding: EdgeInsets.symmetric(
       horizontal: AppConstants.paddingSmall,
       vertical: AppConstants.paddingSmall,
     ),
     decoration: BoxDecoration(
-      color: AppColors.gradient1.withValues(alpha: .15),
-      // border: Border.all(color: AppColors.gradient1, width: 1.0),
+      color:
+          context.isLightMode
+              ? AppColors.white
+              : AppColors.gradient1.withValues(alpha: .15),
       borderRadius: BorderRadius.circular(AppConstants.borderImage),
+      boxShadow:
+          context.isLightMode
+              ? [
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: .2),
+                  blurRadius: .2,
+                  spreadRadius: .2,
+                  offset: const Offset(.5, .5),
+                ),
+              ]
+              : null,
     ),
     alignment: alignment,
     child: child,

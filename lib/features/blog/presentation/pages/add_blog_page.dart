@@ -89,205 +89,190 @@ class _AddBlogPageState extends State<AddBlogPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-        actions: [
-          ValueListenableBuilder(
-            valueListenable: _enableSaveButton,
-            builder: (context, enableButton, _) {
-              return IconButton(
-                onPressed: enableButton ? handleUploadBlog : null,
-                icon: Icon(
-                  Icons.done_rounded,
+    return GestureDetector(
+      child: Scaffold(
+        appBar: AppBar(
+          forceMaterialTransparency: true,
+          actions: [buildActionButton],
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(AppConstants.paddingSmall),
+            child: BlocConsumer<BlogBloc, BlogState>(
+              listener: (context, state) {
+                if (state is BlogFailureState) {
+                  showCustomOverlay(
+                    context: context,
+                    isSuccessType: false,
+                    content: context.translate.failedToUploadBlog,
+                  );
+                } else if (state is BlogSuccessState) {
+                  Navigator.of(context).pop(true);
+                }
+              },
+              builder: (context, state) {
+                if (state is BlogLoadingState) {
+                  return const LoadingWidget();
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        buildImageSelection,
+                        SizedBox(height: AppConstants.paddingSmall),
+                        buildCategorySelection,
+                        SizedBox(height: AppConstants.paddingSmall),
+                        CommonTextField(
+                          controller: _titleCtrl,
+                          hintText: context.translate.blogTitle,
+                          stream: addBlogStream.blogTitleStreamS(context),
+                          onChange: addBlogStream.blogTitleChange,
+                          linesLimit: null,
+                        ),
+                        SizedBox(height: AppConstants.paddingSmall),
+                        CommonTextField(
+                          controller: _contentCtrl,
+                          hintText: context.translate.blogContent,
+                          stream: addBlogStream.blogContentStreams(context),
+                          onChange: addBlogStream.blogContentChange,
+                          linesLimit: null,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget get buildActionButton {
+    return ValueListenableBuilder(
+      valueListenable: _enableSaveButton,
+      builder: (context, enableButton, _) {
+        return IconButton(
+          onPressed: enableButton ? handleUploadBlog : null,
+          icon: Icon(
+            Icons.done_rounded,
+            color:
+                enableButton
+                    ? (context.isLightMode ? AppColors.black : AppColors.white)
+                    : (context.isLightMode
+                        ? AppColors.black.withValues(alpha: .4)
+                        : AppColors.white.withValues(alpha: .4)),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget get buildImageSelection {
+    return ValueListenableBuilder(
+      valueListenable: _image,
+      builder: (context, image, _) {
+        return image == null
+            ? RippleEffect(
+              onTap: () {
+                selectImage();
+              },
+              child: DottedBorder(
+                color: AppPallete.borderColor,
+                dashPattern: const [10, 4],
+                radius: const Radius.circular(AppConstants.borderImage),
+                borderType: BorderType.RRect,
+                strokeCap: StrokeCap.round,
+                child: SizedBox(
+                  height: AppConstants.containerHeight,
+                  width: AppConstants.widthScreen,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.folder_open, size: AppConstants.iconHugeSize),
+                      SizedBox(height: AppConstants.paddingSmall),
+                      Text(
+                        context.translate.selectYourImage,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+            : RippleEffect(
+              onTap: selectImage,
+              child: SizedBox(
+                width: AppConstants.widthScreen,
+                height: AppConstants.containerHeight,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.borderImage),
+                  child: Image.file(image, fit: BoxFit.cover),
+                ),
+              ),
+            );
+      },
+    );
+  }
+
+  Widget get buildCategorySelection {
+    return ValueListenableBuilder(
+      valueListenable: _selectedTopics,
+      builder: (context, selectedTopics, _) {
+        return SizedBox(
+          height: AppConstants.containerTopicHeight,
+          child: ListView.builder(
+            itemCount: AppConstants.topics(context).length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, i) {
+              final item = AppConstants.topics(context)[i];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right:
+                      i != AppConstants.topics(context).length - 1
+                          ? AppConstants.paddingTiny
+                          : 0.0,
+                ),
+                child: FilterChip(
+                  label: Text(
+                    item,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color:
+                          selectedTopics.contains(item)
+                              ? AppColors.white
+                              : (context.isLightMode
+                                  ? AppColors.black
+                                  : AppColors.white),
+                    ),
+                  ),
                   color:
-                      enableButton
-                          ? AppColors.white
-                          : AppColors.white.withValues(alpha: .4),
+                      selectedTopics.contains(item)
+                          ? const WidgetStatePropertyAll(AppPallete.gradient1)
+                          : null,
+                  side: const BorderSide(color: AppPallete.borderColor),
+                  selected: selectedTopics.contains(item),
+                  checkmarkColor: AppColors.white,
+                  onSelected: (value) {
+                    if (!_selectedTopics.value.contains(item)) {
+                      _selectedTopics.value = [..._selectedTopics.value, item];
+                    } else if (_selectedTopics.value.contains(item)) {
+                      _selectedTopics.value =
+                          _selectedTopics.value
+                              .where(
+                                (e) =>
+                                    e.trim().toLowerCase() !=
+                                    item.trim().toLowerCase(),
+                              )
+                              .toList();
+                    }
+                    setValueForSaveButton();
+                  },
                 ),
               );
             },
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(AppConstants.paddingSmall),
-          child: BlocConsumer<BlogBloc, BlogState>(
-            listener: (context, state) {
-              if (state is BlogFailureState) {
-                showCustomOverlay(
-                  context: context,
-                  isSuccessType: false,
-                  content: context.translate.failedToUploadBlog,
-                );
-              } else if (state is BlogSuccessState) {
-                Navigator.of(context).pop(true);
-              }
-            },
-            builder: (context, state) {
-              if (state is BlogLoadingState) {
-                return const LoadingWidget();
-              } else {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder(
-                        valueListenable: _image,
-                        builder: (context, image, _) {
-                          return image == null
-                              ? RippleEffect(
-                                onTap: () {
-                                  selectImage();
-                                },
-                                child: DottedBorder(
-                                  color: AppPallete.borderColor,
-                                  dashPattern: const [10, 4],
-                                  radius: const Radius.circular(
-                                    AppConstants.borderImage,
-                                  ),
-                                  borderType: BorderType.RRect,
-                                  strokeCap: StrokeCap.round,
-                                  child: SizedBox(
-                                    height: AppConstants.containerHeight,
-                                    width: AppConstants.widthScreen,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.folder_open,
-                                          size: AppConstants.iconHugeSize,
-                                        ),
-                                        SizedBox(
-                                          height: AppConstants.paddingSmall,
-                                        ),
-                                        Text(
-                                          context.translate.selectYourImage,
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                              : RippleEffect(
-                                onTap: selectImage,
-                                child: SizedBox(
-                                  width: AppConstants.widthScreen,
-                                  height: AppConstants.containerHeight,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      AppConstants.borderImage,
-                                    ),
-                                    child: Image.file(image, fit: BoxFit.cover),
-                                  ),
-                                ),
-                              );
-                        },
-                      ),
-                      SizedBox(height: AppConstants.paddingSmall),
-                      ValueListenableBuilder(
-                        valueListenable: _selectedTopics,
-                        builder: (context, selectedTopics, _) {
-                          return SizedBox(
-                            height: AppConstants.containerTopicHeight,
-                            child: ListView.builder(
-                              itemCount: AppConstants.topics(context).length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, i) {
-                                final item = AppConstants.topics(context)[i];
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    right:
-                                        i !=
-                                                AppConstants.topics(
-                                                      context,
-                                                    ).length -
-                                                    1
-                                            ? AppConstants.paddingTiny
-                                            : 0.0,
-                                  ),
-                                  child: RippleEffect(
-                                    onTap: () {
-                                      if (!_selectedTopics.value.contains(
-                                        item,
-                                      )) {
-                                        _selectedTopics.value = [
-                                          ..._selectedTopics.value,
-                                          item,
-                                        ];
-                                      } else if (_selectedTopics.value.contains(
-                                        item,
-                                      )) {
-                                        _selectedTopics.value =
-                                            _selectedTopics.value
-                                                .where(
-                                                  (e) =>
-                                                      e.trim().toLowerCase() !=
-                                                      item.trim().toLowerCase(),
-                                                )
-                                                .toList();
-                                      }
-                                      setValueForSaveButton();
-                                    },
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: AppConstants.paddingTiny,
-                                    ),
-                                    child: Chip(
-                                      label: Text(
-                                        item,
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodyMedium,
-                                      ),
-                                      color:
-                                          selectedTopics.contains(item)
-                                              ? const WidgetStatePropertyAll(
-                                                AppPallete.gradient1,
-                                              )
-                                              : null,
-                                      side: const BorderSide(
-                                        color: AppPallete.borderColor,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: AppConstants.paddingSmall),
-                      CommonTextField(
-                        controller: _titleCtrl,
-                        hintText: context.translate.blogTitle,
-                        stream: addBlogStream.blogTitleStreamS(context),
-                        onChange: addBlogStream.blogTitleChange,
-                        borderColor: AppColors.white.withValues(alpha: .2),
-                        linesLimit: null,
-                      ),
-                      SizedBox(height: AppConstants.paddingSmall),
-                      CommonTextField(
-                        controller: _contentCtrl,
-                        hintText: context.translate.blogContent,
-                        stream: addBlogStream.blogContentStreams(context),
-                        onChange: addBlogStream.blogContentChange,
-                        borderColor: AppColors.white.withValues(alpha: .2),
-                        linesLimit: null,
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

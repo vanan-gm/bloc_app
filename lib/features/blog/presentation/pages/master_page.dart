@@ -57,103 +57,107 @@ class _MasterPageState extends State<MasterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Blog App',
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            fontWeight: FontWeight.w700,
-            color: context.isLightMode ? AppColors.black : AppColors.white,
-          ),
-        ),
-        centerTitle: true,
-        forceMaterialTransparency: true,
-      ),
-      body: SafeArea(
-        child: IndexedStack(index: _currentTabIndex, children: pages),
-      ),
-      bottomNavigationBar: BottomBar(
-        selectedIndex: _currentTabIndex,
-        onTap: changeTabIndex,
-        height: 75,
-        items: <BottomBarItem>[
-          BottomBarItem(
-            icon: AppIcon.asset(
-              Assets.iconsIcHome,
-              size: AppConstants.iconMediumSize,
-              color: getTabColor(context: context, requiredIndex: 0),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Blog App',
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.isLightMode ? AppColors.black : AppColors.white,
             ),
-            title: AppText(
-              text: context.translate.home,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+          ),
+          centerTitle: true,
+          forceMaterialTransparency: true,
+        ),
+        body: SafeArea(
+          child: IndexedStack(index: _currentTabIndex, children: pages),
+        ),
+        bottomNavigationBar: BottomBar(
+          selectedIndex: _currentTabIndex,
+          onTap: changeTabIndex,
+          padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall),
+          height: 65,
+          items: <BottomBarItem>[
+            BottomBarItem(
+              icon: AppIcon.asset(
+                Assets.iconsIcHome,
+                size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 0),
               ),
+              title: AppText(
+                text: context.translate.home,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: getTabColor(context: context, requiredIndex: 0),
+                ),
+              ),
+              activeColor: AppColors.gradient1,
             ),
-            activeColor: AppColors.gradient1,
-          ),
-          BottomBarItem(
-            icon: AppIcon.asset(
-              Assets.iconsIcSearch,
-              size: AppConstants.iconMediumSize,
-              color: getTabColor(context: context, requiredIndex: 1),
-            ),
-            title: AppText(
-              text: context.translate.search,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            BottomBarItem(
+              icon: AppIcon.asset(
+                Assets.iconsIcSearch,
+                size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 1),
               ),
+              title: AppText(
+                text: context.translate.search,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: getTabColor(context: context, requiredIndex: 1),
+                ),
+              ),
+              activeColor: AppColors.gradient1,
             ),
-            activeColor: AppColors.gradient1,
-          ),
-          BottomBarItem(
-            icon: AppIcon.asset(
-              Assets.iconsIcHeart,
-              size: AppConstants.iconMediumSize,
-              color: getTabColor(context: context, requiredIndex: 2),
-            ),
-            title: AppText(
-              text: context.translate.favorite,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            BottomBarItem(
+              icon: AppIcon.asset(
+                Assets.iconsIcHeart,
+                size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 2),
               ),
+              title: AppText(
+                text: context.translate.favorite,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: getTabColor(context: context, requiredIndex: 2),
+                ),
+              ),
+              activeColor: AppColors.gradient1,
             ),
-            activeColor: AppColors.gradient1,
-          ),
-          BottomBarItem(
-            icon: AppIcon.asset(
-              Assets.iconsIcSettings,
-              size: AppConstants.iconMediumSize,
-              color: getTabColor(context: context, requiredIndex: 3),
-            ),
-            title: AppText(
-              text: context.translate.settings,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            BottomBarItem(
+              icon: AppIcon.asset(
+                Assets.iconsIcSettings,
+                size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 3),
               ),
+              title: AppText(
+                text: context.translate.settings,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: getTabColor(context: context, requiredIndex: 3),
+                ),
+              ),
+              activeColor: AppColors.gradient1,
             ),
-            activeColor: AppColors.gradient1,
-          ),
-        ],
+          ],
+        ),
+        floatingActionButton:
+            _currentTabIndex == 0
+                ? FloatingActionButton(
+                  onPressed: () async {
+                    final result = await Navigator.of(
+                      context,
+                    ).push(AddBlogPage.route());
+                    if (result.isNotNull && context.mounted) {
+                      context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
+                    }
+                  },
+                  mini: true,
+                  backgroundColor:
+                      context.isLightMode
+                          ? AppColors.white.withValues(alpha: .8)
+                          : AppColors.black.withValues(alpha: .8),
+                  child: const Icon(Icons.add),
+                )
+                : null,
       ),
-      floatingActionButton:
-          _currentTabIndex == 0
-              ? FloatingActionButton(
-                onPressed: () async {
-                  final result = await Navigator.of(
-                    context,
-                  ).push(AddBlogPage.route());
-                  if (result.isNotNull && context.mounted) {
-                    context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
-                  }
-                },
-                mini: true,
-                backgroundColor:
-                    context.isLightMode
-                        ? AppColors.white.withValues(alpha: .8)
-                        : AppColors.black.withValues(alpha: .8),
-                child: const Icon(Icons.add),
-              )
-              : null,
     );
   }
 

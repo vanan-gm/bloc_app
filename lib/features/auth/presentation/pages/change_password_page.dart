@@ -38,20 +38,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.translate.changePassword,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            context.translate.changePassword,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+          ),
+          centerTitle: true,
+          forceMaterialTransparency: true,
         ),
-        centerTitle: true,
-        forceMaterialTransparency: true,
-      ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+        body: SafeArea(
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthLoadingState) {

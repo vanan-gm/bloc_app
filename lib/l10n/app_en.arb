@@ -96,5 +96,12 @@
   "fieldMustBeOver6Char": "Field must be over 6 characters",
   "selectLanguage": "Select language",
   "english": "English",
-  "vietnamese": "Vietnamese"
+  "vietnamese": "Vietnamese",
+  "aboutAppSlogan": "Write your story, share your world",
+  "build": "Build",
+  "size": "Size",
+  "platform": "Platform",
+  "minOsVersion": "Min OS Version",
+  "license": "License",
+  "footerContent": "© 2025 BlogApp. All rights reserved."
 }

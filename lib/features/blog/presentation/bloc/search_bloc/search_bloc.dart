@@ -17,10 +17,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       super(SearchBlogsInitialState()) {
     on<SearchEvent>((_, emit) => emit(SearchBlogsLoadingState()));
     on<SearchBlogsEvent>(_onSearchBlogsEvent);
+    on<ClearSearchBlogsEvent>(_onClearSearchBlogsEvent);
   }
 
   FutureOr<void> _onSearchBlogsEvent(
-      SearchBlogsEvent event,
+    SearchBlogsEvent event,
     Emitter<SearchState> emit,
   ) async {
     final res = await _getBlogsByKeyWord.call(event.keyword);
@@ -28,5 +29,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       (failure) => emit(SearchBlogsFailureState(message: failure.message)),
       (blogs) => emit(SearchBlogsSuccessState(blogs: blogs)),
     );
+  }
+
+  FutureOr<void> _onClearSearchBlogsEvent(
+    ClearSearchBlogsEvent event,
+    Emitter<SearchState> emit,
+  ) async {
+    emit(ClearSearchBlogsSuccessState());
   }
 }

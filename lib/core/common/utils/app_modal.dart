@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
@@ -40,7 +41,13 @@ class AppModal {
                 ),
                 trailing:
                     locale.languageCode == AppConstants.localeEn
-                        ? Icon(Icons.check, color: AppColors.white)
+                        ? Icon(
+                          Icons.check,
+                          color:
+                              context.isLightMode
+                                  ? AppColors.black
+                                  : AppColors.white,
+                        )
                         : null,
                 onTap: () {
                   onSelected(AppConstants.localeEn);
@@ -55,7 +62,13 @@ class AppModal {
                 ),
                 trailing:
                     locale.languageCode == AppConstants.localeVi
-                        ? Icon(Icons.check, color: AppColors.white)
+                        ? Icon(
+                          Icons.check,
+                          color:
+                              context.isLightMode
+                                  ? AppColors.black
+                                  : AppColors.white,
+                        )
                         : null,
                 onTap: () {
                   onSelected(AppConstants.localeVi);

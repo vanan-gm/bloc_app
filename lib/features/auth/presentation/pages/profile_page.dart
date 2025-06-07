@@ -100,10 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(
-            top: AppConstants.paddingSmall,
-            bottom: AppConstants.paddingTiny,
-          ),
+          padding: EdgeInsets.only(top: AppConstants.paddingSmall),
           child: BlocListener<ab.AuthBloc, ab.AuthState>(
             listener: (context, state) {
               if (state is ab.AuthSuccessState) {
@@ -137,82 +134,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ValueListenableBuilder(
-                                valueListenable: _image,
-                                builder: (context, image, _) {
-                                  return Align(
-                                    alignment: Alignment.center,
-                                    child: CircleAvatarImage(
-                                      image: image,
-                                      radius: AppConstants.circleAvatarBigSize,
-                                      onTap: () async {
-                                        final pickedImage =
-                                            await getIt<ImagePickerService>()
-                                                .pickFromGallery();
-                                        if (pickedImage == null) return;
-                                        if (!context.mounted) return;
-                                        context.read<ab.AuthBloc>().add(
-                                          ab.UpdateUserAvatarEvent(
-                                            userId: _user.value!.id,
-                                            imageFile: pickedImage,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: AppConstants.paddingSmall,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Spacer(),
-                                    Text(
-                                      user != null
-                                          ? user.name
-                                              .upperFirstLetterWithSpace()
-                                          : "",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium!.copyWith(
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          left: AppConstants.paddingTiny,
-                                        ),
-                                        child: RippleEffect(
-                                          onTap: () => setDetailAppear.call(),
-                                          child: TweenAnimationBuilder(
-                                            tween: Tween<double>(
-                                              begin: pi,
-                                              end: _showDetails ? pi : 0,
-                                            ),
-                                            duration:
-                                                AppConstants.rotationDuration,
-                                            builder: (context, value, child) {
-                                              return Transform.rotate(
-                                                angle: value,
-                                                child: AppIcon.asset(
-                                                  Assets.iconsIcUpArrow,
-                                                  color: AppColors.white,
-                                                  size:
-                                                      AppConstants
-                                                          .iconMediumSize,
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              avatarWidget,
+                              userNameWidget(user),
                               AnimatedContainer(
                                 duration: AppConstants.rotationDuration,
                                 height:
@@ -252,90 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: AppConstants.paddingSmall,
-                                  ),
-                                  child: DefaultTabController(
-                                    length: 3,
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                AppConstants.paddingMediumSmall,
-                                          ),
-                                          child: SizedBox(
-                                            height: 35,
-                                            child: TabBar(
-                                              labelColor: AppColors.white,
-                                              unselectedLabelColor:
-                                                  AppColors.white,
-                                              indicatorColor:
-                                                  AppColors.transparentColor,
-                                              labelStyle:
-                                                  Theme.of(
-                                                    context,
-                                                  ).textTheme.bodyMedium,
-                                              unselectedLabelStyle:
-                                                  Theme.of(
-                                                    context,
-                                                  ).textTheme.bodyMedium,
-                                              dividerColor:
-                                                  AppColors.transparentColor,
-                                              splashBorderRadius:
-                                                  BorderRadius.circular(
-                                                    AppConstants.borderTab,
-                                                  ),
-                                              indicatorSize:
-                                                  TabBarIndicatorSize.tab,
-                                              indicator: BoxDecoration(
-                                                color: AppColors.gradient1,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      AppConstants.borderTab,
-                                                    ),
-                                              ),
-                                              tabs: [
-                                                Tab(
-                                                  text:
-                                                      context.translate.updates,
-                                                ),
-                                                Tab(
-                                                  text:
-                                                      context
-                                                          .translate
-                                                          .pictures,
-                                                ),
-                                                Tab(
-                                                  text: context.translate.about,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              top: AppConstants.paddingTiny,
-                                            ),
-                                            child: TabBarView(
-                                              children: [
-                                                buildFirstTab(blogs),
-                                                buildSecondTab(),
-                                                buildThirdTab(
-                                                  user != null ? user.name : "",
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              Expanded(child: expandContent(user)),
                             ],
                           );
                         },
@@ -346,6 +186,130 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget get avatarWidget {
+    return ValueListenableBuilder(
+      valueListenable: _image,
+      builder: (context, image, _) {
+        return Align(
+          alignment: Alignment.center,
+          child: CircleAvatarImage(
+            image: image,
+            radius: AppConstants.circleAvatarBigSize,
+            onTap: () async {
+              final pickedImage =
+                  await getIt<ImagePickerService>().pickFromGallery();
+              if (pickedImage == null) return;
+              if (!context.mounted) return;
+              context.read<ab.AuthBloc>().add(
+                ab.UpdateUserAvatarEvent(
+                  userId: _user.value!.id,
+                  imageFile: pickedImage,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget userNameWidget(UserModel? user) {
+    return Padding(
+      padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+      child: Row(
+        children: [
+          Spacer(),
+          Text(
+            user != null ? user.name.upperFirstLetterWithSpace() : "",
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w700),
+          ),
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.only(left: AppConstants.paddingTiny),
+              child: RippleEffect(
+                onTap: () => setDetailAppear.call(),
+                child: TweenAnimationBuilder(
+                  tween: Tween<double>(begin: pi, end: _showDetails ? pi : 0),
+                  duration: AppConstants.rotationDuration,
+                  builder: (context, value, child) {
+                    return Transform.rotate(
+                      angle: value,
+                      child: AppIcon.asset(
+                        Assets.iconsIcUpArrow,
+                        color:
+                            context.isLightMode
+                                ? AppColors.black
+                                : AppColors.white,
+                        size: AppConstants.iconMediumSize,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget expandContent(UserModel? user) {
+    return Padding(
+      padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+      child: DefaultTabController(
+        length: 3,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingMediumSmall,
+              ),
+              child: SizedBox(
+                height: 35,
+                child: TabBar(
+                  labelColor: AppColors.white,
+                  unselectedLabelColor:
+                      context.isLightMode ? AppColors.black : AppColors.white,
+                  indicatorColor: AppColors.transparentColor,
+                  labelStyle: Theme.of(context).textTheme.bodyMedium,
+                  unselectedLabelStyle: Theme.of(context).textTheme.bodyMedium,
+                  dividerColor: AppColors.transparentColor,
+                  splashBorderRadius: BorderRadius.circular(
+                    AppConstants.borderTab,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    color: AppColors.gradient1,
+                    borderRadius: BorderRadius.circular(AppConstants.borderTab),
+                  ),
+                  tabs: [
+                    Tab(text: context.translate.updates),
+                    Tab(text: context.translate.pictures),
+                    Tab(text: context.translate.about),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(top: AppConstants.paddingTiny),
+                child: TabBarView(
+                  children: [
+                    buildFirstTab(blogs),
+                    buildSecondTab(),
+                    buildThirdTab(user != null ? user.name : ""),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -463,7 +427,10 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           des,
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: AppColors.whiteColor.withValues(alpha: .6),
+            color:
+                context.isLightMode
+                    ? AppColors.black.withValues(alpha: .6)
+                    : AppColors.white.withValues(alpha: .6),
           ),
         ),
       ],

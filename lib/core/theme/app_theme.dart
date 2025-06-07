@@ -25,15 +25,20 @@ abstract final class AppFlexTheme {
     // Using FlexColorScheme built-in FlexScheme enum based colors
     scheme: FlexScheme.purpleM3,
     // Component theme configurations for light mode.
-    textTheme: textTheme,
+    textTheme: textTheme(textColor: AppColors.black),
+    scaffoldBackground: AppColors.offWhite,
+    appBarBackground: AppColors.offWhite,
+    appBarStyle: FlexAppBarStyle.primary,
     subThemesData: const FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,
       useM2StyleDividerInM3: true,
+      appBarBackgroundSchemeColor: SchemeColor.secondary,
       inputDecoratorIsFilled: true,
       inputDecoratorBorderType: FlexInputBorderType.outline,
       inputDecoratorRadius: AppConstants.borderButton,
       inputDecoratorBorderSchemeColor: SchemeColor.onPrimary,
+      appBarIconSchemeColor: SchemeColor.black,
       alignedDropdown: true,
       navigationRailUseIndicator: true,
     ),
@@ -47,7 +52,7 @@ abstract final class AppFlexTheme {
     // Using FlexColorScheme built-in FlexScheme enum based colors.
     scheme: FlexScheme.purpleM3,
     // Component theme configurations for dark mode.
-    textTheme: textTheme,
+    textTheme: textTheme(textColor: AppColors.white),
     subThemesData: FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,
@@ -71,19 +76,41 @@ abstract final class AppFlexTheme {
         borderRadius: BorderRadius.circular(10.0),
       );
 
-  static style({double? fontSize}) => AppStyle.defaultStyle(fontSize: fontSize);
+  static style({double? fontSize, required Color textColor}) =>
+      AppStyle.defaultStyle(fontSize: fontSize, textColor: textColor);
 
-  static get textTheme => TextTheme(
-    displayLarge: style(fontSize: AppConstants.textEnormousSize),
-    displayMedium: style(fontSize: AppConstants.textGiantSize),
-    displaySmall: style(fontSize: AppConstants.textHugeSize),
+  static textTheme({required Color textColor}) => TextTheme(
+    displayLarge: style(
+      fontSize: AppConstants.textEnormousSize,
+      textColor: textColor,
+    ),
+    displayMedium: style(
+      fontSize: AppConstants.textGiantSize,
+      textColor: textColor,
+    ),
+    displaySmall: style(
+      fontSize: AppConstants.textHugeSize,
+      textColor: textColor,
+    ),
 
-    titleLarge: style(fontSize: AppConstants.textBigSize),
-    titleMedium: style(fontSize: AppConstants.textLargeSize),
-    titleSmall: style(fontSize: AppConstants.textMediumLargeSize),
+    titleLarge: style(fontSize: AppConstants.textBigSize, textColor: textColor),
+    titleMedium: style(
+      fontSize: AppConstants.textLargeSize,
+      textColor: textColor,
+    ),
+    titleSmall: style(
+      fontSize: AppConstants.textMediumLargeSize,
+      textColor: textColor,
+    ),
 
-    bodyLarge: style(fontSize: AppConstants.textMediumSize),
-    bodyMedium: style(fontSize: AppConstants.textSmallSize),
-    bodySmall: style(fontSize: AppConstants.textTinySize),
+    bodyLarge: style(
+      fontSize: AppConstants.textMediumSize,
+      textColor: textColor,
+    ),
+    bodyMedium: style(
+      fontSize: AppConstants.textSmallSize,
+      textColor: textColor,
+    ),
+    bodySmall: style(fontSize: AppConstants.textTinySize, textColor: textColor),
   );
 }

@@ -1,6 +1,7 @@
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/login_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
@@ -38,10 +39,9 @@ class _BlogPageState extends State<BlogPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSignOutSuccessState) {
-            Navigator.of(context).pushAndRemoveUntil(
-              LoginPage.route(),
-                  (route) => false,
-            );
+            Navigator.of(
+              context,
+            ).pushAndRemoveUntil(LoginPage.route(), (route) => false);
           }
         },
         builder: (context, state) {
@@ -53,9 +53,10 @@ class _BlogPageState extends State<BlogPage> {
                   listener: (context, state) {
                     if (state is BlogFailureState) {
                       showCustomOverlay(
-                          context: context,
-                          content: state.message,
-                          isSuccessType: false);
+                        context: context,
+                        content: state.message,
+                        isSuccessType: false,
+                      );
                     }
                   },
                   builder: (context, state) {
@@ -63,18 +64,24 @@ class _BlogPageState extends State<BlogPage> {
                       return const LoadingWidget();
                     } else if (state is BlogGetAllSuccessState) {
                       return ListView.builder(
-                          itemCount: state.blogs.length,
-                          itemBuilder: (context, i) {
-                            final blog = state.blogs[i];
-                            return BlogCard(
-                              blog: blog,
-                              padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall).copyWith(bottom: AppConstants.paddingSmall),
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(BlogDetailPage.route(blog: blog));
-                              },
-                            );
-                          });
+                        itemCount: state.blogs.length,
+                        itemBuilder: (context, i) {
+                          final blog = state.blogs[i];
+                          return BlogCard(
+                            blog: blog,
+                            chipBackgroudColor: AppColors.black,
+                            chipTextColor: AppColors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppConstants.paddingSmall,
+                            ).copyWith(bottom: AppConstants.paddingSmall),
+                            onTap: () {
+                              Navigator.of(
+                                context,
+                              ).push(BlogDetailPage.route(blog: blog));
+                            },
+                          );
+                        },
+                      );
                     } else {
                       return SizedBox(
                         width: AppConstants.widthScreen,
@@ -86,10 +93,10 @@ class _BlogPageState extends State<BlogPage> {
               ),
               state is AuthLoadingState
                   ? SizedBox(
-                width: AppConstants.widthScreen,
-                height: AppConstants.heightScreen,
-                child: const LoadingWidget(),
-              )
+                    width: AppConstants.widthScreen,
+                    height: AppConstants.heightScreen,
+                    child: const LoadingWidget(),
+                  )
                   : const SizedBox(),
             ],
           );

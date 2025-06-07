@@ -1,5 +1,6 @@
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
+import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -55,7 +56,7 @@ class AppDialog {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.white,
           title: Text(
             context.translate.logoutOfYourAccount,
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -108,9 +109,10 @@ class AppDialog {
               ),
               child: Text(
                 context.translate.logout,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
               ),
             ),
           ],
@@ -128,7 +130,7 @@ class AppDialog {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.white,
           title: Text(
             context.translate.notification,
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -171,9 +173,10 @@ class AppDialog {
               ),
               child: Text(
                 context.translate.ok,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
               ),
             ),
           ],
@@ -191,6 +194,65 @@ class AppDialog {
       context,
       CachedNetworkImageProvider(imageUrl),
       barrierColor: AppColors.transparentColor,
+    );
+  }
+
+  static void showAboutAppDialog({
+    required BuildContext context,
+    required VoidCallback onOk,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.white,
+          title: Text(
+            context.translate.aboutApp,
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              color: AppColors.black,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppText(
+                text: "BlogApp",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              AppText(
+                text: '"${context.translate.aboutAppSlogan}"',
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: AppColors.black.withValues(alpha: .7),
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: onOk,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.gradient1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.borderButton,
+                  ),
+                ),
+              ),
+              child: Text(
+                context.translate.ok,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
+              ),
+            ),
+          ],
+          actionsAlignment: MainAxisAlignment.center,
+        );
+      },
     );
   }
 }

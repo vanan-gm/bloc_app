@@ -84,9 +84,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                 onChanged: widget.onChange,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color:
-                      context.isLightMode
-                          ? AppColors.black
-                          : AppColors.whiteColor,
+                      context.isLightMode ? AppColors.black : AppColors.white,
                 ),
                 maxLines: widget.linesLimit,
                 decoration: inputDecoration(snapshot),
@@ -124,7 +122,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
 
   InputBorder customBorder({Color color = AppColors.borderColor}) =>
       OutlineInputBorder(
-        borderSide: BorderSide(color: color, width: 1.4),
+        borderSide: BorderSide(color: color, width: 1.0),
         borderRadius: BorderRadius.circular(AppConstants.borderButton),
       );
 
@@ -145,7 +143,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                   : widget.borderColor ?? AppColors.borderColor,
         ),
         border: customBorder(
-          color: context.isLightMode ? AppColors.black : AppColors.white,
+          color: context.isLightMode ? AppColors.black : AppColors.borderColor,
         ),
         focusedBorder: customBorder(
           color:

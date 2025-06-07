@@ -12,7 +12,6 @@ class ThemeCubit extends Cubit<ThemeMode> {
   void loadSavedTheme() async {
     try {
       final savedTheme = settingsRepository.getSavedTheme();
-      print(savedTheme);
       await Future.delayed(Duration.zero);
       emit(savedTheme);
     } catch (e) {}

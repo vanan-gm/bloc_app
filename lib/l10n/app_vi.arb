@@ -96,5 +96,12 @@
   "fieldMustBeOver6Char": "Field phải có hơn 6 ký tự",
   "selectLanguage": "Chọn ngôn ngữ",
   "english": "Tiếng Anh",
-  "vietnamese": "Tiếng Việt"
+  "vietnamese": "Tiếng Việt",
+  "aboutAppSlogan": "Tự do kể chuyện, tự do sẻ chia",
+  "build": "Bản dựng",
+  "size": "Kích thước",
+  "platform": "Nền tảng",
+  "minOsVersion": "HĐH tối thiểu",
+  "license": "Bản quyền",
+  "footerContent": "© 2025 BlogApp. Đã đăng ký bản quyền."
 }

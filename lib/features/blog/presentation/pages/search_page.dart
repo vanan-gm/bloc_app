@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,80 +25,82 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchCtrl = TextEditingController();
-  List<Blog> blogs = [];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppConstants.paddingSmall,
-      ).copyWith(bottom: AppConstants.paddingSmall),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: SearchField(
-                  controller: _searchCtrl,
-                  hintText: context.translate.searchBlogsHere,
-                  onClear: () {
-                    setState(() {
-                      blogs = [];
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: AppConstants.paddingTiny),
-                child: RippleEffect(
-                  onTap: () {
-                    FocusManager.instance.primaryFocus!.unfocus();
-                    context.read<SearchBloc>().add(
-                      SearchBlogsEvent(keyword: _searchCtrl.text.trim()),
-                    );
-                  },
-                  child: SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: AppIcon.asset(Assets.iconsIcSend),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppConstants.paddingSmall,
+        ).copyWith(bottom: AppConstants.paddingSmall),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: SearchField(
+                    controller: _searchCtrl,
+                    hintText: context.translate.searchBlogsHere,
+                    onClear: () {
+                      context.read<SearchBloc>().add(ClearSearchBlogsEvent());
+                    },
                   ),
                 ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(top: AppConstants.paddingSmall),
-              child: BlocBuilder<SearchBloc, SearchState>(
-                builder: (context, state) {
-                  if (state is SearchBlogsLoadingState) {
-                    return const LoadingWidget();
-                  } else if (state is SearchBlogsSuccessState) {
-                    return ListView.builder(
-                      itemCount: state.blogs.length,
-                      itemBuilder: (context, i) {
-                        final blog = state.blogs[i];
-                        return BlogCard(
-                          blog: blog,
-                          padding: EdgeInsets.only(
-                            bottom: AppConstants.paddingSmall,
-                          ),
-                          onTap: () {
-                            Navigator.of(
-                              context,
-                            ).push(BlogDetailPage.route(blog: blog));
-                          },
-                        );
-                      },
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                },
+                Padding(
+                  padding: EdgeInsets.only(left: AppConstants.paddingTiny),
+                  child: RippleEffect(
+                    onTap: () {
+                      FocusManager.instance.primaryFocus!.unfocus();
+                      context.read<SearchBloc>().add(
+                        SearchBlogsEvent(keyword: _searchCtrl.text.trim()),
+                      );
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: AppIcon.asset(Assets.iconsIcSend),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                child: BlocBuilder<SearchBloc, SearchState>(
+                  builder: (context, state) {
+                    if (state is SearchBlogsLoadingState) {
+                      return const LoadingWidget();
+                    } else if (state is SearchBlogsSuccessState) {
+                      return ListView.builder(
+                        itemCount: state.blogs.length,
+                        itemBuilder: (context, i) {
+                          final blog = state.blogs[i];
+                          return BlogCard(
+                            blog: blog,
+                            chipBackgroudColor: AppColors.black,
+                            chipTextColor: AppColors.white,
+                            padding: EdgeInsets.only(
+                              bottom: AppConstants.paddingSmall,
+                            ),
+                            onTap: () {
+                              Navigator.of(
+                                context,
+                              ).push(BlogDetailPage.route(blog: blog));
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
