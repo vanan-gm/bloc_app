@@ -125,5 +125,5 @@ class AppButton extends StatelessWidget {
     end: Alignment.topRight,
   );
 
-  Color get gColor => AppColors.greyColor;
+  Color get gColor => AppColors.grey;
 }

@@ -1,4 +1,4 @@
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -114,4 +114,7 @@ class AppConstants {
   static const String emptyString = "";
   static const String localeEn = 'en';
   static const String localeVi = 'vi';
+
+  // Fixed size
+  static const Size buttonDialogSize = Size(200, 30);
 }

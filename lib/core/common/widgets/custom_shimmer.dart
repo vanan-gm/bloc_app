@@ -12,10 +12,10 @@ class CustomShimmer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: AppColors.greyColor,
+      color: AppColors.grey,
       child: Shimmer.fromColors(
-        baseColor: AppColors.greyColor.withOpacity(.5),
-        highlightColor: AppColors.black.withOpacity(.5),
+        baseColor: AppColors.grey.withValues(alpha: .5),
+        highlightColor: AppColors.black.withValues(alpha: .5),
         child: const SizedBox(),
       ),
     );

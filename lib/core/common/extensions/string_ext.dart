@@ -1,5 +1,5 @@
-import 'package:bloc_app/core/common/extesions/object_ext.dart';
-import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
+import 'package:bloc_app/core/common/extensions/object_ext.dart';
+import 'package:bloc_app/core/common/extensions/theme_mode_ext.dart';
 import 'package:bloc_app/core/enums/theme_mode.dart';
 
 extension StringExt on String {

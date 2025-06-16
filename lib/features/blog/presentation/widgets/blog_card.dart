@@ -1,6 +1,6 @@
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
-import 'package:bloc_app/core/common/extesions/string_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/string_ext.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
@@ -88,9 +88,7 @@ class BlogCard extends StatelessWidget {
                                     ? AppColors.white
                                     : AppColors.gradient1),
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                color: AppColors.transparentColor,
-                              ),
+                              side: BorderSide(color: AppColors.transparent),
                               borderRadius: BorderRadius.circular(
                                 AppConstants.borderSmall,
                               ),

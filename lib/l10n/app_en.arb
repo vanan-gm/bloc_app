@@ -103,5 +103,6 @@
   "platform": "Platform",
   "minOsVersion": "Min OS Version",
   "license": "License",
+  "designedBy": "Designed by",
   "footerContent": "© 2025 BlogApp. All rights reserved."
 }

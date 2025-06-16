@@ -14,35 +14,31 @@ class AppIcon extends StatelessWidget {
 
   AppIcon.icon(
     this.icon, {
-    Key? key,
+    super.key,
     this.color,
     this.size = AppConstants.iconMediumSize,
     this.margin,
     this.onClick,
     this.rippleRadius = AppConstants.borderButton2,
-  }) : super(key: key);
+  });
 
   AppIcon.asset(
     this.path, {
-    Key? key,
+    super.key,
     this.color,
     this.size = AppConstants.iconMediumSmallSize,
     this.margin,
     this.onClick,
     this.rippleRadius = AppConstants.borderButton2,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     Widget body() =>
         icon == null
             ? assetIcon()
-            : Icon(
-              icon,
-              color: color ?? AppColors.transparentColor,
-              size: size,
-            );
+            : Icon(icon, color: color ?? AppColors.transparent, size: size);
     return margin == null
         ? onClick == null
             ? body()

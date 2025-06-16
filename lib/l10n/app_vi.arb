@@ -103,5 +103,6 @@
   "platform": "Nền tảng",
   "minOsVersion": "HĐH tối thiểu",
   "license": "Bản quyền",
+  "designedBy": "Thiết kế",
   "footerContent": "© 2025 BlogApp. Đã đăng ký bản quyền."
 }

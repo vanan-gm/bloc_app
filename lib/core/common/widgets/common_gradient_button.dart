@@ -1,5 +1,5 @@
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/object_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/object_ext.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/core/theme/app_pallete.dart';
@@ -76,7 +76,7 @@ class CommonGradientButton extends StatelessWidget {
   );
 
   Color gColor(BuildContext context) =>
-      context.isLightMode ? AppColors.black : AppColors.greyColor;
+      context.isLightMode ? AppColors.black : AppColors.grey;
 
   Gradient? getGradientFromSnapshot(AsyncSnapshot<bool> snapshot) {
     if (snapshot.hasError || snapshot.data != true) return null;

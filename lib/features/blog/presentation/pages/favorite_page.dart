@@ -1,6 +1,6 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';

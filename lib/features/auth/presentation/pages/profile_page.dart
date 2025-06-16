@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:bloc_app/core/common/extesions/string_ext.dart';
+import 'package:bloc_app/core/common/extensions/string_ext.dart';
 import 'package:bloc_app/core/common/paths/app_path.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
@@ -277,10 +277,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   labelColor: AppColors.white,
                   unselectedLabelColor:
                       context.isLightMode ? AppColors.black : AppColors.white,
-                  indicatorColor: AppColors.transparentColor,
+                  indicatorColor: AppColors.transparent,
                   labelStyle: Theme.of(context).textTheme.bodyMedium,
                   unselectedLabelStyle: Theme.of(context).textTheme.bodyMedium,
-                  dividerColor: AppColors.transparentColor,
+                  dividerColor: AppColors.transparent,
                   splashBorderRadius: BorderRadius.circular(
                     AppConstants.borderTab,
                   ),

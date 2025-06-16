@@ -1,6 +1,6 @@
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
-import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/theme_mode_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/utils/app_modal.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
@@ -186,7 +186,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 context: context,
                 icon: Assets.iconsIcRate,
                 text: context.translate.rateUs,
-                onTap: () {},
+                onTap:
+                    () => AppDialog.showFunctionInProgressDialog(
+                      context: context,
+                      onOk: () => Navigator.of(context).pop(),
+                    ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: AppConstants.paddingMedium),
@@ -219,12 +223,12 @@ class _SettingsPageState extends State<SettingsPage> {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "${context.translate.version} v1.1",
+                  "${context.translate.version} v1.1.1",
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color:
                         context.isLightMode
-                            ? AppColors.black.withValues(alpha: .5)
-                            : AppColors.white.withValues(alpha: .5),
+                            ? AppColors.black.withValues(alpha: .6)
+                            : AppColors.white.withValues(alpha: .6),
                   ),
                 ),
               ),

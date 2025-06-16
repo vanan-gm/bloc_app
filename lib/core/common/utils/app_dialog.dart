@@ -1,6 +1,8 @@
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
+import 'package:bloc_app/core/common/widgets/two_text_row.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -81,8 +83,8 @@ class AppDialog {
             ElevatedButton(
               onPressed: onBack,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.transparentColor,
-                shadowColor: AppColors.transparentColor,
+                backgroundColor: AppColors.transparent,
+                shadowColor: AppColors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                     AppConstants.borderButton,
@@ -170,6 +172,7 @@ class AppDialog {
                     AppConstants.borderButton,
                   ),
                 ),
+                fixedSize: AppConstants.buttonDialogSize,
               ),
               child: Text(
                 context.translate.ok,
@@ -193,7 +196,7 @@ class AppDialog {
     showImageViewer(
       context,
       CachedNetworkImageProvider(imageUrl),
-      barrierColor: AppColors.transparentColor,
+      barrierColor: AppColors.transparent,
     );
   }
 
@@ -206,29 +209,146 @@ class AppDialog {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppColors.white,
-          title: Text(
-            context.translate.aboutApp,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-              color: AppColors.black,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppText(
-                text: "BlogApp",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              AppText(
-                text: '"${context.translate.aboutAppSlogan}"',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: AppColors.black.withValues(alpha: .7),
-                  fontStyle: FontStyle.italic,
+          content: SizedBox(
+            width: AppConstants.widthScreen * .8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppText(
+                  text: "Blog App",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
                 ),
-              ),
-            ],
+                AppText(
+                  text: '"${context.translate.aboutAppSlogan}"',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontStyle: FontStyle.italic,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSuperTiny),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.version,
+                  rightText: "1.1.1",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingMedium),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.build,
+                  rightText: "2025.06.16",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.size,
+                  rightText: "28.4 MB",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.platform,
+                  rightText: "IOS & Android",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.minOsVersion,
+                  rightText: "IOS 14.0 / Android 8.0",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.license,
+                  rightText: "MIT License",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+                TwoTextRow(
+                  leftText: context.translate.designedBy,
+                  rightText: "Van An",
+                  leftTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .5),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  rightTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(
+                    color: AppColors.black.withValues(alpha: .7),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  padding: EdgeInsets.only(top: AppConstants.paddingSmall),
+                ),
+              ],
+            ),
           ),
           actions: [
             ElevatedButton(
@@ -240,6 +360,7 @@ class AppDialog {
                     AppConstants.borderButton,
                   ),
                 ),
+                fixedSize: AppConstants.buttonDialogSize,
               ),
               child: Text(
                 context.translate.ok,

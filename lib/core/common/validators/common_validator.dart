@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:bloc_app/core/common/extesions/buildcontext_ext.dart';
-import 'package:bloc_app/core/common/extesions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';

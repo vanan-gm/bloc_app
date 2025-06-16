@@ -1,4 +1,4 @@
-import 'package:bloc_app/core/common/extesions/string_ext.dart';
+import 'package:bloc_app/core/common/extensions/string_ext.dart';
 import 'package:bloc_app/core/common/service/shared_preference_service.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/theme_mode.dart';

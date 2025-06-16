@@ -1,5 +1,5 @@
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:bloc_app/core/common/extesions/theme_mode_ext.dart';
+import 'package:bloc_app/core/common/extensions/theme_mode_ext.dart';
 import 'package:bloc_app/core/enums/theme_mode.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
