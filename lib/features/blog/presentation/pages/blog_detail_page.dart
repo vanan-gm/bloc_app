@@ -21,6 +21,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 class BlogDetailPage extends StatefulWidget {
   final Blog blog;
@@ -37,6 +38,9 @@ class BlogDetailPage extends StatefulWidget {
 class _BlogDetailPageState extends State<BlogDetailPage> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _key = GlobalKey();
+  final ValueNotifier<double> _contentTextSize = ValueNotifier(15);
+  final GlobalKey<ExpandableFabState> _floatingKey =
+      GlobalKey<ExpandableFabState>();
   double _titleHeight = 0.0;
   bool _showFloatingButton = false;
   String _appBarTitle = '';
@@ -78,6 +82,13 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
       GetBlogLikeStateEvent(blogId: widget.blog.id, userId: userId),
     );
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _contentTextSize.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -126,31 +137,81 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
           ),
         ),
       ),
-      floatingActionButton: Visibility(
-        visible: _showFloatingButton,
-        child: FloatingActionButton(
-          onPressed:
-              () => _scrollController.animateTo(
-                0.0,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-              ),
+      floatingActionButtonLocation: ExpandableFab.location,
+      floatingActionButton: ExpandableFab(
+        key: _floatingKey,
+        type: ExpandableFabType.up,
+        childrenAnimation: ExpandableFabAnimation.none,
+        distance: AppConstants.distanceFloatingButtons,
+        openButtonBuilder: RotateFloatingActionButtonBuilder(
+          child: AppIcon.asset(Assets.iconsIcSettings, color: AppColors.white),
+          fabSize: ExpandableFabSize.small,
+          foregroundColor: AppColors.transparent,
           backgroundColor: AppColors.black.withValues(alpha: .7),
-          mini: true,
           shape: const CircleBorder(),
-          child: const RotatedBox(
-            quarterTurns: 1,
-            child: Icon(Icons.arrow_back_ios_rounded, color: AppColors.white),
-          ),
         ),
+        closeButtonBuilder: DefaultFloatingActionButtonBuilder(
+          child: AppIcon.asset(Assets.iconsIcClose, color: AppColors.white),
+          fabSize: ExpandableFabSize.small,
+          foregroundColor: AppColors.transparent,
+          backgroundColor: AppColors.black.withValues(alpha: .7),
+          shape: const CircleBorder(),
+        ),
+        children: [
+          if (_showFloatingButton)
+            FloatingActionButton.small(
+              onPressed:
+                  () => _scrollController.animateTo(
+                    0.0,
+                    duration: AppConstants.scrollToTopDuration,
+                    curve: Curves.easeIn,
+                  ),
+              heroTag: "btn01",
+              backgroundColor: AppColors.black.withValues(alpha: .7),
+              child: AppIcon.asset(
+                Assets.iconsIcUpArrow,
+                color: AppColors.white,
+              ),
+            ),
+          FloatingActionButton.small(
+            onPressed: () {
+              _contentTextSize.value = (_contentTextSize.value - 2).clamp(
+                AppConstants.minContentTextSize,
+                AppConstants.maxContentTextSize,
+              );
+            },
+            heroTag: "btn02",
+            backgroundColor: AppColors.black.withValues(alpha: .7),
+            child: AppIcon.asset(Assets.iconsIcMinus, color: AppColors.white),
+          ),
+          FloatingActionButton.small(
+            onPressed: () {
+              _contentTextSize.value = (_contentTextSize.value + 2).clamp(
+                AppConstants.minContentTextSize,
+                AppConstants.maxContentTextSize,
+              );
+            },
+            heroTag: "btn03",
+            backgroundColor: AppColors.black.withValues(alpha: .7),
+            child: AppIcon.asset(Assets.iconsIcAdd, color: AppColors.white),
+          ),
+        ],
       ),
     );
   }
 
   Widget get contentRenderWidget {
-    return AppTextPainter(
-      text: widget.blog.content,
-      style: Theme.of(context).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
+    return ValueListenableBuilder(
+      valueListenable: _contentTextSize,
+      builder: (context, textSize, _) {
+        return AppTextPainter(
+          text: widget.blog.content,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium!.copyWith(wordSpacing: 1.5),
+          fontSize: textSize,
+        );
+      },
     );
   }
 

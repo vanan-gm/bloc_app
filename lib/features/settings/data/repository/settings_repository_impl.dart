@@ -20,14 +20,13 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   ThemeMode getSavedTheme() {
-    return service.getData<String>(AppConstants.appTheme).getAppTheme;
+    var theme = service.getData<String>(AppConstants.appTheme);
+    return theme.getAppTheme;
   }
 
   @override
   Future<void> setTheme(ThemeMode theme) async {
-    await service.setData<String>(
-      AppConstants.appTheme,
-      theme.toString().toLowerCase(),
-    );
+    var savedTheme = theme.name.toString().toLowerCase();
+    await service.setData<String>(AppConstants.appTheme, savedTheme);
   }
 }

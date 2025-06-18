@@ -5,6 +5,7 @@ class Assets {
   static const String fontsNunitoBold = 'assets/fonts/Nunito-Bold.ttf';
   static const String fontsNunitoItalic = 'assets/fonts/Nunito-Italic.ttf';
   static const String fontsNunitoRegular = 'assets/fonts/Nunito-Regular.ttf';
+  static const String iconsIcAdd = 'assets/icons/ic_add.png';
   static const String iconsIcClose = 'assets/icons/ic_close.png';
   static const String iconsIcComments = 'assets/icons/ic_comments.png';
   static const String iconsIcDarkMode = 'assets/icons/ic_dark_mode.png';
@@ -17,6 +18,7 @@ class Assets {
   static const String iconsIcLanguage = 'assets/icons/ic_language.png';
   static const String iconsIcLightMode = 'assets/icons/ic_light_mode.png';
   static const String iconsIcLogout = 'assets/icons/ic_logout.png';
+  static const String iconsIcMinus = 'assets/icons/ic_minus.png';
   static const String iconsIcRate = 'assets/icons/ic_rate.png';
   static const String iconsIcReload = 'assets/icons/ic_reload.png';
   static const String iconsIcRightArrow = 'assets/icons/ic_right_arrow.png';

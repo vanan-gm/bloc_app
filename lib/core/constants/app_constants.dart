@@ -65,6 +65,7 @@ class AppConstants {
   static const Duration fadeDuration = Duration(milliseconds: 300);
   static const Duration fadeShortDuration = Duration(milliseconds: 100);
   static const Duration rotationDuration = Duration(milliseconds: 200);
+  static const Duration scrollToTopDuration = Duration(milliseconds: 200);
 
   // Elevation
   static const double elevationZero = 0.0;
@@ -107,8 +108,8 @@ class AppConstants {
   // SharedPreference constants
   static const String appLocale = 'app_locale';
   static const String appTheme = 'app_theme';
-  static const String darkTheme = 'dark_theme';
-  static const String lightTheme = 'light_theme';
+  static const String darkMode = 'darkMode';
+  static const String lightMode = 'lightMode';
 
   // App Constants
   static const String emptyString = "";
@@ -117,4 +118,7 @@ class AppConstants {
 
   // Fixed size
   static const Size buttonDialogSize = Size(200, 30);
+  static const double minContentTextSize = 14.0;
+  static const double maxContentTextSize = 24.0;
+  static const double distanceFloatingButtons = 55.0;
 }

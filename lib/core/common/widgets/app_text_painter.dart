@@ -1,36 +1,53 @@
-import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:flutter/material.dart';
 
 class AppTextPainter extends StatelessWidget {
   final String text;
   final TextStyle? style;
+  final double? fontSize;
+  final Duration? duration;
 
-  const AppTextPainter({super.key, required this.text, this.style});
+  const AppTextPainter({
+    super.key,
+    required this.text,
+    this.style,
+    this.fontSize,
+    this.duration,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = style ?? Theme.of(context).textTheme.bodyMedium;
-    // Use LayoutBuilder to get screen constraints
+    final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium!;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final painter = TextPainter(
-          text: TextSpan(
-            text: text,
-            style: textStyle,
-          ),
-          textAlign: TextAlign.left,
-          textDirection: ui.TextDirection.ltr,
-          maxLines: null,
-        );
+        return TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: fontSize, end: fontSize),
+          duration: duration ?? AppConstants.fadeDuration,
+          curve: Curves.easeInOut,
+          builder: (context, animatedFontSize, child) {
+            final animatedStyle = baseStyle.copyWith(
+              fontSize: animatedFontSize,
+            );
+            final painter = TextPainter(
+              text: TextSpan(text: text, style: animatedStyle),
+              textAlign: TextAlign.left,
+              textDirection: ui.TextDirection.ltr,
+              maxLines: null,
+            );
+            painter.layout(maxWidth: constraints.maxWidth);
 
-        painter.layout(maxWidth: constraints.maxWidth);
-        final textHeight = painter.height;
-
-        return SingleChildScrollView(
-          child: CustomPaint(
-            size: Size(constraints.maxWidth, textHeight),
-            painter: MyTextPainter(text, constraints.maxWidth, textStyle!),
-          ),
+            return SingleChildScrollView(
+              child: CustomPaint(
+                size: Size(constraints.maxWidth, painter.height),
+                painter: MyTextPainter(
+                  text,
+                  constraints.maxWidth,
+                  animatedStyle,
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -47,10 +64,7 @@ class MyTextPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: style,
-      ),
+      text: TextSpan(text: text, style: style),
       textDirection: ui.TextDirection.ltr,
       textAlign: TextAlign.left,
     );
@@ -60,5 +74,9 @@ class MyTextPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant MyTextPainter oldDelegate) {
+    return oldDelegate.text != text ||
+        oldDelegate.maxWidth != maxWidth ||
+        oldDelegate.style != style;
+  }
 }

@@ -25,7 +25,7 @@ extension StringExt on String {
   }
 
   ThemeMode get getAppTheme =>
-      toLowerCase().equals(ThemeMode.lightMode.getThemeString)
+      toLowerCase().equals(ThemeMode.lightMode.getThemeString.toLowerCase())
           ? ThemeMode.lightMode
           : ThemeMode.darkMode;
 }
