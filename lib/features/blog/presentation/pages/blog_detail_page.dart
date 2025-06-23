@@ -1,5 +1,6 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/date_time_ext.dart';
+import 'package:bloc_app/core/common/extensions/locale_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/string_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
@@ -15,7 +16,10 @@ import 'package:bloc_app/core/enums/like_state.dart';
 import 'package:bloc_app/core/enums/update_state_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
+import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail_bloc.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -127,7 +131,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     key: _key,
                     padding: EdgeInsets.only(bottom: AppConstants.paddingTiny),
                   ),
-                  categoryRenderWidget,
+                  categoryRenderWidget(context),
                   authorRenderWidget,
                   imageRenderWidget,
                   contentRenderWidget,
@@ -215,7 +219,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     );
   }
 
-  Widget get categoryRenderWidget {
+  Widget categoryRenderWidget(BuildContext context) {
+    final categories = context.read<BlogCategoryCubit>().state;
     return SizedBox(
       height: 40,
       child: ListView.builder(
@@ -226,7 +231,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
             padding: EdgeInsets.only(right: AppConstants.paddingSmall),
             child: Chip(
               label: Text(
-                widget.blog.categoryIds[i],
+                getChipText(context, categories, widget.blog.categoryIds[i]) ??
+                    "",
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall!.copyWith(color: AppColors.white),
@@ -239,6 +245,19 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
         },
       ),
     );
+  }
+
+  String? getChipText(
+    BuildContext context,
+    List<BlogCategory> categories,
+    String categoryId,
+  ) {
+    final locale = context.read<LanguageCubit>().state;
+    if (categories.isEmpty) return null;
+    final category = categories.firstWhere(
+      (category) => category.categoryId == categoryId,
+    );
+    return locale.isVietnamese ? category.titleVi : category.titleEn;
   }
 
   Widget get imageRenderWidget {
