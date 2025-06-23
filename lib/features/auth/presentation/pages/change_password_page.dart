@@ -62,7 +62,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   isSuccessType: false,
                   content: context.translate.failedToChangePassword,
                 );
-              } else if (state is AuthChangePasswordSuccessState) {
+              } else if (state is AuthChangedPasswordState) {
                 _isLoading.value = false;
                 showCustomOverlay(
                   context: context,

@@ -6,9 +6,9 @@ final class SearchBlogsInitialState extends SearchState {}
 
 final class SearchBlogsLoadingState extends SearchState {}
 
-final class SearchBlogsSuccessState extends SearchState {
+final class SearchBlogsFetchedState extends SearchState {
   final List<Blog> blogs;
-  SearchBlogsSuccessState({required this.blogs});
+  SearchBlogsFetchedState({required this.blogs});
 }
 
 final class SearchBlogsFailureState extends SearchState {

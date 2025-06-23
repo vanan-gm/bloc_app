@@ -9,6 +9,7 @@ import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_
 import 'package:bloc_app/features/blog/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/search_bloc/search_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:bloc_app/core/enums/theme_mode.dart' as tm;
@@ -28,6 +29,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => getIt<AppUserCubit>()),
         BlocProvider(create: (_) => getIt<LanguageCubit>()),
+        BlocProvider(create: (_) => getIt<BlogCategoryCubit>()),
         BlocProvider(create: (_) => getIt<ThemeCubit>()),
         BlocProvider(create: (_) => getIt<AuthBloc>()),
         BlocProvider(create: (_) => getIt<BlogBloc>()),

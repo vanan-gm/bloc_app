@@ -9,6 +9,7 @@ import 'package:bloc_app/core/network/connection_checker.dart';
 import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source.dart';
 import 'package:bloc_app/features/blog/data/models/blog_model.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
+import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
 import 'package:bloc_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
@@ -28,7 +29,7 @@ class BlogRepositoryImpl implements BlogRepository {
     required String title,
     required String content,
     required String posterId,
-    required List<String> topics,
+    required List<String> categoryIds,
   }) async {
     try {
       if (!await connectionChecker.isInternetConnected) {
@@ -40,7 +41,7 @@ class BlogRepositoryImpl implements BlogRepository {
         title: title,
         content: content,
         imageUrl: '',
-        topics: topics,
+        categoryIds: categoryIds,
         updatedAt: DateTime.now(),
       );
       final imageUrl = await blogRemoteDataSource.updateBlogImage(
@@ -143,8 +144,25 @@ class BlogRepositoryImpl implements BlogRepository {
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       }
-      final blogs = await blogRemoteDataSource.getFavoriteBlogs(userId);
+      final blogModels = await blogRemoteDataSource.getFavoriteBlogs(userId);
+      final blogs = blogModels.map((blog) => blog.toEntity()).toList();
       return right(blogs);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BlogCategory>>> getBlogCategories() async {
+    try {
+      // If there's no internet, we will display errors
+      if (!await connectionChecker.isInternetConnected) {
+        return left(Failure(message: AppConstants.noConnectionErrorMessage));
+      }
+      final categoryModels = await blogRemoteDataSource.getBlogCategories();
+      final categories =
+          categoryModels.map((category) => category.toEntity()).toList();
+      return right(categories);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
     }

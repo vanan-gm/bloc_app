@@ -101,6 +101,7 @@ class AppConstants {
   // Supabase constants
   static const String tableBlogs = 'blogs';
   static const String tableLikes = 'likes';
+  static const String tableCategories = 'categories';
   static const String tableProfiles = 'profiles';
   static const String bucketBlogImages = 'blog_images';
   static const String bucketUserImages = 'user-images';
@@ -110,6 +111,7 @@ class AppConstants {
   static const String appTheme = 'app_theme';
   static const String darkMode = 'darkMode';
   static const String lightMode = 'lightMode';
+  static const String blogCategories = 'blog_categories';
 
   // App Constants
   static const String emptyString = "";

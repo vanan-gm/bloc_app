@@ -4,7 +4,7 @@ class Blog {
   final String title;
   final String content;
   final String imageUrl;
-  final List<String> topics;
+  final List<String> categoryIds;
   final DateTime updatedAt;
   final String? posterName;
   final String? posterImage;
@@ -15,7 +15,7 @@ class Blog {
     required this.title,
     required this.content,
     required this.imageUrl,
-    required this.topics,
+    required this.categoryIds,
     required this.updatedAt,
     this.posterName,
     this.posterImage,

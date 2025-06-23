@@ -11,22 +11,21 @@ part 'favorite_state.dart';
 class FavoriteBlogBloc extends Bloc<FavoriteBlogEvent, FavoriteBlogState> {
   final GetFavoriteBlogs _favoriteBlogs;
 
-  FavoriteBlogBloc({
-    required GetFavoriteBlogs favoriteBlogs
-  }) : _favoriteBlogs = favoriteBlogs,
-       super(FavoriteBlogInitialSate()) {
+  FavoriteBlogBloc({required GetFavoriteBlogs favoriteBlogs})
+    : _favoriteBlogs = favoriteBlogs,
+      super(FavoriteBlogInitialSate()) {
     on<FavoriteBlogEvent>((_, emit) => emit(FavoriteBlogLoadingState()));
-    on<FavoriteBlogGetAllEvent>(_onFavoriteBlogGetAllEvent);
+    on<GetAllFavoriteBlogsEvent>(_onFavoriteBlogGetAllEvent);
   }
 
   FutureOr<void> _onFavoriteBlogGetAllEvent(
-      FavoriteBlogGetAllEvent event,
+    GetAllFavoriteBlogsEvent event,
     Emitter<FavoriteBlogState> emit,
   ) async {
     final res = await _favoriteBlogs.call(event.userId);
     res.fold(
       (failure) => emit(FavoriteBlogFailureState(message: failure.toString())),
-      (blogs) => emit(FavoriteBlogGetAllSuccessState(blogs: blogs)),
+      (blogs) => emit(FavoriteBlogsFetchedState(blogs: blogs)),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:bloc_app/core/common/extensions/object_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:bottom_bar/bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,6 +54,7 @@ class _MasterPageState extends State<MasterPage> {
   @override
   void initState() {
     super.initState();
+    context.read<BlogBloc>().add(GetBlogCategoriesEvent());
   }
 
   @override
@@ -71,8 +73,17 @@ class _MasterPageState extends State<MasterPage> {
           centerTitle: true,
           forceMaterialTransparency: true,
         ),
-        body: SafeArea(
-          child: IndexedStack(index: _currentTabIndex, children: pages),
+        body: BlocListener<BlogBloc, BlogState>(
+          listener: (context, state) {
+            if (state is BlogCategoriesFetchedState) {
+              context.read<BlogCategoryCubit>().setDataForBlogCategories(
+                state.categories,
+              );
+            }
+          },
+          child: SafeArea(
+            child: IndexedStack(index: _currentTabIndex, children: pages),
+          ),
         ),
         bottomNavigationBar: BottomBar(
           selectedIndex: _currentTabIndex,
@@ -146,7 +157,7 @@ class _MasterPageState extends State<MasterPage> {
                       context,
                     ).push(AddBlogPage.route());
                     if (result.isNotNull && context.mounted) {
-                      context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
+                      context.read<BlogBloc>().add(GetAllBlogsEvent());
                     }
                   },
                   mini: true,

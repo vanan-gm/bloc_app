@@ -15,17 +15,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     : _getBlogsByUserId = getBlogsByUserId,
       super(ProfileInitialState()) {
     on<ProfileEvent>((_, emit) => emit(ProfileLoadingState()));
-    on<GetProfileBlogsEvent>(_onGetProfileBlogsEvent);
+    on<GetProfileBlogEvent>(_onGetProfileBlogsEvent);
   }
 
   FutureOr<void> _onGetProfileBlogsEvent(
-    GetProfileBlogsEvent event,
+    GetProfileBlogEvent event,
     Emitter<ProfileState> emit,
   ) async {
     final res = await _getBlogsByUserId.call(event.userId);
     res.fold(
       (failure) => emit(ProfileFailureState(message: failure.message)),
-      (blogs) => emit(GetProfileSuccessState(blogs: blogs)),
+      (blogs) => emit(ProfileFetchedState(blogs: blogs)),
     );
   }
 }

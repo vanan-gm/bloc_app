@@ -113,7 +113,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     res.fold(
       (failure) => emit(AuthFailureState(message: failure.message)),
-      (data) => emit(AuthChangePasswordSuccessState()),
+      (data) => emit(AuthChangedPasswordState()),
     );
   }
 
@@ -126,7 +126,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     res.fold(
       (failure) => emit(AuthFailureState(message: failure.message)),
-      (imageUrl) => emit(AuthUpdateAvatarSuccessState(imageUrl: imageUrl)),
+      (imageUrl) => emit(AuthUpdatedAvatarState(imageUrl: imageUrl)),
     );
   }
 

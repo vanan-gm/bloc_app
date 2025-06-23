@@ -3,30 +3,32 @@ part of 'blog_bloc.dart';
 @immutable
 sealed class BlogEvent {}
 
-final class BlogUploadEvent extends BlogEvent {
+final class UploadBlogEvent extends BlogEvent {
   final String posterId;
   final String title;
   final String content;
   final File image;
-  final List<String> topics;
+  final List<String> categoryIds;
 
-  BlogUploadEvent({
+  UploadBlogEvent({
     required this.posterId,
     required this.title,
     required this.content,
     required this.image,
-    required this.topics,
+    required this.categoryIds,
   });
 }
 
-final class BlogGetAllBlogsEvent extends BlogEvent{}
+final class GetAllBlogsEvent extends BlogEvent {}
 
-final class BlogGetBlogsByUserIdEvent extends BlogEvent{
+final class GetBlogsByUserIdEvent extends BlogEvent {
   final String userId;
-  BlogGetBlogsByUserIdEvent({required this.userId});
+  GetBlogsByUserIdEvent({required this.userId});
 }
 
-final class BlogGetBlogsByKeyWordEvent extends BlogEvent{
+final class GetBlogsByKeyWordEvent extends BlogEvent {
   final String key;
-  BlogGetBlogsByKeyWordEvent({required this.key});
+  GetBlogsByKeyWordEvent({required this.key});
 }
+
+final class GetBlogCategoriesEvent extends BlogEvent {}

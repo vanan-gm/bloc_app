@@ -9,16 +9,29 @@ class SharedPreferenceService {
   Future<void> setData<T>(String key, dynamic value) async {
     switch (T) {
       case String:
-        await _preferences.setString(key, value);
+        if (value is String) {
+          await _preferences.setString(key, value);
+        }
         break;
       case int:
-        await _preferences.setInt(key, value);
+        if (value is int) {
+          await _preferences.setInt(key, value);
+        }
         break;
       case double:
-        await _preferences.setDouble(key, value);
+        if (value is double) {
+          await _preferences.setDouble(key, value);
+        }
         break;
       case bool:
-        await _preferences.setBool(key, value);
+        if (value is bool) {
+          await _preferences.setBool(key, value);
+        }
+        break;
+      case List:
+        if (value is List<String>) {
+          await _preferences.setStringList(key, value);
+        }
         break;
     }
   }
@@ -38,6 +51,9 @@ class SharedPreferenceService {
         break;
       case bool:
         data = _preferences.getBool(key) ?? false;
+        break;
+      case List:
+        data = _preferences.getStringList(key) ?? [];
         break;
     }
     return data as T;

@@ -27,7 +27,7 @@ class _FavoritePageState extends State<FavoritePage> {
     if (!mounted) return;
     final userId = context.currentUserId;
     context.read<FavoriteBlogBloc>().add(
-      FavoriteBlogGetAllEvent(userId: userId),
+      GetAllFavoriteBlogsEvent(userId: userId),
     );
   }
 
@@ -36,7 +36,7 @@ class _FavoritePageState extends State<FavoritePage> {
       if (!mounted) return;
       final userId = context.currentUserId;
       context.read<FavoriteBlogBloc>().add(
-        FavoriteBlogGetAllEvent(userId: userId),
+        GetAllFavoriteBlogsEvent(userId: userId),
       );
     });
   }
@@ -66,7 +66,7 @@ class _FavoritePageState extends State<FavoritePage> {
                   builder: (context, state) {
                     if (state is FavoriteBlogLoadingState) {
                       return const LoadingWidget();
-                    } else if (state is FavoriteBlogGetAllSuccessState) {
+                    } else if (state is FavoriteBlogsFetchedState) {
                       return ListView.builder(
                         itemCount: state.blogs.length,
                         itemBuilder: (context, i) {

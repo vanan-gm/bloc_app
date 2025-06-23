@@ -27,7 +27,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final res = await _getBlogsByKeyWord.call(event.keyword);
     res.fold(
       (failure) => emit(SearchBlogsFailureState(message: failure.message)),
-      (blogs) => emit(SearchBlogsSuccessState(blogs: blogs)),
+      (blogs) => emit(SearchBlogsFetchedState(blogs: blogs)),
     );
   }
 

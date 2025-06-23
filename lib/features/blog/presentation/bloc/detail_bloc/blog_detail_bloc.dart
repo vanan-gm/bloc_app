@@ -42,20 +42,24 @@ class BlogDetailBloc extends Bloc<BlogDetailEvent, BlogDetailState> {
     );
     res.fold(
       (failure) => emit(BlogDetailFailureState(message: failure.message)),
-      (state) => emit(GetBlogDetailLikeStateSuccessState(state: state)),
+      (state) => emit(BlogDetailFetchedLikeState(state: state)),
     );
   }
 
   FutureOr<void> _onUpdateBlogLikeStateEvent(
-      UpdateBlogLikeStateEvent event,
-      Emitter<BlogDetailState> emit,
-      ) async {
+    UpdateBlogLikeStateEvent event,
+    Emitter<BlogDetailState> emit,
+  ) async {
     final res = await _updateBlogLikeState.call(
-      UpdateBlogLikeParam(blogId: event.blogId, userId: event.userId, type: event.type),
+      UpdateBlogLikeParam(
+        blogId: event.blogId,
+        userId: event.userId,
+        type: event.type,
+      ),
     );
     res.fold(
-          (failure) => emit(BlogDetailFailureState(message: failure.message)),
-          (state) => emit(GetBlogDetailLikeStateSuccessState(state: state)),
+      (failure) => emit(BlogDetailFailureState(message: failure.message)),
+      (state) => emit(BlogDetailUpdatedLikeState(state: state)),
     );
   }
 }

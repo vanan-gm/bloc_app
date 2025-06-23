@@ -50,12 +50,12 @@ class _AddBlogPageState extends State<AddBlogPage> {
   void handleUploadBlog() {
     final posterId = context.currentUserId;
     context.read<BlogBloc>().add(
-      BlogUploadEvent(
+      UploadBlogEvent(
         posterId: posterId,
         title: _titleCtrl.text.trim(),
         content: _contentCtrl.text.trim(),
         image: _image.value!,
-        topics: _selectedTopics.value,
+        categoryIds: _selectedTopics.value,
       ),
     );
   }

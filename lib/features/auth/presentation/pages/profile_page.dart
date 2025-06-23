@@ -75,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void callReads() {
     context.read<ab.AuthBloc>().add(ab.CheckUserLoggedInEvent());
     context.read<ProfileBloc>().add(
-      GetProfileBlogsEvent(userId: context.currentUserId),
+      GetProfileBlogEvent(userId: context.currentUserId),
     );
   }
 
@@ -109,14 +109,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 _image.value = state.user.imageUrl;
               } else if (state is ab.AuthLoadingState) {
                 _isLoading.value = true;
-              } else if (state is ab.AuthUpdateAvatarSuccessState) {
+              } else if (state is ab.AuthUpdatedAvatarState) {
                 _isLoading.value = false;
                 _image.value = state.imageUrl;
               }
             },
             child: BlocListener<ProfileBloc, ProfileState>(
               listener: (context, state) {
-                if (state is GetProfileSuccessState) {
+                if (state is ProfileFetchedState) {
                   blogs = state.blogs;
                   setState(() {});
                 }
@@ -320,7 +320,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, state) {
         if (state is ProfileLoadingState) {
           return const LoadingWidget();
-        } else if (state is GetProfileSuccessState) {
+        } else if (state is ProfileFetchedState) {
           return blogs.isNotEmpty
               ? ListView.builder(
                 itemCount: blogs.length,

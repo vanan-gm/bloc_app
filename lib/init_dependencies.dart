@@ -20,6 +20,7 @@ import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source
 import 'package:bloc_app/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:bloc_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_blog_categories.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_user_id.dart';
@@ -31,6 +32,7 @@ import 'package:bloc_app/features/blog/presentation/bloc/detail_bloc/blog_detail
 import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
 import 'package:bloc_app/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:bloc_app/features/settings/domain/repository/settings_repository.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -47,7 +49,7 @@ Future<void> initDependencies() async {
   _initAuth();
   _initBlog();
   _initStreams();
-  _initLanguage();
+  _initSettings();
 
   final prefs = await SharedPreferences.getInstance();
   getIt.registerLazySingleton(() => prefs);
@@ -72,11 +74,11 @@ Future<void> initDependencies() async {
 void _initAuth() {
   // Datasource
   getIt
-    ..registerFactory<AuthRemoteDataSource>(
+    ..registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(supabaseClient: getIt()),
     )
     // Repository
-    ..registerFactory<AuthRepository>(
+    ..registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
         authRemoteDataSource: getIt(),
         connectionChecker: getIt(),
@@ -124,12 +126,14 @@ void _initBlog() {
     ..registerFactory(() => GetBlogLikeState(repository: getIt()))
     ..registerFactory(() => UpdateBlogLikeState(repository: getIt()))
     ..registerFactory(() => GetFavoriteBlogs(repository: getIt()))
+    ..registerFactory(() => GetBlogCategories(repository: getIt()))
     // Bloc
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: getIt(),
         getAllBlogs: getIt(),
         getBlogLikeState: getIt(),
+        getBlogCategories: getIt(),
       ),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
@@ -150,12 +154,15 @@ void _initStreams() {
   getIt.registerFactory<ChangePasswordStream>(() => ChangePasswordStream());
 }
 
-void _initLanguage() {
+void _initSettings() {
   getIt
     ..registerLazySingleton(() => SharedPreferenceService(preferences: getIt()))
     ..registerFactory<SettingsRepository>(
       () => SettingsRepositoryImpl(service: getIt()),
     )
     ..registerLazySingleton(() => LanguageCubit(settingsRepository: getIt()))
-    ..registerLazySingleton(() => ThemeCubit(settingsRepository: getIt()));
+    ..registerLazySingleton(() => ThemeCubit(settingsRepository: getIt()))
+    ..registerLazySingleton(
+      () => BlogCategoryCubit(settingsRepository: getIt()),
+    );
 }

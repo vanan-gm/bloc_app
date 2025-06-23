@@ -220,13 +220,13 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
       height: 40,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.blog.topics.length,
+        itemCount: widget.blog.categoryIds.length,
         itemBuilder: (context, i) {
           return Padding(
             padding: EdgeInsets.only(right: AppConstants.paddingSmall),
             child: Chip(
               label: Text(
-                widget.blog.topics[i],
+                widget.blog.categoryIds[i],
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall!.copyWith(color: AppColors.white),
@@ -302,7 +302,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                         strokeWidth: AppConstants.loadingStrokeWidth,
                       ),
                     );
-                  } else if (state is GetBlogDetailLikeStateSuccessState) {
+                  } else if (state is BlogDetailFetchedLikeState) {
                     return StatefulBuilder(
                       builder: (context, setSt) {
                         final liked = state.state == LikeState.liked;
@@ -329,7 +329,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                         );
                       },
                     );
-                  } else if (state is UpdateBlogDetailLikeStateSuccessState) {
+                  } else if (state is BlogDetailUpdatedLikeState) {
                     final liked = state.state == LikeState.liked;
                     return StatefulBuilder(
                       builder: (context, setSt) {

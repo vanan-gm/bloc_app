@@ -1,4 +1,5 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/locale_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/string_ext.dart';
 import 'package:bloc_app/core/common/widgets/cached_network_img.dart';
@@ -7,7 +8,11 @@ import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/card_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
+import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlogCard extends StatelessWidget {
   final Blog blog;
@@ -42,6 +47,7 @@ class BlogCard extends StatelessWidget {
   }
 
   Widget buildVertical(BuildContext context) {
+    var categories = context.read<BlogCategoryCubit>().state;
     return Stack(
       children: [
         CachedNetworkImg(imageUrl: blog.imageUrl),
@@ -63,7 +69,7 @@ class BlogCard extends StatelessWidget {
                     height: 50,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: blog.topics.length,
+                      itemCount: blog.categoryIds.length,
                       itemBuilder: (context, i) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -71,7 +77,12 @@ class BlogCard extends StatelessWidget {
                           ),
                           child: Chip(
                             label: Text(
-                              blog.topics[i],
+                              getChipText(
+                                    context,
+                                    categories,
+                                    blog.categoryIds[i],
+                                  ) ??
+                                  "",
                               style: Theme.of(
                                 context,
                               ).textTheme.bodySmall!.copyWith(
@@ -119,6 +130,19 @@ class BlogCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String? getChipText(
+    BuildContext context,
+    List<BlogCategory> categories,
+    String categoryId,
+  ) {
+    final locale = context.read<LanguageCubit>().state;
+    if (categories.isEmpty) return null;
+    final category = categories.firstWhere(
+      (category) => category.categoryId == categoryId,
+    );
+    return locale.isVietnamese ? category.titleVi : category.titleEn;
   }
 
   Widget buildHorizontal(BuildContext context) {

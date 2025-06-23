@@ -72,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
                   builder: (context, state) {
                     if (state is SearchBlogsLoadingState) {
                       return const LoadingWidget();
-                    } else if (state is SearchBlogsSuccessState) {
+                    } else if (state is SearchBlogsFetchedState) {
                       return ListView.builder(
                         itemCount: state.blogs.length,
                         itemBuilder: (context, i) {

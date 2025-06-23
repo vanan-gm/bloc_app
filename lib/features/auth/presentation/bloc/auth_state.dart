@@ -16,12 +16,12 @@ final class AuthSuccessState extends AuthState {
 
 final class AuthSignOutSuccessState extends AuthState {}
 
-final class AuthUpdateAvatarSuccessState extends AuthState {
+final class AuthUpdatedAvatarState extends AuthState {
   final String imageUrl;
-  const AuthUpdateAvatarSuccessState({required this.imageUrl});
+  const AuthUpdatedAvatarState({required this.imageUrl});
 }
 
-final class AuthChangePasswordSuccessState extends AuthState {}
+final class AuthChangedPasswordState extends AuthState {}
 
 final class AuthFailureState extends AuthState {
   final String message;

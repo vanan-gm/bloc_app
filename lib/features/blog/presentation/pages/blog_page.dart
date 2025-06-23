@@ -24,13 +24,13 @@ class _BlogPageState extends State<BlogPage> {
   @override
   void initState() {
     super.initState();
-    context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
+    context.read<BlogBloc>().add(GetAllBlogsEvent());
   }
 
   Future<void> _handleRefreshPage() async {
     await Future.delayed(AppConstants.refreshDuration, () {});
     if (!mounted) return;
-    context.read<BlogBloc>().add(BlogGetAllBlogsEvent());
+    context.read<BlogBloc>().add(GetAllBlogsEvent());
   }
 
   @override
@@ -62,7 +62,7 @@ class _BlogPageState extends State<BlogPage> {
                   builder: (context, state) {
                     if (state is BlogLoadingState) {
                       return const LoadingWidget();
-                    } else if (state is BlogGetAllSuccessState) {
+                    } else if (state is BlogFetchedDataState) {
                       return ListView.builder(
                         itemCount: state.blogs.length,
                         itemBuilder: (context, i) {
