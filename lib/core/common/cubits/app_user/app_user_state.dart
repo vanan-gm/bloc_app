@@ -1,13 +1,13 @@
 part of 'app_user_cubit.dart';
 
 @immutable
-abstract class AppUserState{}
+abstract class AppUserState {}
 
 final class AppUserInitialState extends AppUserState {}
 
-final class AppUserLoggedInState extends AppUserState{
-  final UserEntity userEntity;
-  AppUserLoggedInState({required this.userEntity});
+final class AppUserLoggedInState extends AppUserState {
+  final User user;
+  AppUserLoggedInState({required this.user});
 }
 
 // core cannot depend on other features

@@ -1,6 +1,6 @@
-import 'package:bloc_app/core/common/entities/user_entity.dart';
+import 'package:bloc_app/core/common/entities/user.dart';
 
-class UserModel extends UserEntity {
+class UserModel extends User {
   UserModel({
     required super.id,
     required super.email,
@@ -25,7 +25,7 @@ class UserModel extends UserEntity {
     'image_url': imageUrl,
   };
 
-  static UserModel fromEntity(UserEntity userE) {
+  static UserModel fromEntity(User userE) {
     return UserModel(
       id: userE.id,
       email: userE.email,

@@ -5,8 +5,7 @@ import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/core/error/failures.dart';
 import 'package:bloc_app/core/network/connection_checker.dart';
 import 'package:bloc_app/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:bloc_app/core/common/entities/user_entity.dart';
-import 'package:bloc_app/features/auth/data/models/user.dart';
+import 'package:bloc_app/core/common/entities/user.dart';
 import 'package:bloc_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
@@ -20,7 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, UserEntity>> loginWithEmailPassword(
+  Future<Either<Failure, User>> loginWithEmailPassword(
     String email,
     String password,
   ) async {
@@ -31,7 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> signUpWithEmailPassword(
+  Future<Either<Failure, User>> signUpWithEmailPassword(
     String name,
     String email,
     String password,
@@ -45,9 +44,7 @@ class AuthRepositoryImpl implements AuthRepository {
     );
   }
 
-  Future<Either<Failure, UserEntity>> _getUser(
-    Future<UserEntity> Function() fn,
-  ) async {
+  Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
@@ -63,7 +60,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async {
+  Future<Either<Failure, User>> getCurrentUser() async {
     try {
       final user = await authRemoteDataSource.getCurrentUserData();
       if (user == null) {

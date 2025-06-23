@@ -10,7 +10,7 @@ extension BuildcontextExt on BuildContext {
   String get currentUserId {
     final state = read<AppUserCubit>().state;
     if (state is AppUserLoggedInState) {
-      return state.userEntity.id;
+      return state.user.id;
     } else {
       throw ServerException(message: 'User not logged in');
     }

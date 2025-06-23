@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:bloc_app/core/usercase/usecase.dart';
-import 'package:bloc_app/core/common/entities/user_entity.dart';
+import 'package:bloc_app/core/common/entities/user.dart';
 import 'package:bloc_app/features/auth/domain/usecases/change_password.dart';
 import 'package:bloc_app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:bloc_app/features/auth/domain/usecases/update_user_avatar.dart';
@@ -130,7 +130,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _emitAuthSuccess(UserEntity user, Emitter<AuthState> emit) {
+  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccessState(user: user));
   }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bloc_app/core/common/paths/app_path.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
-import 'package:bloc_app/features/auth/data/models/user.dart';
+import 'package:bloc_app/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {

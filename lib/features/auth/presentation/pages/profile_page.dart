@@ -1,12 +1,12 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/entities/user.dart' as us;
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/utils/image_picker_service.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/core/common/widgets/circle_avatar_image.dart';
-import 'package:bloc_app/features/auth/data/models/user.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ValueNotifier<UserModel?> _user = ValueNotifier(null);
+  final ValueNotifier<us.User?> _user = ValueNotifier(null);
   bool _showDetails = true;
   final ValueNotifier<String> _image = ValueNotifier(
     AppPath.defaultUserImageUrl,
@@ -105,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
             listener: (context, state) {
               if (state is ab.AuthSuccessState) {
                 _isLoading.value = false;
-                _user.value = UserModel.fromEntity(state.user);
+                _user.value = state.user;
                 _image.value = state.user.imageUrl;
               } else if (state is ab.AuthLoadingState) {
                 _isLoading.value = true;
@@ -218,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget userNameWidget(UserModel? user) {
+  Widget userNameWidget(us.User? user) {
     return Padding(
       padding: EdgeInsets.only(top: AppConstants.paddingSmall),
       child: Row(
@@ -260,7 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget expandContent(UserModel? user) {
+  Widget expandContent(us.User? user) {
     return Padding(
       padding: EdgeInsets.only(top: AppConstants.paddingSmall),
       child: DefaultTabController(
