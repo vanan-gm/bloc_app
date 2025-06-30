@@ -19,7 +19,7 @@ import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
 import 'package:bloc_app/features/blog/data/data_sources/blog_remote_data_source.dart';
 import 'package:bloc_app/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:bloc_app/features/blog/domain/repository/blog_repository.dart';
-import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_blogs.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_categories.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
@@ -120,7 +120,7 @@ void _initBlog() {
     )
     // Usecase
     ..registerFactory(() => UploadBlog(blogRepository: getIt()))
-    ..registerFactory(() => GetAllBlogs(blogRepository: getIt()))
+    ..registerFactory(() => GetBlogs(blogRepository: getIt()))
     ..registerFactory(() => GetBlogsByUserId(blogRepository: getIt()))
     ..registerFactory(() => GetBlogsByKeyWord(blogRepository: getIt()))
     ..registerFactory(() => GetBlogLikeState(repository: getIt()))
@@ -131,13 +131,13 @@ void _initBlog() {
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: getIt(),
-        getAllBlogs: getIt(),
+        getBlogs: getIt(),
         getBlogLikeState: getIt(),
         getBlogCategories: getIt(),
       ),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
-    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()))
+    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt(), getBlogs: getIt()))
     ..registerFactory(
       () => BlogDetailBloc(
         getBlogLikeState: getIt(),

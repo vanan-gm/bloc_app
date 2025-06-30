@@ -19,7 +19,11 @@ final class UploadBlogEvent extends BlogEvent {
   });
 }
 
-final class GetAllBlogsEvent extends BlogEvent {}
+final class GetBlogsEvent extends BlogEvent {
+  final int page;
+  final bool isRefresh;
+  GetBlogsEvent({required this.page, this.isRefresh = false});
+}
 
 final class GetBlogsByUserIdEvent extends BlogEvent {
   final String userId;

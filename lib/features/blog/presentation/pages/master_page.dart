@@ -54,6 +54,11 @@ class _MasterPageState extends State<MasterPage> {
   @override
   void initState() {
     super.initState();
+    initData();
+  }
+
+  void initData(){
+    if(!mounted) return;
     context.read<BlogBloc>().add(GetBlogCategoriesEvent());
   }
 
@@ -157,7 +162,7 @@ class _MasterPageState extends State<MasterPage> {
                       context,
                     ).push(AddBlogPage.route());
                     if (result.isNotNull && context.mounted) {
-                      context.read<BlogBloc>().add(GetAllBlogsEvent());
+                      context.read<BlogBloc>().add(GetBlogsEvent(page: 1));
                     }
                   },
                   mini: true,

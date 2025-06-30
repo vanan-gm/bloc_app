@@ -1,22 +1,47 @@
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppConstants {
-  static double widthScreen = ScreenUtil().screenWidth;
-  static double heightScreen = ScreenUtil().screenHeight;
+  // static double widthScreen = ScreenUtil().screenWidth;
+  // static double heightScreen = ScreenUtil().screenHeight;
+  static double? _screenWidth;
+  static double? _screenHeight;
+
+  static void init(BuildContext context) {
+    _screenWidth = MediaQuery.sizeOf(context).width;
+    _screenHeight = MediaQuery.sizeOf(context).height;
+
+    _initializePaddings();
+  }
+
+  static void _initializePaddings() {
+    final width = _screenWidth ?? 0;
+    paddingMicroSmall = width * 0.01;
+    paddingSuperTiny = width * 0.02;
+    paddingTiny = width * 0.03;
+    paddingSmall = width * 0.04;
+    paddingSmallPlus = width * 0.05;
+    paddingMediumSmall = width * 0.06;
+    paddingMedium = width * 0.07;
+    paddingLarge = width * 0.08;
+    paddingBig = width * 0.09;
+    paddingHuge = width * 0.1;
+  }
+
+  static double get widthScreen => _screenWidth ?? 0;
+  static double get heightScreen => _screenHeight ?? 0;
 
   // Paddings
-  static double paddingMicroSmall = 1.w;
-  static double paddingSuperTiny = 5.w;
-  static double paddingTiny = 10.w;
-  static double paddingSmall = 15.w;
-  static double paddingSmallPlus = 18.w;
-  static double paddingMediumSmall = 25.w;
-  static double paddingMedium = 30.w;
-  static double paddingLarge = 45.w;
-  static double paddingBig = 60.w;
-  static double paddingHuge = 75.w;
+  static double paddingMicroSmall = 0;
+  static double paddingSuperTiny = 0;
+  static double paddingTiny = 0;
+  static double paddingSmall = 0;
+  static double paddingSmallPlus = 0;
+  static double paddingMediumSmall = 0;
+  static double paddingMedium = 0;
+  static double paddingLarge = 0;
+  static double paddingBig = 0;
+  static double paddingHuge = 0;
 
   // Radius
   static const double borderWide = 20.0;
@@ -66,6 +91,8 @@ class AppConstants {
   static const Duration fadeShortDuration = Duration(milliseconds: 100);
   static const Duration rotationDuration = Duration(milliseconds: 200);
   static const Duration scrollToTopDuration = Duration(milliseconds: 200);
+  static const Duration throttleDuration = Duration(milliseconds: 100);
+  static const Duration debounceDuration = Duration(seconds: 1);
 
   // Elevation
   static const double elevationZero = 0.0;
@@ -117,6 +144,7 @@ class AppConstants {
   static const String emptyString = "";
   static const String localeEn = 'en';
   static const String localeVi = 'vi';
+  static const int itemPerPage = 10;
 
   // Fixed size
   static const Size buttonDialogSize = Size(200, 30);

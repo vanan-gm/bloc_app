@@ -53,9 +53,7 @@ class _LoginPageState extends State<LoginPage> {
             child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthSuccessState) {
-                  Navigator.of(
-                    context,
-                  ).pushAndRemoveUntil(MasterPage.route(), (route) => false);
+
                 } else if (state is AuthFailureState) {
                   if (state.message.isNotEmpty &&
                       state.message != AppConstants.userNotLoggedIn) {

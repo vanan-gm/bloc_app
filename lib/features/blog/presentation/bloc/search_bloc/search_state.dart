@@ -8,7 +8,8 @@ final class SearchBlogsLoadingState extends SearchState {}
 
 final class SearchBlogsFetchedState extends SearchState {
   final List<Blog> blogs;
-  SearchBlogsFetchedState({required this.blogs});
+  final bool hasReachedEnd;
+  SearchBlogsFetchedState({required this.blogs, required this.hasReachedEnd});
 }
 
 final class SearchBlogsFailureState extends SearchState {

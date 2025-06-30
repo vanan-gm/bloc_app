@@ -57,13 +57,13 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getAllBlogs() async {
+  Future<Either<Failure, List<Blog>>> getBlogs({required int page}) async {
     try {
       // If there's no internet, we will display error
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       }
-      final blogs = await blogRemoteDataSource.getAllBlogs();
+      final blogs = await blogRemoteDataSource.getBlogs(page: page);
       return right(blogs);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
@@ -85,13 +85,13 @@ class BlogRepositoryImpl implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord(String key) async {
+  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord({required String keyword, required int page}) async {
     try {
       // If there's no internet, we will display errors
       if (!await connectionChecker.isInternetConnected) {
         return left(Failure(message: AppConstants.noConnectionErrorMessage));
       }
-      final blogs = await blogRemoteDataSource.getBlogsByKeyWord(key);
+      final blogs = await blogRemoteDataSource.getBlogsByKeyWord(keyword: keyword, page: page);
       return right(blogs);
     } on ServerException catch (e) {
       return left(Failure(message: e.message.toString()));
