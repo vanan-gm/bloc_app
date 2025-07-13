@@ -13,7 +13,6 @@ import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/enums/page_type.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/blog/presentation/pages/add_blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/favorite_page.dart';
@@ -181,7 +180,7 @@ class _MasterPageState extends State<MasterPage> {
     required BuildContext context,
     required int requiredIndex,
   }) {
-    if (_currentTabIndex == requiredIndex) return AppPallete.gradient1;
+    if (_currentTabIndex == requiredIndex) return AppColors.gradient1;
     return context.isLightMode ? AppColors.black : AppColors.white;
   }
 }

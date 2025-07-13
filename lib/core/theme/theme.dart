@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/core/theme/app_style.dart';
 
 class AppTheme {

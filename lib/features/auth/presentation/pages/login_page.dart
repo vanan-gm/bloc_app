@@ -6,11 +6,9 @@ import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:bloc_app/features/auth/presentation/streams/login_stream.dart';
-import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -153,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextSpan(
                   text: context.translate.signUp,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppPallete.gradient2,
+                    color: AppColors.gradient2,
                     fontWeight: FontWeight.bold,
                   ),
                   recognizer:

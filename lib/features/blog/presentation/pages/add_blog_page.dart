@@ -11,12 +11,10 @@ import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
-import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
-import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/features/blog/presentation/streams/add_blog_stream.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/category_chip_item.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -182,7 +180,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                 selectImage();
               },
               child: DottedBorder(
-                color: AppPallete.borderColor,
+                color: AppColors.borderColor,
                 dashPattern: const [10, 4],
                 radius: const Radius.circular(AppConstants.borderImage),
                 borderType: BorderType.RRect,
@@ -238,54 +236,28 @@ class _AddBlogPageState extends State<AddBlogPage> {
                           ? AppConstants.paddingTiny
                           : 0.0,
                 ),
-                child: buildChipItem(
-                  context,
-                  category,
-                  _selectedCategories.value.contains(category.categoryId),
+                child: CategoryChipItem(
+                  category: category,
+                  isChosen: _selectedCategories.value.contains(category.categoryId),
+                  onChanged: (bool isChosen){
+                    if (isChosen) {
+                      _selectedCategories.value = [
+                        ..._selectedCategories.value,
+                        category.categoryId,
+                      ];
+                    } else if (!isChosen) {
+                      _selectedCategories.value =
+                          _selectedCategories.value
+                              .where((c) => c != category.categoryId)
+                              .toList();
+                    }
+                    setValueForSaveButton();
+                  }
                 ),
               );
             },
           ),
         );
-      },
-    );
-  }
-
-  Widget buildChipItem(
-    BuildContext context,
-    BlogCategory category,
-    bool isChosen,
-  ) {
-    return FilterChip(
-      label: Text(
-        context.read<LanguageCubit>().state.isVietnamese
-            ? category.titleVi
-            : category.titleEn,
-        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-          color:
-              isChosen
-                  ? AppColors.white
-                  : (context.isLightMode ? AppColors.black : AppColors.white),
-        ),
-      ),
-      color:
-          isChosen ? const WidgetStatePropertyAll(AppPallete.gradient1) : null,
-      side: const BorderSide(color: AppPallete.borderColor),
-      selected: isChosen,
-      checkmarkColor: AppColors.white,
-      onSelected: (value) {
-        if (!isChosen) {
-          _selectedCategories.value = [
-            ..._selectedCategories.value,
-            category.categoryId,
-          ];
-        } else if (isChosen) {
-          _selectedCategories.value =
-              _selectedCategories.value
-                  .where((c) => c != category.categoryId)
-                  .toList();
-        }
-        setValueForSaveButton();
       },
     );
   }

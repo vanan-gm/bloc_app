@@ -3,6 +3,9 @@ import 'dart:math';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/widgets/smart_list_view.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
+import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/category_chip_item.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +31,9 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchCtrl = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> _showFilter = ValueNotifier(false);
+  final ValueNotifier<List<BlogCategory>> _categories = ValueNotifier([]);
+  final ValueNotifier<List<String>> _chosenCategories = ValueNotifier([]);
 
   @override
   void initState() {
@@ -38,12 +44,15 @@ class _SearchPageState extends State<SearchPage> {
   void initData(){
     if(!mounted) return;
     context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
+    // _categories.value = context.read<BlogCategoryCubit>().state;
   }
 
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+    _searchCtrl.dispose();
+    _showFilter.dispose();
   }
 
   @override
@@ -78,18 +87,65 @@ class _SearchPageState extends State<SearchPage> {
                   child: RippleEffect(
                     onTap: () {
                       FocusManager.instance.primaryFocus!.unfocus();
-                      context.read<SearchBloc>().add(
-                        SearchBlogsEvent(keyword: _searchCtrl.text.trim(), page: 1),
-                      );
+
                     },
                     child: SizedBox(
                       height: 30,
                       width: 30,
-                      child: AppIcon.asset(Assets.iconsIcSend),
+                      child: AppIcon.asset(Assets.iconsIcFilter),
                     ),
                   ),
                 ),
               ],
+            ),
+            ValueListenableBuilder(
+              valueListenable: _showFilter,
+              builder: (context, showingFilter, _){
+                return ValueListenableBuilder(
+                  valueListenable: _chosenCategories,
+                  builder: (context, chosenCategories, _){
+                    return BlocBuilder<BlogCategoryCubit, List<BlogCategory>>(
+                      builder: (context, categories){
+                        return SizedBox(
+                          height: AppConstants.containerTopicHeight,
+                          child: ListView.builder(
+                            itemCount: categories.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, i) {
+                              final category = categories[i];
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  right:
+                                  i != AppConstants.topics(context).length - 1
+                                      ? AppConstants.paddingTiny
+                                      : 0.0,
+                                ),
+                                child: CategoryChipItem(
+                                  category: category,
+                                  isChosen: _chosenCategories.value.contains(category.categoryId),
+                                  onChanged: (bool isChosen){
+                                    if (isChosen) {
+                                      _chosenCategories.value = [
+                                        ..._chosenCategories.value,
+                                        category.categoryId,
+                                      ];
+                                    } else if (!isChosen) {
+                                      _chosenCategories.value =
+                                          _chosenCategories.value
+                                              .where((c) => c != category.categoryId)
+                                              .toList();
+                                    }
+                                  }
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    );
+                  }
+                );
+              },
             ),
             Expanded(
               child: Padding(

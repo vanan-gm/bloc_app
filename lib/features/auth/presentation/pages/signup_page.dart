@@ -6,7 +6,6 @@ import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
 import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
@@ -184,7 +183,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodyMedium!.copyWith(
-                                    color: AppPallete.gradient2,
+                                    color: AppColors.gradient2,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   recognizer:

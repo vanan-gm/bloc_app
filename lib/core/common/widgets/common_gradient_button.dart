@@ -2,7 +2,6 @@ import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/object_ext.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
 class CommonGradientButton extends StatelessWidget {
@@ -31,8 +30,8 @@ class CommonGradientButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(7.0),
               ),
-              backgroundColor: AppPallete.transparentColor,
-              shadowColor: AppPallete.transparentColor,
+              backgroundColor: AppColors.transparent,
+              shadowColor: AppColors.transparent,
             ),
             child: Text(
               text,
@@ -70,7 +69,7 @@ class CommonGradientButton extends StatelessWidget {
   );
 
   Gradient get gGradientColor => const LinearGradient(
-    colors: [AppPallete.gradient1, AppPallete.gradient2],
+    colors: [AppColors.gradient1, AppColors.gradient2],
     begin: Alignment.bottomLeft,
     end: Alignment.topRight,
   );
