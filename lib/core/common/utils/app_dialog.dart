@@ -2,6 +2,7 @@ import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
+import 'package:bloc_app/core/common/widgets/elevated_app_button.dart';
 import 'package:bloc_app/core/common/widgets/two_text_row.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -80,43 +81,61 @@ class AppDialog {
             ],
           ),
           actions: [
-            ElevatedButton(
+            ElevatedAppButton(
               onPressed: onBack,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.transparent,
-                shadowColor: AppColors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppConstants.borderButton,
-                  ),
-                ),
-              ),
-              child: Text(
-                context.translate.cancel,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: AppColors.black,
-                  fontWeight: FontWeight.w700,
-                ),
+              backgroundColor: AppColors.transparent,
+              buttonText: context.translate.cancel,
+              textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: AppColors.black,
+                fontWeight: FontWeight.w700,
               ),
             ),
-            ElevatedButton(
+            ElevatedAppButton(
               onPressed: onOk,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppConstants.borderButton,
-                  ),
-                ),
-              ),
-              child: Text(
-                context.translate.logout,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                ),
+              backgroundColor: AppColors.red,
+              buttonText: context.translate.logout,
+              textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.white,
               ),
             ),
+            // ElevatedButton(
+            //   onPressed: onBack,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: AppColors.transparent,
+            //     shadowColor: AppColors.transparent,
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(
+            //         AppConstants.borderButton,
+            //       ),
+            //     ),
+            //   ),
+            //   child: Text(
+            //     context.translate.cancel,
+            //     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //       color: AppColors.black,
+            //       fontWeight: FontWeight.w700,
+            //     ),
+            //   ),
+            // ),
+            // ElevatedButton(
+            //   onPressed: onOk,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: AppColors.red,
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(
+            //         AppConstants.borderButton,
+            //       ),
+            //     ),
+            //   ),
+            //   child: Text(
+            //     context.translate.logout,
+            //     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //       fontWeight: FontWeight.w700,
+            //       color: AppColors.white,
+            //     ),
+            //   ),
+            // ),
           ],
           actionsAlignment: MainAxisAlignment.spaceAround,
         );
@@ -163,24 +182,10 @@ class AppDialog {
             ],
           ),
           actions: [
-            ElevatedButton(
+            ElevatedAppButton(
               onPressed: onOk,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.gradient1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppConstants.borderButton,
-                  ),
-                ),
-                fixedSize: AppConstants.buttonDialogSize,
-              ),
-              child: Text(
-                context.translate.ok,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                ),
-              ),
+              buttonText: context.translate.ok,
+              buttonSize: AppConstants.buttonDialogSize,
             ),
           ],
           actionsAlignment: MainAxisAlignment.center,
@@ -351,24 +356,10 @@ class AppDialog {
             ),
           ),
           actions: [
-            ElevatedButton(
+            ElevatedAppButton(
               onPressed: onOk,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.gradient1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppConstants.borderButton,
-                  ),
-                ),
-                fixedSize: AppConstants.buttonDialogSize,
-              ),
-              child: Text(
-                context.translate.ok,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                ),
-              ),
+              buttonText: context.translate.ok,
+              buttonSize: AppConstants.buttonDialogSize,
             ),
           ],
           actionsAlignment: MainAxisAlignment.center,

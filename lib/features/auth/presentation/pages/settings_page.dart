@@ -124,7 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 icon: Assets.iconsIcLanguage,
                 text: context.translate.language,
                 onTap: () {
-                  AppModal.showBottomSheet(
+                  AppModal.showLanguageBottomSheet(
                     context: context,
                     onSelected: (localeCode) {
                       context.read<LanguageCubit>().changeLocale(localeCode);
