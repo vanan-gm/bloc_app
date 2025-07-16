@@ -61,20 +61,19 @@ class _SearchFieldState extends State<SearchField> {
 
   @override
   void dispose() {
-    _debounce!.cancel();
+    if (_debounce.isNotNull) _debounce!.cancel();
     super.dispose();
   }
 
-  void _onSearchChanged(String keyword) async{
-    if(keyword.length <= 3) return;
-    if(_debounce != null){
-      if(_debounce!.isActive) _debounce!.cancel();
+  void _onSearchChanged(String keyword) async {
+    if (keyword.length <= 3) return;
+    if (_debounce != null) {
+      if (_debounce!.isActive) _debounce!.cancel();
     }
-    _debounce = Timer(AppConstants.debounceDuration, (){
+    _debounce = Timer(AppConstants.debounceDuration, () {
       widget.onSubmit.call(keyword);
     });
   }
-
 
   Widget? suffixIcon;
 

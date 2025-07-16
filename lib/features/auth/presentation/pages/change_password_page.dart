@@ -1,5 +1,5 @@
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
@@ -57,17 +57,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 _isLoading.value = true;
               } else if (state is AuthFailureState) {
                 _isLoading.value = false;
-                showCustomOverlay(
+                AppToast.showToast(
                   context: context,
-                  isSuccessType: false,
-                  content: context.translate.failedToChangePassword,
+                  title: "Failure!",
+                  message: context.translate.failedToChangePassword,
+                  type: ToastType.error,
                 );
               } else if (state is AuthChangedPasswordState) {
                 _isLoading.value = false;
-                showCustomOverlay(
+                AppToast.showToast(
                   context: context,
-                  isSuccessType: true,
-                  content: context.translate.changePasswordSuccessMessage,
+                  title: "Success!",
+                  message: context.translate.changePasswordSuccessMessage,
+                  type: ToastType.success,
                 );
                 Navigator.of(context).pop();
               }

@@ -1,4 +1,4 @@
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/smart_list_view.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
@@ -67,10 +67,11 @@ class _BlogPageState extends State<BlogPage> {
                 child: BlocConsumer<BlogBloc, BlogState>(
                   listener: (context, state) {
                     if (state is BlogFailureState) {
-                      showCustomOverlay(
+                      AppToast.showToast(
                         context: context,
-                        content: state.message,
-                        isSuccessType: false,
+                        title: "Failure!",
+                        message: state.message,
+                        type: ToastType.error,
                       );
                     }
                   },
@@ -103,15 +104,21 @@ class _BlogPageState extends State<BlogPage> {
                               GetBlogsEvent(page: page),
                             ),
                         loadingWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppConstants.paddingSmall,
+                          ),
                           child: Shimmer.fromColors(
                             baseColor: AppColors.black.withValues(alpha: .6),
-                            highlightColor: AppColors.gradient1.withValues(alpha: .6),
+                            highlightColor: AppColors.gradient1.withValues(
+                              alpha: .6,
+                            ),
                             child: Container(
                               width: AppConstants.widthScreen,
                               height: AppConstants.containerCardHeight,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(AppConstants.borderImage),
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderImage,
+                                ),
                                 color: AppColors.white,
                               ),
                             ),

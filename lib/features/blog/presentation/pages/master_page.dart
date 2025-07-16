@@ -1,6 +1,7 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/object_ext.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
@@ -56,8 +57,8 @@ class _MasterPageState extends State<MasterPage> {
     initData();
   }
 
-  void initData(){
-    if(!mounted) return;
+  void initData() {
+    if (!mounted) return;
     context.read<BlogBloc>().add(GetBlogCategoriesEvent());
   }
 

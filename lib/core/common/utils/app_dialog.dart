@@ -46,7 +46,7 @@ class AppDialog {
   static void hideLoadingDialog(BuildContext context) {
     if (_isShowingLoading) {
       _isShowingLoading = false;
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
     }
   }
 

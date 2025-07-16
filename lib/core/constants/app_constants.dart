@@ -2,8 +2,6 @@ import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:flutter/cupertino.dart';
 
 class AppConstants {
-  // static double widthScreen = ScreenUtil().screenWidth;
-  // static double heightScreen = ScreenUtil().screenHeight;
   static double? _screenWidth;
   static double? _screenHeight;
 
@@ -18,8 +16,8 @@ class AppConstants {
     final width = _screenWidth ?? 0;
     paddingMicroSmall = width * 0.01;
     paddingSuperTiny = width * 0.02;
-    paddingTiny = width * 0.03;
-    paddingSmall = width * 0.04;
+    paddingTiny = width * 0.025;
+    paddingSmall = width * 0.045;
     paddingSmallPlus = width * 0.05;
     paddingMediumSmall = width * 0.06;
     paddingMedium = width * 0.07;
@@ -42,6 +40,9 @@ class AppConstants {
   static double paddingLarge = 0;
   static double paddingBig = 0;
   static double paddingHuge = 0;
+
+  // Fixed value paddings
+  static double getPadding(double value) => value;
 
   // Radius
   static const double borderWide = 20.0;
@@ -74,8 +75,11 @@ class AppConstants {
 
   // Custom
   static const double containerHeight = 150;
+  static const double containerSmallHeight = 25;
   static const double containerTopicHeight = 50;
   static const double containerCardHeight = 200;
+  static const double containerBigHeight = 400;
+  static const double containerMediumHeight = 300;
   static const double containerBottomHeight = 100;
   static const double containerDetailHeight = 70;
   static const double circleAvatarDetailPageSize = 18;
@@ -93,6 +97,8 @@ class AppConstants {
   static const Duration scrollToTopDuration = Duration(milliseconds: 200);
   static const Duration throttleDuration = Duration(milliseconds: 100);
   static const Duration debounceDuration = Duration(seconds: 1);
+  static const Duration toastDuration = Duration(seconds: 1);
+  static const Duration animationCtrlDuration = Duration(milliseconds: 300);
 
   // Elevation
   static const double elevationZero = 0.0;
