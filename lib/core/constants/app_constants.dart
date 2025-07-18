@@ -82,6 +82,11 @@ class AppConstants {
   static const double containerMediumHeight = 300;
   static const double containerBottomHeight = 100;
   static const double containerDetailHeight = 70;
+
+  static const double defaultButtonWidth = 120;
+  static const double defaultButtonHeight = 40;
+  static const double filterButtonWidth = 140;
+
   static const double circleAvatarDetailPageSize = 18;
   static const double circleAvatarSmallSize = 24;
   static const double circleAvatarMedSize = 30;
@@ -96,7 +101,7 @@ class AppConstants {
   static const Duration rotationDuration = Duration(milliseconds: 200);
   static const Duration scrollToTopDuration = Duration(milliseconds: 200);
   static const Duration throttleDuration = Duration(milliseconds: 100);
-  static const Duration debounceDuration = Duration(seconds: 1);
+  static const Duration debounceDuration = Duration(milliseconds: 1500);
   static const Duration toastDuration = Duration(seconds: 1);
   static const Duration animationCtrlDuration = Duration(milliseconds: 300);
 

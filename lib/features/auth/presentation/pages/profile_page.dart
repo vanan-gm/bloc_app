@@ -124,8 +124,8 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ValueListenableBuilder(
                 valueListenable: _isLoading,
                 builder: (context, isLoading, _) {
-                  return AbsorbPointer(
-                    absorbing: isLoading,
+                  return IgnorePointer(
+                    ignoring: isLoading,
                     child: RefreshIndicator(
                       onRefresh: handleRefresh,
                       child: ValueListenableBuilder(

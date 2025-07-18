@@ -228,7 +228,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
         itemCount: widget.blog.categoryIds.length,
         itemBuilder: (context, i) {
           return Padding(
-            padding: EdgeInsets.only(right: AppConstants.paddingSmall),
+            padding: EdgeInsets.only(right: AppConstants.paddingTiny),
             child: Chip(
               label: Text(
                 getChipText(context, categories, widget.blog.categoryIds[i]) ??

@@ -10,7 +10,12 @@ class CategoryChipItem extends StatelessWidget {
   final BlogCategory category;
   final bool isChosen;
   final ValueChanged<bool> onChanged;
-  const CategoryChipItem({super.key, required this.category, this.isChosen = false, required this.onChanged});
+  const CategoryChipItem({
+    super.key,
+    required this.category,
+    this.isChosen = false,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +26,14 @@ class CategoryChipItem extends StatelessWidget {
             : category.titleEn,
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color:
-          isChosen
-              ? AppColors.white
-              : (context.isLightMode ? AppColors.black : AppColors.white),
+              isChosen
+                  ? AppColors.white
+                  : (context.isLightMode ? AppColors.black : AppColors.white),
         ),
       ),
-      color:
-      isChosen ? WidgetStatePropertyAll(AppColors.gradient1) : null,
-      side: BorderSide(color: AppColors.borderColor),
+      color: isChosen ? WidgetStatePropertyAll(AppColors.gradient1) : null,
+      side:
+          isChosen ? BorderSide.none : BorderSide(color: AppColors.borderColor),
       selected: isChosen,
       checkmarkColor: AppColors.white,
       onSelected: onChanged,

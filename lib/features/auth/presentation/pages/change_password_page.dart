@@ -82,8 +82,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               child: ValueListenableBuilder(
                 valueListenable: _isLoading,
                 builder: (context, isLoading, _) {
-                  return AbsorbPointer(
-                    absorbing: isLoading,
+                  return IgnorePointer(
+                    ignoring: isLoading,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,

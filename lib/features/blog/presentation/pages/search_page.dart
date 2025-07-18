@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/object_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/core/common/widgets/multiple_value_notifier_builder.dart';
@@ -8,6 +10,7 @@ import 'package:bloc_app/core/common/widgets/smart_list_view.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
 import 'package:bloc_app/features/blog/presentation/widgets/category_chip_item.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/category_filter_bottom_sheet.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -84,139 +87,7 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: AppConstants.paddingTiny),
-                  child: RippleEffect(
-                    onTap: () {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppConstants.borderButton2,
-                          ),
-                        ),
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) {
-                          _categories.value =
-                              context.read<BlogCategoryCubit>().state;
-                          return Padding(
-                            padding: EdgeInsets.all(AppConstants.paddingSmall),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Spacer(),
-                                    Expanded(
-                                      child: AppText(
-                                        text: "Category Filter",
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: RippleEffect(
-                                          onTap:
-                                              () => Navigator.of(context).pop(),
-                                          child: AppIcon.asset(
-                                            Assets.iconsIcClose,
-                                            color: AppColors.white,
-                                            size: AppConstants.iconMediumSize,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    top: AppConstants.paddingSmall,
-                                  ),
-                                  child: MultiValueListenerBuilder(
-                                    notifiers: [_categories, _chosenCategories],
-                                    builder: (context, values) {
-                                      final List<BlogCategory> categories =
-                                          values[0];
-                                      final List<String> chosenCategories =
-                                          values[1];
-                                      return Wrap(
-                                        spacing: 4,
-                                        runSpacing: 4,
-                                        children: List.generate(
-                                          categories.length,
-                                          (index) {
-                                            return CategoryChipItem(
-                                              category: categories[index],
-                                              isChosen: chosenCategories
-                                                  .contains(
-                                                    categories[index]
-                                                        .categoryId,
-                                                  ),
-                                              onChanged: (bool isChosen) {
-                                                if (isChosen) {
-                                                  _chosenCategories.value = [
-                                                    ..._chosenCategories.value,
-                                                    categories[index]
-                                                        .categoryId,
-                                                  ];
-                                                } else if (!isChosen) {
-                                                  _chosenCategories.value =
-                                                      _chosenCategories.value
-                                                          .where(
-                                                            (c) =>
-                                                                c !=
-                                                                categories[index]
-                                                                    .categoryId,
-                                                          )
-                                                          .toList();
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    top: AppConstants.paddingSmall,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      AppButton.text(
-                                        text: "Apply",
-                                        color: AppColors.gradient1,
-                                        onPressed: () {},
-                                      ),
-                                      AppButton.text(
-                                        text: "Cancel",
-                                        color: AppColors.red,
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: AppIcon.asset(Assets.iconsIcFilter),
-                    ),
-                  ),
-                ),
+                categoryFilterBox,
               ],
             ),
             Expanded(
@@ -255,24 +126,19 @@ class _SearchPageState extends State<SearchPage> {
                                 isLoadingMore: true,
                               ),
                             ),
-                        loadingWidget: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppConstants.paddingSmall,
+                        loadingWidget: Shimmer.fromColors(
+                          baseColor: AppColors.black.withValues(alpha: .6),
+                          highlightColor: AppColors.gradient1.withValues(
+                            alpha: .6,
                           ),
-                          child: Shimmer.fromColors(
-                            baseColor: AppColors.black.withValues(alpha: .6),
-                            highlightColor: AppColors.gradient1.withValues(
-                              alpha: .6,
-                            ),
-                            child: Container(
-                              width: AppConstants.widthScreen,
-                              height: AppConstants.containerCardHeight,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  AppConstants.borderImage,
-                                ),
-                                color: AppColors.white,
+                          child: Container(
+                            width: AppConstants.widthScreen,
+                            height: AppConstants.containerCardHeight,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                AppConstants.borderImage,
                               ),
+                              color: AppColors.white,
                             ),
                           ),
                         ),
@@ -287,6 +153,74 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget get categoryFilterBox {
+    return ValueListenableBuilder(
+      valueListenable: _chosenCategories,
+      builder: (context, chosenCategories, _) {
+        return Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppConstants.paddingMicroSmall),
+              child: RippleEffect(
+                onTap: () async {
+                  FocusManager.instance.primaryFocus!.unfocus();
+                  final result = await showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.borderButton2,
+                      ),
+                    ),
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Padding(
+                        padding: EdgeInsets.all(AppConstants.paddingSmall),
+                        child: CategoryFilterBottomSheet(
+                          chosenCategories: _chosenCategories.value,
+                        ),
+                      );
+                    },
+                  );
+                  if (result == null) return;
+                  result as List<String>;
+                  if (result.isNotEmpty) {
+                    _chosenCategories.value = result;
+                  } else {
+                    _chosenCategories.value.clear();
+                  }
+                },
+                child: SizedBox(
+                  height: AppConstants.circleAvatarMedSize,
+                  width: AppConstants.circleAvatarMedSize,
+                  child: AppIcon.asset(Assets.iconsIcFilter),
+                ),
+              ),
+            ),
+            if(chosenCategories.isNotEmpty) Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.gradient1,
+                ),
+                alignment: Alignment.center,
+                child: AppText(
+                  text: chosenCategories.length.toString(),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(color: AppColors.white),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
