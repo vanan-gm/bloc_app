@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bloc_app/core/common/utils/bloc_transformers.dart';
 import 'package:bloc_app/core/usercase/usecase.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
-import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_blogs.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_categories.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
@@ -18,22 +19,22 @@ part 'blog_event.dart';
 part 'blog_state.dart';
 
 class BlogBloc extends Bloc<BlogEvent, BlogState> {
+  List<Blog> _blogs = [];
   final UploadBlog _uploadBlog;
-  final GetAllBlogs _getAllBlogs;
+  final GetBlogs _getBlogs;
   final GetBlogCategories _getBlogCategories;
 
   BlogBloc({
     required UploadBlog uploadBlog,
-    required GetAllBlogs getAllBlogs,
+    required GetBlogs getBlogs,
     required GetBlogLikeState getBlogLikeState,
     required GetBlogCategories getBlogCategories,
   }) : _uploadBlog = uploadBlog,
-       _getAllBlogs = getAllBlogs,
+       _getBlogs = getBlogs,
        _getBlogCategories = getBlogCategories,
        super(BlogInitialSate()) {
-    on<BlogEvent>((_, emit) => emit(BlogLoadingState()));
     on<UploadBlogEvent>(_onBlogUploadEvent);
-    on<GetAllBlogsEvent>(_onBlogGetAllBlogsEvent);
+    on<GetBlogsEvent>(_onBlogGetBlogsEvent, transformer: throttleDroppable());
     on<GetBlogCategoriesEvent>(_onGetBlogCategoriesEvent);
   }
 
@@ -41,6 +42,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     UploadBlogEvent event,
     Emitter<BlogState> emit,
   ) async {
+    emit(BlogLoadingState());
     final res = await _uploadBlog.call(
       UploadBlogParams(
         posterId: event.posterId,
@@ -56,14 +58,24 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     );
   }
 
-  FutureOr<void> _onBlogGetAllBlogsEvent(
-    GetAllBlogsEvent event,
+  FutureOr<void> _onBlogGetBlogsEvent(
+    GetBlogsEvent event,
     Emitter<BlogState> emit,
   ) async {
-    final res = await _getAllBlogs.call(NoParams());
+    if (event.page == 1) {
+      emit(BlogLoadingState());
+    }
+    final res = await _getBlogs.call(NormalParams(page: event.page));
     res.fold(
       (failure) => emit(BlogFailureState(message: failure.message)),
-      (blogs) => emit(BlogFetchedDataState(blogs: blogs)),
+      (blogs){
+        if(event.isRefresh){
+          _blogs = blogs;
+        }else{
+          _blogs.addAll(blogs);
+        }
+        emit(BlogFetchedDataState(blogs: List.from(_blogs), hasReachedEnd: false));
+      },
     );
   }
 
@@ -71,6 +83,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     GetBlogCategoriesEvent event,
     Emitter<BlogState> emit,
   ) async {
+    emit(BlogLoadingState());
     final res = await _getBlogCategories.call(NoParams());
     res.fold(
       (failure) => emit(BlogFailureState(message: failure.message)),

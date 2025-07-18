@@ -1,16 +1,14 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
-import 'package:bloc_app/core/common/widgets/loading_widget.dart';
-import 'package:bloc_app/core/common/widgets/common_text_field.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
+import 'package:bloc_app/core/common/widgets/common_text_field.dart';
+import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:bloc_app/features/auth/presentation/streams/login_stream.dart';
-import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -53,16 +51,14 @@ class _LoginPageState extends State<LoginPage> {
             child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthSuccessState) {
-                  Navigator.of(
-                    context,
-                  ).pushAndRemoveUntil(MasterPage.route(), (route) => false);
                 } else if (state is AuthFailureState) {
                   if (state.message.isNotEmpty &&
                       state.message != AppConstants.userNotLoggedIn) {
-                    showCustomOverlay(
+                    AppToast.showToast(
                       context: context,
-                      content: state.message,
-                      isSuccessType: false,
+                      title: "Failure!",
+                      message: state.message,
+                      type: ToastType.error,
                     );
                   }
                 }
@@ -155,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextSpan(
                   text: context.translate.signUp,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppPallete.gradient2,
+                    color: AppColors.gradient2,
                     fontWeight: FontWeight.bold,
                   ),
                   recognizer:

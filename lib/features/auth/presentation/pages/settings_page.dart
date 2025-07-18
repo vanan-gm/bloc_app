@@ -3,10 +3,10 @@ import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/theme_mode_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/utils/app_modal.dart';
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
-import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/enums/theme_mode.dart' as tm;
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/pages/change_password_page.dart';
@@ -15,7 +15,6 @@ import 'package:bloc_app/features/auth/presentation/pages/profile_page.dart';
 import 'package:bloc_app/features/auth/presentation/widgets/setting_item.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/theme_cubit.dart';
-import 'package:bloc_app/core/enums/theme_mode.dart' as tm;
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,20 +59,22 @@ class _SettingsPageState extends State<SettingsPage> {
         listener: (context, state) {
           if (state is AuthSignOutSuccessState) {
             AppDialog.hideLoadingDialog(context);
-            showCustomOverlay(
+            AppToast.showToast(
               context: context,
-              isSuccessType: true,
-              content: context.translate.signOutSuccessMessage,
+              title: "Success!",
+              message: context.translate.signOutSuccessMessage,
+              type: ToastType.success,
             );
             Navigator.of(
               context,
             ).pushAndRemoveUntil(LoginPage.route(), (route) => false);
           } else if (state is AuthFailureState) {
             AppDialog.hideLoadingDialog(context);
-            showCustomOverlay(
+            AppToast.showToast(
               context: context,
-              isSuccessType: false,
-              content: context.translate.encounterError,
+              title: "Failure!",
+              message: context.translate.encounterError,
+              type: ToastType.error,
             );
           }
         },
@@ -124,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 icon: Assets.iconsIcLanguage,
                 text: context.translate.language,
                 onTap: () {
-                  AppModal.showBottomSheet(
+                  AppModal.showLanguageBottomSheet(
                     context: context,
                     onSelected: (localeCode) {
                       context.read<LanguageCubit>().changeLocale(localeCode);

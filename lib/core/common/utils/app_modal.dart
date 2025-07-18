@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AppModal {
   AppModal._();
 
-  static Future<void> showBottomSheet({
+  static Future<void> showLanguageBottomSheet({
     required BuildContext context,
     required void Function(String localeCode) onSelected,
   }) async {

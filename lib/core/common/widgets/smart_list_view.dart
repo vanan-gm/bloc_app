@@ -1,4 +1,5 @@
 import 'package:bloc_app/core/common/widgets/three_dots_animation.dart';
+import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -7,9 +8,11 @@ class SmartListView<T> extends StatefulWidget {
   final RefreshCallback? onRefresh;
   final Function(int page)? onLoadMore;
   final List<T> dataList;
-  final int totalItem;
+  // final int totalItem;
   final IndexedWidgetBuilder itemBuilder;
   final EdgeInsets? padding;
+  final bool hasReachedEnd;
+  final Widget? loadingWidget;
 
   late final int itemCount;
   late bool isLimitedData;
@@ -21,20 +24,26 @@ class SmartListView<T> extends StatefulWidget {
     required this.scrollController,
     required this.itemBuilder,
     required this.dataList,
-    required this.totalItem,
+    // required this.totalItem,
     this.onRefresh,
     this.onLoadMore,
     this.padding,
+    this.hasReachedEnd = false,
+    this.loadingWidget,
   }) {
     isLimitedData = false;
     isLoadMore = false;
     isRefresh = false;
 
-    if (dataList.length >= totalItem) {
+    // if (dataList.length >= totalItem) {
+    //   isLimitedData = true;
+    // }
+
+    if(hasReachedEnd){
       isLimitedData = true;
     }
 
-    itemCount = (dataList.isEmpty || isLimitedData || dataList.length % 10 != 0) ? dataList.length : dataList.length + 1;
+    itemCount = (dataList.isEmpty || isLimitedData || dataList.length % AppConstants.itemPerPage != 0) ? dataList.length : dataList.length + 1;
   }
 
   @override
@@ -65,7 +74,7 @@ class _SmartListViewState extends State<SmartListView> {
 
   @override
   Widget build(BuildContext context) => RefreshIndicator(
-    color: AppColors.green,
+    color: AppColors.gradient1,
     onRefresh: () async {
       await Future.delayed(Duration(seconds: 2));
       _currentPage = 1;
@@ -81,9 +90,9 @@ class _SmartListViewState extends State<SmartListView> {
     child: ListView.builder(
       itemBuilder: (context, index) {
         if (index == widget.dataList.length) {
-          return Center(
+          return widget.loadingWidget ?? Center(
             child: ThreeDotsAnimation(
-              color: AppColors.green,
+              color: AppColors.gradient1,
               size: 12.0,
               bounceHeight: 12.0,
             ),

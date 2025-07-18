@@ -6,3 +6,14 @@ abstract interface class UserCase<SuccessType, Params>{
 }
 
 class NoParams{}
+
+class NormalParams{
+  final int page;
+  NormalParams({required this.page});
+}
+
+class SearchParams{
+  final int page;
+  final String keyword;
+  SearchParams({required this.keyword, required this.page});
+}

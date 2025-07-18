@@ -5,6 +5,8 @@ abstract class AppUserState {}
 
 final class AppUserInitialState extends AppUserState {}
 
+final class AppUserNotLoggedInState extends AppUserState{}
+
 final class AppUserLoggedInState extends AppUserState {
   final User user;
   AppUserLoggedInState({required this.user});

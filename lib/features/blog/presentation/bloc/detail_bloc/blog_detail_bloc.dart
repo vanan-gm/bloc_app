@@ -5,7 +5,7 @@ import 'package:bloc_app/core/enums/like_state.dart';
 import 'package:bloc_app/core/enums/update_state_type.dart';
 import 'package:bloc_app/core/usercase/usecase.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
-import 'package:bloc_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:bloc_app/features/blog/domain/usecases/get_blogs.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blog_like_state.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_keyword.dart';
 import 'package:bloc_app/features/blog/domain/usecases/get_blogs_by_user_id.dart';

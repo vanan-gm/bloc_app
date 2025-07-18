@@ -1,5 +1,6 @@
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
+import 'package:bloc_app/core/common/widgets/smart_list_view.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BlogPage extends StatefulWidget {
   static route() => CupertinoPageRoute(builder: (context) => const BlogPage());
@@ -21,16 +23,29 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    context.read<BlogBloc>().add(GetAllBlogsEvent());
+    initData();
+  }
+
+  void initData() {
+    if (!mounted) return;
+    context.read<BlogBloc>().add(GetBlogsEvent(page: 1));
   }
 
   Future<void> _handleRefreshPage() async {
     await Future.delayed(AppConstants.refreshDuration, () {});
     if (!mounted) return;
-    context.read<BlogBloc>().add(GetAllBlogsEvent());
+    context.read<BlogBloc>().add(GetBlogsEvent(page: 1, isRefresh: true));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -52,10 +67,11 @@ class _BlogPageState extends State<BlogPage> {
                 child: BlocConsumer<BlogBloc, BlogState>(
                   listener: (context, state) {
                     if (state is BlogFailureState) {
-                      showCustomOverlay(
+                      AppToast.showToast(
                         context: context,
-                        content: state.message,
-                        isSuccessType: false,
+                        title: "Failure!",
+                        message: state.message,
+                        type: ToastType.error,
                       );
                     }
                   },
@@ -63,8 +79,8 @@ class _BlogPageState extends State<BlogPage> {
                     if (state is BlogLoadingState) {
                       return const LoadingWidget();
                     } else if (state is BlogFetchedDataState) {
-                      return ListView.builder(
-                        itemCount: state.blogs.length,
+                      return SmartListView(
+                        scrollController: _scrollController,
                         itemBuilder: (context, i) {
                           final blog = state.blogs[i];
                           return BlogCard(
@@ -81,6 +97,33 @@ class _BlogPageState extends State<BlogPage> {
                             },
                           );
                         },
+                        dataList: state.blogs,
+                        hasReachedEnd: state.hasReachedEnd,
+                        onLoadMore:
+                            (int page) => context.read<BlogBloc>().add(
+                              GetBlogsEvent(page: page),
+                            ),
+                        loadingWidget: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppConstants.paddingSmall,
+                          ),
+                          child: Shimmer.fromColors(
+                            baseColor: AppColors.black.withValues(alpha: .6),
+                            highlightColor: AppColors.gradient1.withValues(
+                              alpha: .6,
+                            ),
+                            child: Container(
+                              width: AppConstants.widthScreen,
+                              height: AppConstants.containerCardHeight,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderImage,
+                                ),
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
                       );
                     } else {
                       return SizedBox(

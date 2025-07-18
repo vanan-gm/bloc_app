@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_app/core/common/extensions/object_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
@@ -11,6 +13,8 @@ class SearchField extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback? onClear;
   final Color? borderColor;
+  final bool useDebounce;
+  final ValueChanged<String> onSubmit;
 
   const SearchField({
     super.key,
@@ -18,6 +22,8 @@ class SearchField extends StatefulWidget {
     required this.controller,
     this.onClear,
     this.borderColor,
+    this.useDebounce = true,
+    required this.onSubmit,
   });
 
   @override
@@ -26,6 +32,7 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   final FocusNode _focusNode = FocusNode();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -52,6 +59,22 @@ class _SearchFieldState extends State<SearchField> {
     });
   }
 
+  @override
+  void dispose() {
+    if (_debounce.isNotNull) _debounce!.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String keyword) async {
+    if (keyword.length <= 3) return;
+    if (_debounce != null) {
+      if (_debounce!.isActive) _debounce!.cancel();
+    }
+    _debounce = Timer(AppConstants.debounceDuration, () {
+      widget.onSubmit.call(keyword);
+    });
+  }
+
   Widget? suffixIcon;
 
   @override
@@ -60,6 +83,7 @@ class _SearchFieldState extends State<SearchField> {
       controller: widget.controller,
       focusNode: _focusNode,
       style: Theme.of(context).textTheme.bodyMedium,
+      onChanged: _onSearchChanged,
       decoration: InputDecoration(
         hintText: widget.hintText,
         hintStyle: Theme.of(context).textTheme.bodyMedium,

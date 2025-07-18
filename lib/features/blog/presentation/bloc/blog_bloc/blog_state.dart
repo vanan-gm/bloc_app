@@ -18,7 +18,8 @@ final class BlogSuccessState extends BlogState {}
 
 final class BlogFetchedDataState extends BlogState {
   final List<Blog> blogs;
-  BlogFetchedDataState({required this.blogs});
+  final bool hasReachedEnd;
+  BlogFetchedDataState({required this.blogs, required this.hasReachedEnd});
 }
 
 final class BlogsFetchedByUserIdState extends BlogState {
