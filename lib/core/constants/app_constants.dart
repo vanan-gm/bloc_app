@@ -102,7 +102,7 @@ class AppConstants {
   static const Duration scrollToTopDuration = Duration(milliseconds: 200);
   static const Duration throttleDuration = Duration(milliseconds: 100);
   static const Duration debounceDuration = Duration(milliseconds: 1500);
-  static const Duration toastDuration = Duration(seconds: 1);
+  static const Duration toastDuration = Duration(seconds: 3);
   static const Duration animationCtrlDuration = Duration(milliseconds: 300);
 
   // Elevation
