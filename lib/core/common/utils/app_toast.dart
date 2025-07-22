@@ -220,18 +220,20 @@ class _ToastWidgetState extends State<ToastWidget>
 
                       // Close Button
                       if (widget.showCloseButton)
-                        IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: AppConstants.iconSmallSize,
-                            color: AppColors.grey,
-                          ),
-                          onPressed: _dismiss,
+                        Padding(
                           padding: EdgeInsets.only(
-                            top: AppConstants.paddingMediumSmall,
+                            top: AppConstants.paddingSmall,
                             right: AppConstants.paddingSuperTiny,
                           ),
-                          constraints: const BoxConstraints(),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              size: AppConstants.iconSmallSize,
+                              color: AppColors.grey,
+                            ),
+                            onPressed: _dismiss,
+                            constraints: const BoxConstraints(),
+                          ),
                         ),
                     ],
                   ),
