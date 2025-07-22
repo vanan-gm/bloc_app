@@ -1,0 +1,1 @@
+enum PageType { home, search, favorite, settings }

@@ -1,0 +1,1 @@
+enum LikeState{liked, unliked, unknown}

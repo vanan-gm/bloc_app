@@ -19,9 +19,17 @@ class SignupStream extends SignUpValidation {
   Stream<String> get passwordConfirmS =>
       _passwordConfirm.stream.transform(passwordConfirmValidation);
 
-  Stream<bool> get submitS =>
-      Rx.combineLatest4(
-          nameS, emailS, passwordS, passwordConfirmS, (a, b, c, d) => true);
+  Stream<bool> get submitS => Rx.combineLatest4(
+    nameS,
+    emailS,
+    passwordS,
+    passwordConfirmS,
+    (name, email, pass, passCon) =>
+        name.isNotEmpty &&
+        email.isNotEmpty &&
+        pass.isNotEmpty &&
+        passCon.isNotEmpty,
+  );
 
   // Functions to add to streams
   Function(String) get nameChange => _name.sink.add;
@@ -30,13 +38,13 @@ class SignupStream extends SignUpValidation {
 
   Function(String) get passwordChange => _password.sink.add;
 
-  Function(Map<String, String>) get passwordConfirmChange => _passwordConfirm.sink.add;
+  Function(Map<String, String>) get passwordConfirmChange =>
+      _passwordConfirm.sink.add;
 
-  void dispose(){
+  void dispose() {
     _name.close();
     _email.close();
     _password.close();
     _passwordConfirm.close();
   }
-
 }

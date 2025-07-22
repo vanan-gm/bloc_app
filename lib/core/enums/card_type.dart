@@ -1,0 +1,1 @@
+enum CardType { vertical, horizontal }

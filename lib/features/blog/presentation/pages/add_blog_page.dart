@@ -1,15 +1,19 @@
 import 'dart:io';
 
-import 'package:bloc_app/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:bloc_app/core/common/utils/pick_image.dart';
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
+import 'package:bloc_app/core/common/utils/image_picker_service.dart';
+import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/ripple_effect.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
-import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc.dart';
-import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
-import 'package:bloc_app/features/blog/presentation/widgets/blog_editor.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
+import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
+import 'package:bloc_app/features/blog/presentation/streams/add_blog_stream.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/category_chip_item.dart';
+import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
+import 'package:bloc_app/init_dependencies.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,30 +32,49 @@ class AddBlogPage extends StatefulWidget {
 class _AddBlogPageState extends State<AddBlogPage> {
   final TextEditingController _titleCtrl = TextEditingController();
   final TextEditingController _contentCtrl = TextEditingController();
-  final List<String> _selectedTopics = [];
-  File? image;
+  final ValueNotifier<bool> _enableSaveButton = ValueNotifier(false);
+  final ValueNotifier<List<String>> _selectedCategories = ValueNotifier([]);
+  final addBlogStream = getIt<AddBlogStream>();
+  final ValueNotifier<File?> _image = ValueNotifier(null);
 
   void selectImage() async {
-    final pickedImage = await pickImage();
+    final pickedImage = await getIt<ImagePickerService>().pickFromGallery();
     if (pickedImage != null) {
-      setState(() {
-        image = pickedImage;
-      });
+      _image.value = pickedImage;
+      setValueForSaveButton();
     }
   }
 
-  void handleUploadBlog(){
-    final posterId =
-        (context.read<AppUserCubit>().state as AppUserLoggedInState)
-            .userEntity
-            .id;
-    context.read<BlogBloc>().add(BlogUploadEvent(
-      posterId: posterId,
-      title: _titleCtrl.text.trim(),
-      content: _contentCtrl.text.trim(),
-      image: image!,
-      topics: _selectedTopics,
-    ));
+  void handleUploadBlog() {
+    final posterId = context.currentUserId;
+    context.read<BlogBloc>().add(
+      UploadBlogEvent(
+        posterId: posterId,
+        title: _titleCtrl.text.trim(),
+        content: _contentCtrl.text.trim(),
+        image: _image.value!,
+        categoryIds: _selectedCategories.value,
+      ),
+    );
+  }
+
+  bool get checkBeforeAddBlog =>
+      _image.value != null &&
+      _selectedCategories.value.isNotEmpty &&
+      _titleCtrl.text.trim().isNotEmpty &&
+      _titleCtrl.text.trim().length >= 6 &&
+      _contentCtrl.text.trim().isNotEmpty &&
+      _contentCtrl.text.trim().length >= 6;
+
+  void setValueForSaveButton() {
+    _enableSaveButton.value = checkBeforeAddBlog;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _titleCtrl.addListener(setValueForSaveButton);
+    _contentCtrl.addListener(setValueForSaveButton);
   }
 
   @override
@@ -59,139 +82,182 @@ class _AddBlogPageState extends State<AddBlogPage> {
     super.dispose();
     _titleCtrl.dispose();
     _contentCtrl.dispose();
+    addBlogStream.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: handleUploadBlog,
-              icon: const Icon(Icons.done_rounded)),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(AppConstants.paddingSmall),
-          child: BlocConsumer<BlogBloc, BlogState>(
-            listener: (context, state){
-              if(state is BlogFailureState){
-                showCustomOverlay(context: context, isSuccessType: false, content: 'Failed to upload blog');
-              }else if(state is BlogSuccessState){
-                Navigator.of(context).pushAndRemoveUntil(BlogPage.route(), (route) => false);
-              }
-            },
-            builder: (context, state){
-              if(state is BlogLoadingState){
-                return const LoadingWidget();
-              }else{
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      image == null
-                          ? RippleEffect(
-                        onTap: () {
-                          selectImage();
-                        },
-                        child: DottedBorder(
-                            color: AppPallete.borderColor,
-                            dashPattern: const [10, 4],
-                            radius:
-                            const Radius.circular(AppConstants.borderImage),
-                            borderType: BorderType.RRect,
-                            strokeCap: StrokeCap.round,
-                            child: SizedBox(
-                              height: AppConstants.containerHeight,
-                              width: AppConstants.widthScreen,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.folder_open,
-                                    size: AppConstants.iconHugeSize,
-                                  ),
-                                  SizedBox(
-                                    height: AppConstants.paddingSmall,
-                                  ),
-                                  const Text(
-                                    'Select your image',
-                                    style: TextStyle(
-                                        fontSize: AppConstants.textMediumSize),
-                                  )
-                                ],
-                              ),
-                            )),
-                      )
-                          : RippleEffect(
-                        onTap: selectImage,
-                        child: SizedBox(
-                          width: AppConstants.widthScreen,
-                          height: AppConstants.containerHeight,
-                          child: ClipRRect(
-                            borderRadius:
-                            BorderRadius.circular(AppConstants.borderImage),
-                            child: Image.file(
-                              image!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+    return GestureDetector(
+      child: Scaffold(
+        appBar: AppBar(
+          forceMaterialTransparency: true,
+          actions: [buildActionButton],
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(AppConstants.paddingSmall),
+            child: BlocConsumer<BlogBloc, BlogState>(
+              listener: (context, state) {
+                if (state is BlogFailureState) {
+                  AppToast.showToast(
+                    context: context,
+                    title: "Failure!",
+                    message: context.translate.failedToUploadBlog,
+                    type: ToastType.error,
+                  );
+                } else if (state is BlogSuccessState) {
+                  Navigator.of(context).pop(true);
+                }
+              },
+              builder: (context, state) {
+                if (state is BlogLoadingState) {
+                  return const LoadingWidget();
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        buildImageSelection,
+                        SizedBox(height: AppConstants.paddingSmall),
+                        buildCategorySelection(context),
+                        SizedBox(height: AppConstants.paddingSmall),
+                        CommonTextField(
+                          controller: _titleCtrl,
+                          hintText: context.translate.blogTitle,
+                          stream: addBlogStream.blogTitleStreamS(context),
+                          onChange: addBlogStream.blogTitleChange,
+                          linesLimit: null,
                         ),
-                      ),
-                      SizedBox(
-                        height: AppConstants.paddingSmall,
-                      ),
-                      SizedBox(
-                        height: AppConstants.containerTopicHeight,
-                        child: ListView.builder(
-                            itemCount: AppConstants.topics.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, i) {
-                              final item = AppConstants.topics[i];
-                              return Padding(
-                                  padding: EdgeInsets.only(
-                                      right: i != AppConstants.topics.length - 1
-                                          ? AppConstants.paddingTiny
-                                          : 0.0),
-                                  child: RippleEffect(
-                                    onTap: () {
-                                      if (!_selectedTopics.contains(item)) {
-                                        _selectedTopics.add(item);
-                                      } else if (_selectedTopics.contains(item)) {
-                                        _selectedTopics.remove(item);
-                                      }
-                                      setState(() {});
-                                    },
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: AppConstants.paddingTiny),
-                                    child: Chip(
-                                      label: Text(item),
-                                      color: _selectedTopics.contains(item)
-                                          ? const MaterialStatePropertyAll(
-                                          AppPallete.gradient1)
-                                          : null,
-                                      side: const BorderSide(
-                                          color: AppPallete.borderColor),
-                                    ),
-                                  ));
-                            }),
-                      ),
-                      SizedBox(
-                        height: AppConstants.paddingSmall,
-                      ),
-                      BlogEditor(controller: _titleCtrl, hintText: 'Blog title'),
-                      SizedBox(
-                        height: AppConstants.paddingSmall,
-                      ),
-                      BlogEditor(controller: _contentCtrl, hintText: 'Blog content'),
-                    ],
-                  ),
-                );
-              }
-            },
+                        SizedBox(height: AppConstants.paddingSmall),
+                        CommonTextField(
+                          controller: _contentCtrl,
+                          hintText: context.translate.blogContent,
+                          stream: addBlogStream.blogContentStreams(context),
+                          onChange: addBlogStream.blogContentChange,
+                          linesLimit: null,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget get buildActionButton {
+    return ValueListenableBuilder(
+      valueListenable: _enableSaveButton,
+      builder: (context, enableButton, _) {
+        return IconButton(
+          onPressed: enableButton ? handleUploadBlog : null,
+          icon: Icon(
+            Icons.done_rounded,
+            color:
+                enableButton
+                    ? (context.isLightMode ? AppColors.black : AppColors.white)
+                    : (context.isLightMode
+                        ? AppColors.black.withValues(alpha: .4)
+                        : AppColors.white.withValues(alpha: .4)),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget get buildImageSelection {
+    return ValueListenableBuilder(
+      valueListenable: _image,
+      builder: (context, image, _) {
+        return image == null
+            ? RippleEffect(
+              onTap: () {
+                selectImage();
+              },
+              child: DottedBorder(
+                color: AppColors.borderColor,
+                dashPattern: const [10, 4],
+                radius: const Radius.circular(AppConstants.borderImage),
+                borderType: BorderType.RRect,
+                strokeCap: StrokeCap.round,
+                child: SizedBox(
+                  height: AppConstants.containerHeight,
+                  width: AppConstants.widthScreen,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.folder_open, size: AppConstants.iconHugeSize),
+                      SizedBox(height: AppConstants.paddingSmall),
+                      Text(
+                        context.translate.selectYourImage,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+            : RippleEffect(
+              onTap: selectImage,
+              child: SizedBox(
+                width: AppConstants.widthScreen,
+                height: AppConstants.containerHeight,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.borderImage),
+                  child: Image.file(image, fit: BoxFit.cover),
+                ),
+              ),
+            );
+      },
+    );
+  }
+
+  Widget buildCategorySelection(BuildContext context) {
+    final categories = context.read<BlogCategoryCubit>().state;
+    return ValueListenableBuilder(
+      valueListenable: _selectedCategories,
+      builder: (context, selectedTopics, _) {
+        return SizedBox(
+          height: AppConstants.containerTopicHeight,
+          child: ListView.builder(
+            itemCount: categories.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, i) {
+              final category = categories[i];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right:
+                      i != AppConstants.topics(context).length - 1
+                          ? AppConstants.paddingTiny
+                          : 0.0,
+                ),
+                child: CategoryChipItem(
+                  category: category,
+                  isChosen: _selectedCategories.value.contains(
+                    category.categoryId,
+                  ),
+                  onChanged: (bool isChosen) {
+                    if (isChosen) {
+                      _selectedCategories.value = [
+                        ..._selectedCategories.value,
+                        category.categoryId,
+                      ];
+                    } else if (!isChosen) {
+                      _selectedCategories.value =
+                          _selectedCategories.value
+                              .where((c) => c != category.categoryId)
+                              .toList();
+                    }
+                    setValueForSaveButton();
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

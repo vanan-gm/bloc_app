@@ -1,13 +1,14 @@
-import 'package:bloc_app/core/common/utils/show_custom_overlay.dart';
+import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
+import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/utils/app_toast.dart';
+import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
+import 'package:bloc_app/core/common/widgets/common_text_field.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
 import 'package:bloc_app/core/theme/app_colors.dart';
-import 'package:bloc_app/core/theme/app_pallete.dart';
 import 'package:bloc_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:bloc_app/features/auth/presentation/streams/signup_stream.dart';
-import 'package:bloc_app/features/auth/presentation/widgets/auth_field.dart';
-import 'package:bloc_app/features/auth/presentation/widgets/auth_gradient_button.dart';
-import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
+import 'package:bloc_app/features/blog/presentation/pages/master_page.dart';
 import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -15,7 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
-  static route() => CupertinoPageRoute(builder: (context) => const SignUpPage());
+  static route() =>
+      CupertinoPageRoute(builder: (context) => const SignUpPage());
   const SignUpPage({super.key});
 
   @override
@@ -36,6 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _emailCtrl.dispose();
     _passWordCtrl.dispose();
     _passWordConfirmCtrl.dispose();
+    signUpStream.dispose();
   }
 
   @override
@@ -49,18 +52,22 @@ class _SignUpPageState extends State<SignUpPage> {
               child: BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthSuccessState) {
-                    showCustomOverlay(
-                        context: context,
-                        content: 'Create account successfully');
-                    Navigator.of(context).pushAndRemoveUntil(
-                      BlogPage.route(),
-                      (route) => false,
+                    AppToast.showToast(
+                      context: context,
+                      title: "Success!",
+                      message: context.translate.createAccountSuccessfully,
+                      type: ToastType.success,
                     );
+                    Navigator.of(
+                      context,
+                    ).pushAndRemoveUntil(MasterPage.route(), (route) => false);
                   } else if (state is AuthFailureState) {
-                    showCustomOverlay(
-                        context: context,
-                        content: state.message,
-                        isSuccessType: false);
+                    AppToast.showToast(
+                      context: context,
+                      title: "Failure",
+                      message: state.message,
+                      type: ToastType.error,
+                    );
                   }
                 },
                 builder: (context, state) {
@@ -70,19 +77,24 @@ class _SignUpPageState extends State<SignUpPage> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           'Sign Up',
-                          style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displayLarge!.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color:
+                                context.isLightMode
+                                    ? AppColors.black
+                                    : AppColors.white,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
-                          child: AuthField(
+                          child: CommonTextField(
                             hintText: 'Name',
                             controller: _nameCtrl,
                             stream: signUpStream.nameS,
@@ -94,7 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
-                          child: AuthField(
+                          child: CommonTextField(
                             hintText: 'Email',
                             controller: _emailCtrl,
                             stream: signUpStream.emailS,
@@ -106,7 +118,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
-                          child: AuthField(
+                          child: CommonTextField(
                             hintText: 'Password',
                             controller: _passWordCtrl,
                             isPasswordType: true,
@@ -119,15 +131,16 @@ class _SignUpPageState extends State<SignUpPage> {
                             horizontal: AppConstants.paddingSmall,
                             vertical: AppConstants.paddingSmall,
                           ),
-                          child: AuthField(
+                          child: CommonTextField(
                             hintText: 'Password Confirm',
                             controller: _passWordConfirmCtrl,
                             isPasswordType: true,
                             stream: signUpStream.passwordConfirmS,
-                            onChange: (value){
+                            onChange: (value) {
                               signUpStream.passwordConfirmChange({
                                 "password": _passWordCtrl.text.trim(),
-                                "password_confirm": _passWordConfirmCtrl.text.trim(),
+                                "password_confirm":
+                                    _passWordConfirmCtrl.text.trim(),
                               });
                             },
                           ),
@@ -137,38 +150,55 @@ class _SignUpPageState extends State<SignUpPage> {
                             vertical: AppConstants.paddingSmall,
                             horizontal: AppConstants.paddingSmall,
                           ),
-                          child: AuthGradientButton(
+                          child: CommonGradientButton(
                             stream: signUpStream.submitS,
                             onPressed: () {
-                              context.read<AuthBloc>().add(AuthSignUp(
+                              context.read<AuthBloc>().add(
+                                SignUpEvent(
                                   name: _nameCtrl.text.trim().toLowerCase(),
                                   email: _emailCtrl.text.trim().toLowerCase(),
-                                  password: _passWordCtrl.text.trim()));
+                                  password: _passWordCtrl.text.trim(),
+                                ),
+                              );
                             },
                             text: 'Sign Up',
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingMedium),
+                            vertical: AppConstants.paddingMedium,
+                          ),
                           child: RichText(
                             text: TextSpan(
-                                text: 'Already have an account? ',
-                                style: Theme.of(context).textTheme.titleMedium,
-                                children: [
-                                  TextSpan(
-                                    text: 'Sign In',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: AppPallete.gradient2,
-                                            fontWeight: FontWeight.bold),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () =>
-                                          Navigator.of(context).maybePop(),
-                                  )
-                                ]),
+                              text:
+                                  "${context.translate.alreadyHaveAnAccount}? ",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium!.copyWith(
+                                color:
+                                    context.isLightMode
+                                        ? AppColors.black
+                                        : AppColors.white,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: context.translate.signIn,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    color: AppColors.gradient2,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap =
+                                            () =>
+                                                Navigator.of(
+                                                  context,
+                                                ).maybePop(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
