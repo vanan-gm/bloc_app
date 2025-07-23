@@ -1,5 +1,6 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/widget_ext.dart';
 import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
@@ -13,6 +14,7 @@ import 'package:bloc_app/init_dependencies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -88,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ? AppColors.black
                                     : AppColors.white,
                           ),
-                        ),
+                        ).useScaleAnimation(),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.paddingSmall,
@@ -99,6 +101,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             controller: _nameCtrl,
                             stream: signUpStream.nameS,
                             onChange: signUpStream.nameChange,
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration200,
                           ),
                         ),
                         Padding(
@@ -111,6 +115,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             controller: _emailCtrl,
                             stream: signUpStream.emailS,
                             onChange: signUpStream.emailChange,
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration400,
                           ),
                         ),
                         Padding(
@@ -124,6 +130,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             isPasswordType: true,
                             stream: signUpStream.passwordS,
                             onChange: signUpStream.passwordChange,
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration600,
                           ),
                         ),
                         Padding(
@@ -143,6 +151,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     _passWordConfirmCtrl.text.trim(),
                               });
                             },
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration800,
                           ),
                         ),
                         Padding(
@@ -162,6 +172,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               );
                             },
                             text: 'Sign Up',
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration400,
+                            offset: AppConstants.offsetUp50,
                           ),
                         ),
                         Padding(
@@ -199,6 +212,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                               ],
                             ),
+                          ).useFadeAnimation(
+                            duration: AppConstants.fadeDuration600,
+                            offset: AppConstants.offsetUp50,
                           ),
                         ),
                       ],

@@ -97,6 +97,11 @@ class AppConstants {
   // Duration
   static const Duration refreshDuration = Duration(seconds: 2);
   static const Duration fadeDuration = Duration(milliseconds: 300);
+  static const Duration fadeDuration200 = Duration(milliseconds: 200);
+  static const Duration fadeDuration400 = Duration(milliseconds: 400);
+  static const Duration fadeDuration600 = Duration(milliseconds: 600);
+  static const Duration fadeDuration800 = Duration(milliseconds: 800);
+  static const Duration fadeDuration1000 = Duration(milliseconds: 1000);
   static const Duration fadeShortDuration = Duration(milliseconds: 100);
   static const Duration rotationDuration = Duration(milliseconds: 200);
   static const Duration scrollToTopDuration = Duration(milliseconds: 200);
@@ -162,4 +167,10 @@ class AppConstants {
   static const double minContentTextSize = 14.0;
   static const double maxContentTextSize = 24.0;
   static const double distanceFloatingButtons = 55.0;
+
+  // Offset
+  static const offsetDown50 = Offset(0, -50);
+  static const offsetUp50 = Offset(0, 50);
+  static const offsetLeft50 = Offset(-50, 0);
+  static const offsetScale = Offset(.8, .8);
 }

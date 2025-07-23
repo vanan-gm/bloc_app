@@ -1,5 +1,6 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
+import 'package:bloc_app/core/common/extensions/widget_ext.dart';
 import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/common_gradient_button.dart';
 import 'package:bloc_app/core/common/widgets/common_text_field.dart';
@@ -87,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
             fontWeight: FontWeight.w700,
             color: context.isLightMode ? AppColors.black : AppColors.white,
           ),
-        ),
+        ).useScaleAnimation(),
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: AppConstants.paddingSmall,
@@ -102,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
               vertical: AppConstants.paddingSmallPlus,
               horizontal: AppConstants.paddingSmall,
             ),
-          ),
+          ).useFadeAnimation(duration: AppConstants.fadeDuration600),
         ),
         Padding(
           padding: EdgeInsets.symmetric(
@@ -119,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
               horizontal: AppConstants.paddingSmall,
             ),
             isPasswordType: true,
-          ),
+          ).useFadeAnimation(duration: AppConstants.fadeDuration800),
         ),
         Padding(
           padding: EdgeInsets.symmetric(
@@ -137,6 +138,9 @@ class _LoginPageState extends State<LoginPage> {
             },
             text: context.translate.signIn,
             stream: loginStream.submitS,
+          ).useFadeAnimation(
+            duration: AppConstants.fadeDuration600,
+            offset: AppConstants.offsetUp50,
           ),
         ),
         Padding(
@@ -162,6 +166,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
+          ).useFadeAnimation(
+            duration: AppConstants.fadeDuration800,
+            offset: AppConstants.offsetUp50,
           ),
         ),
       ],
