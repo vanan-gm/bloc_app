@@ -96,6 +96,7 @@ class AppConstants {
 
   // Duration
   static const Duration refreshDuration = Duration(seconds: 2);
+  static const Duration fadeItemOfListDuration = Duration(milliseconds: 100);
   static const Duration fadeDuration = Duration(milliseconds: 300);
   static const Duration fadeDuration200 = Duration(milliseconds: 200);
   static const Duration fadeDuration400 = Duration(milliseconds: 400);

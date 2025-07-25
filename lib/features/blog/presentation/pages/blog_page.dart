@@ -1,3 +1,4 @@
+import 'package:bloc_app/core/common/extensions/widget_ext.dart';
 import 'package:bloc_app/core/common/utils/app_toast.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/common/widgets/smart_list_view.dart';
@@ -95,6 +96,8 @@ class _BlogPageState extends State<BlogPage> {
                                 context,
                               ).push(BlogDetailPage.route(blog: blog));
                             },
+                          ).useFadeAnimation(
+                            delay: AppConstants.fadeItemOfListDuration * i,
                           );
                         },
                         dataList: state.blogs,

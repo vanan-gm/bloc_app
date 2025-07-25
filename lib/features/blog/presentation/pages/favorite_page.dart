@@ -3,6 +3,7 @@ import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/widgets/loading_widget.dart';
 import 'package:bloc_app/core/constants/app_constants.dart';
+import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/favorite_bloc/favorite_bloc.dart';
 import 'package:bloc_app/features/blog/presentation/pages/blog_detail_page.dart';
 import 'package:bloc_app/features/blog/presentation/widgets/blog_card.dart';
@@ -73,6 +74,8 @@ class _FavoritePageState extends State<FavoritePage> {
                           final blog = state.blogs[i];
                           return BlogCard(
                             blog: blog,
+                            chipBackgroudColor: AppColors.black,
+                            chipTextColor: AppColors.white,
                             padding: EdgeInsets.only(
                               bottom: AppConstants.paddingSmall,
                             ),

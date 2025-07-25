@@ -3,6 +3,7 @@ import 'package:bloc_app/core/common/extensions/date_time_ext.dart';
 import 'package:bloc_app/core/common/extensions/locale_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/string_ext.dart';
+import 'package:bloc_app/core/common/extensions/widget_ext.dart';
 import 'package:bloc_app/core/common/utils/app_dialog.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
@@ -130,11 +131,19 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     ),
                     key: _key,
                     padding: EdgeInsets.only(bottom: AppConstants.paddingTiny),
+                  ).useScaleAnimation(),
+                  categoryRenderWidget(
+                    context,
+                  ).useFadeAnimation(duration: AppConstants.fadeDuration400),
+                  authorRenderWidget.useFadeAnimation(
+                    duration: AppConstants.fadeDuration600,
                   ),
-                  categoryRenderWidget(context),
-                  authorRenderWidget,
-                  imageRenderWidget,
-                  contentRenderWidget,
+                  imageRenderWidget.useFadeAnimation(
+                    duration: AppConstants.fadeDuration800,
+                  ),
+                  contentRenderWidget.useFadeAnimation(
+                    duration: AppConstants.fadeDuration1000,
+                  ),
                 ],
               ),
             ),
