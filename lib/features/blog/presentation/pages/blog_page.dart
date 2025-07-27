@@ -84,6 +84,9 @@ class _BlogPageState extends State<BlogPage> {
                         scrollController: _scrollController,
                         itemBuilder: (context, i) {
                           final blog = state.blogs[i];
+                          final cappedIndex = i.clamp(0, 10);
+                          final delay =
+                              AppConstants.fadeItemOfListDuration * cappedIndex;
                           return BlogCard(
                             blog: blog,
                             chipBackgroudColor: AppColors.black,
@@ -96,9 +99,7 @@ class _BlogPageState extends State<BlogPage> {
                                 context,
                               ).push(BlogDetailPage.route(blog: blog));
                             },
-                          ).useFadeAnimation(
-                            delay: AppConstants.fadeItemOfListDuration * i,
-                          );
+                          ).useFadeAnimation(delay: delay);
                         },
                         dataList: state.blogs,
                         hasReachedEnd: state.hasReachedEnd,

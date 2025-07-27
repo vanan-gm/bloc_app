@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/object_ext.dart';
+import 'package:bloc_app/core/common/extensions/widget_ext.dart';
 import 'package:bloc_app/core/common/widgets/app_button.dart';
 import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/core/common/widgets/multiple_value_notifier_builder.dart';
@@ -11,6 +12,8 @@ import 'package:bloc_app/core/theme/app_colors.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog_category.dart';
 import 'package:bloc_app/features/blog/presentation/widgets/category_chip_item.dart';
 import 'package:bloc_app/features/blog/presentation/widgets/category_filter_bottom_sheet.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/loading_blog_widget.dart';
+import 'package:bloc_app/features/blog/presentation/widgets/loading_blogs_list.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +50,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void initData() {
+    if (!mounted) return;
+    context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
+  }
+
+  Future<void> _handleRefreshPage() async {
     if (!mounted) return;
     context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
   }
@@ -96,12 +104,15 @@ class _SearchPageState extends State<SearchPage> {
                 child: BlocBuilder<SearchBloc, SearchState>(
                   builder: (context, state) {
                     if (state is SearchBlogsLoadingState) {
-                      return const LoadingWidget();
+                      return const LoadingBlogsList();
                     } else if (state is SearchBlogsFetchedState) {
                       return SmartListView(
                         scrollController: _scrollController,
                         itemBuilder: (context, i) {
                           final blog = state.blogs[i];
+                          final cappedIndex = i.clamp(0, 10);
+                          final delay =
+                              AppConstants.fadeItemOfListDuration * cappedIndex;
                           return BlogCard(
                             blog: blog,
                             chipBackgroudColor: AppColors.black,
@@ -114,7 +125,7 @@ class _SearchPageState extends State<SearchPage> {
                                 context,
                               ).push(BlogDetailPage.route(blog: blog));
                             },
-                          );
+                          ).useFadeAnimation(delay: delay);
                         },
                         dataList: state.blogs,
                         hasReachedEnd: state.hasReachedEnd,
@@ -126,22 +137,8 @@ class _SearchPageState extends State<SearchPage> {
                                 isLoadingMore: true,
                               ),
                             ),
-                        loadingWidget: Shimmer.fromColors(
-                          baseColor: AppColors.black.withValues(alpha: .6),
-                          highlightColor: AppColors.gradient1.withValues(
-                            alpha: .6,
-                          ),
-                          child: Container(
-                            width: AppConstants.widthScreen,
-                            height: AppConstants.containerCardHeight,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                AppConstants.borderImage,
-                              ),
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
+                        onRefresh: _handleRefreshPage,
+                        loadingWidget: const LoadingBlogWidget(),
                       );
                     } else {
                       return SizedBox();
@@ -199,25 +196,26 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            if(chosenCategories.isNotEmpty) Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.gradient1,
-                ),
-                alignment: Alignment.center,
-                child: AppText(
-                  text: chosenCategories.length.toString(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall!.copyWith(color: AppColors.white),
+            if (chosenCategories.isNotEmpty)
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.gradient1,
+                  ),
+                  alignment: Alignment.center,
+                  child: AppText(
+                    text: chosenCategories.length.toString(),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall!.copyWith(color: AppColors.white),
+                  ),
                 ),
               ),
-            ),
           ],
         );
       },
