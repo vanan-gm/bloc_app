@@ -10,7 +10,7 @@ class GetBlogsByKeyWord implements UserCase<List<Blog>, SearchParams>{
 
   @override
   Future<Either<Failure, List<Blog>>> call(SearchParams params) async{
-    return await blogRepository.getBlogsByKeyWord(page: params.page, keyword: params.keyword);
+    return await blogRepository.getBlogsByKeyWord(page: params.page, keyword: params.keyword, filterCategories: params.filterCategories);
   }
 
 }

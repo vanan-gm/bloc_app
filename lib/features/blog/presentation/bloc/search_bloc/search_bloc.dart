@@ -15,16 +15,12 @@ part 'search_event.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final List<Blog> _blogs = [];
   final GetBlogsByKeyWord _getBlogsByKeyWord;
-  final GetBlogs _getBlogs;
 
   SearchBloc({
     required GetBlogsByKeyWord getBlogsByKeyWord,
-    required GetBlogs getBlogs,
   }) : _getBlogsByKeyWord = getBlogsByKeyWord,
-       _getBlogs = getBlogs,
        super(SearchBlogsInitialState()) {
-    on<SearchBlogsEvent>(_onSearchBlogsEvent);
-    on<FetchBlogsEvent>(_onFetchBlogsEvent, transformer: throttleDroppable());
+    on<SearchBlogsEvent>(_onSearchBlogsEvent, transformer: throttleDroppable());
     on<ClearSearchBlogsEvent>(_onClearSearchBlogsEvent);
   }
 
@@ -35,7 +31,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     if(event.page == 1){
       emit(SearchBlogsLoadingState());
     }
-    final res = await _getBlogsByKeyWord.call(SearchParams(keyword: event.keyword, page: event.page));
+    final res = await _getBlogsByKeyWord.call(SearchParams(keyword: event.keyword, page: event.page, filterCategories: event.filterCategories));
     res.fold(
       (failure) => emit(SearchBlogsFailureState(message: failure.message)),
       (blogs){
@@ -51,22 +47,5 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     emit(ClearSearchBlogsSuccessState());
-  }
-
-  FutureOr<void> _onFetchBlogsEvent(
-    FetchBlogsEvent event,
-    Emitter<SearchState> emit,
-  ) async {
-    if(event.page == 1){
-      emit(SearchBlogsLoadingState());
-    }
-    final res = await _getBlogs.call(NormalParams(page: event.page));
-    res.fold(
-      (failure) => emit(SearchBlogsFailureState(message: failure.message)),
-      (blogs){
-        _blogs.addAll(blogs);
-        emit(SearchBlogsFetchedState(blogs: List.from(_blogs), hasReachedEnd: false));
-      },
-    );
   }
 }

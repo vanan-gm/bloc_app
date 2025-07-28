@@ -15,5 +15,6 @@ class NormalParams{
 class SearchParams{
   final int page;
   final String keyword;
-  SearchParams({required this.keyword, required this.page});
+  final List<String> filterCategories;
+  SearchParams({required this.keyword, required this.page, this.filterCategories = const []});
 }

@@ -137,7 +137,7 @@ void _initBlog() {
       ),
     )
     ..registerFactory(() => ProfileBloc(getBlogsByUserId: getIt()))
-    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt(), getBlogs: getIt()))
+    ..registerFactory(() => SearchBloc(getBlogsByKeyWord: getIt()))
     ..registerFactory(
       () => BlogDetailBloc(
         getBlogLikeState: getIt(),

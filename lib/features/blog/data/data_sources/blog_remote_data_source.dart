@@ -20,7 +20,7 @@ abstract interface class BlogRemoteDataSource {
 
   Future<List<BlogModel>> getBlogsByUserId(String userId);
 
-  Future<List<BlogModel>> getBlogsByKeyWord({required String keyword, required int page, int itemPerPage = 10});
+  Future<List<BlogModel>> getBlogsByKeyWord({required String keyword, required int page, int itemPerPage = 10, required List<String> filterCategories});
 
   Future<LikeState> getBlogLikeState(String blogId, String userId);
 
@@ -124,16 +124,21 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   }
 
   @override
-  Future<List<BlogModel>> getBlogsByKeyWord({required String keyword, required int page, int itemPerPage = 10}) async {
+  Future<List<BlogModel>> getBlogsByKeyWord({required String keyword, required int page, int itemPerPage = 10, required List<String> filterCategories}) async {
     try {
       final start = (page - 1) * itemPerPage;
       final end = start + itemPerPage - 1;
-      final blogs = await supabaseClient
+      final query = supabaseClient
           .from(AppConstants.tableBlogs)
           .select('*, profiles (name, image_url)')
-          .ilike("title", '%$keyword%')
-          .range(start, end)
-          .order('updated_at');
+          .ilike("title", '%$keyword%');
+
+      if(filterCategories.isNotEmpty){
+        query.inFilter("category_ids", filterCategories);
+      }
+
+      final blogs = await query.range(start, end).order('updated_at');
+
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog).copyWith(

@@ -51,12 +51,14 @@ class _SearchPageState extends State<SearchPage> {
 
   void initData() {
     if (!mounted) return;
-    context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
+    context.read<SearchBloc>().add(SearchBlogsEvent(page: 1));
   }
 
   Future<void> _handleRefreshPage() async {
     if (!mounted) return;
-    context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
+    _searchCtrl.text = "";
+    context.read<SearchBloc>().add(SearchBlogsEvent(page: 1));
+    setState(() {});
   }
 
   @override
@@ -91,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     },
                     onClear: () {
-                      context.read<SearchBloc>().add(FetchBlogsEvent(page: 1));
+                      context.read<SearchBloc>().add(SearchBlogsEvent(page: 1));
                     },
                   ),
                 ),
@@ -135,6 +137,7 @@ class _SearchPageState extends State<SearchPage> {
                                 page: page,
                                 keyword: _searchCtrl.text.trim(),
                                 isLoadingMore: true,
+                                filterCategories: _chosenCategories.value
                               ),
                             ),
                         onRefresh: _handleRefreshPage,
@@ -188,6 +191,8 @@ class _SearchPageState extends State<SearchPage> {
                   } else {
                     _chosenCategories.value.clear();
                   }
+                  if(!context.mounted) return;
+                  context.read<SearchBloc>().add(SearchBlogsEvent(page: 1, keyword: _searchCtrl.text.trim(), filterCategories: _chosenCategories.value));
                 },
                 child: SizedBox(
                   height: AppConstants.circleAvatarMedSize,

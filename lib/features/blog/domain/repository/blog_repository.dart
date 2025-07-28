@@ -18,7 +18,7 @@ abstract class BlogRepository {
 
   Future<Either<Failure, List<Blog>>> getBlogs({required int page});
   Future<Either<Failure, List<Blog>>> getBlogsByUserId(String userId);
-  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord({required String keyword, required int page});
+  Future<Either<Failure, List<Blog>>> getBlogsByKeyWord({required String keyword, required int page, required List<String> filterCategories});
   Future<Either<Failure, LikeState>> getBlogLikeState(
     String blogId,
     String userId,
