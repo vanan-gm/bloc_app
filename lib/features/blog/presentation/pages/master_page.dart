@@ -1,13 +1,10 @@
 import 'package:bloc_app/core/common/extensions/buildcontext_ext.dart';
 import 'package:bloc_app/core/common/extensions/localization_ext.dart';
 import 'package:bloc_app/core/common/extensions/object_ext.dart';
-import 'package:bloc_app/core/common/utils/app_toast.dart';
-import 'package:bloc_app/core/common/widgets/app_text.dart';
 import 'package:bloc_app/features/auth/presentation/pages/settings_page.dart';
 import 'package:bloc_app/features/blog/presentation/bloc/blog_bloc/blog_bloc.dart';
 import 'package:bloc_app/features/settings/presentation/cubit/blog_category_cubit.dart';
 import 'package:bloc_app/generated/assets.dart';
-import 'package:bottom_bar/bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc_app/core/common/widgets/app_icon.dart';
@@ -19,6 +16,7 @@ import 'package:bloc_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/favorite_page.dart';
 import 'package:bloc_app/features/blog/presentation/pages/search_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class MasterPage extends StatefulWidget {
   static route() =>
@@ -31,6 +29,9 @@ class MasterPage extends StatefulWidget {
 }
 
 class _MasterPageState extends State<MasterPage> {
+  final PersistentTabController _tabController = PersistentTabController(
+    initialIndex: 0,
+  );
   final List<PageType> pagesTitle = [
     PageType.home,
     PageType.search,
@@ -90,67 +91,58 @@ class _MasterPageState extends State<MasterPage> {
             child: IndexedStack(index: _currentTabIndex, children: pages),
           ),
         ),
-        bottomNavigationBar: BottomBar(
-          selectedIndex: _currentTabIndex,
-          onTap: changeTabIndex,
-          padding: EdgeInsets.symmetric(horizontal: AppConstants.paddingSmall),
-          height: 65,
-          items: <BottomBarItem>[
-            BottomBarItem(
+        bottomNavigationBar: PersistentTabView(
+          context,
+          controller: _tabController,
+          screens: pages,
+          backgroundColor:
+              context.isLightMode ? AppColors.white : AppColors.black,
+          navBarHeight: AppConstants.containerDetailHeight,
+          onItemSelected: changeTabIndex,
+          items: [
+            PersistentBottomNavBarItem(
               icon: AppIcon.asset(
                 Assets.iconsIcHome,
                 size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 0),
               ),
-              title: AppText(
-                text: context.translate.home,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: getTabColor(context: context, requiredIndex: 0),
-                ),
-              ),
-              activeColor: AppColors.gradient1,
+              title: context.translate.home,
+              activeColorPrimary: AppColors.gradient1,
+              inactiveColorPrimary:
+                  context.isLightMode ? AppColors.black : AppColors.white,
             ),
-            BottomBarItem(
+            PersistentBottomNavBarItem(
               icon: AppIcon.asset(
                 Assets.iconsIcSearch,
                 size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 1),
               ),
-              title: AppText(
-                text: context.translate.search,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: getTabColor(context: context, requiredIndex: 1),
-                ),
-              ),
-              activeColor: AppColors.gradient1,
+              title: context.translate.search,
+              activeColorPrimary: AppColors.gradient1,
+              inactiveColorPrimary:
+                  context.isLightMode ? AppColors.black : AppColors.white,
             ),
-            BottomBarItem(
+            PersistentBottomNavBarItem(
               icon: AppIcon.asset(
                 Assets.iconsIcHeart,
                 size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 2),
               ),
-              title: AppText(
-                text: context.translate.favorite,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: getTabColor(context: context, requiredIndex: 2),
-                ),
-              ),
-              activeColor: AppColors.gradient1,
+              title: context.translate.favorite,
+              activeColorPrimary: AppColors.gradient1,
+              inactiveColorPrimary:
+                  context.isLightMode ? AppColors.black : AppColors.white,
             ),
-            BottomBarItem(
+            PersistentBottomNavBarItem(
               icon: AppIcon.asset(
                 Assets.iconsIcSettings,
                 size: AppConstants.iconMediumSize,
                 color: getTabColor(context: context, requiredIndex: 3),
               ),
-              title: AppText(
-                text: context.translate.settings,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: getTabColor(context: context, requiredIndex: 3),
-                ),
-              ),
-              activeColor: AppColors.gradient1,
+              title: context.translate.settings,
+              activeColorPrimary: AppColors.gradient1,
+              inactiveColorPrimary:
+                  context.isLightMode ? AppColors.black : AppColors.white,
             ),
           ],
         ),

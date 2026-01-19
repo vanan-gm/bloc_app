@@ -52,102 +52,105 @@ class _BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthSignOutSuccessState) {
-            Navigator.of(
-              context,
-            ).pushAndRemoveUntil(LoginPage.route(), (route) => false);
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              RefreshIndicator(
-                onRefresh: _handleRefreshPage,
-                child: BlocConsumer<BlogBloc, BlogState>(
-                  listener: (context, state) {
-                    if (state is BlogFailureState) {
-                      AppToast.showToast(
-                        context: context,
-                        title: "Failure!",
-                        message: state.message,
-                        type: ToastType.error,
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is BlogLoadingState) {
-                      return const LoadingWidget();
-                    } else if (state is BlogFetchedDataState) {
-                      return SmartListView(
-                        scrollController: _scrollController,
-                        itemBuilder: (context, i) {
-                          final blog = state.blogs[i];
-                          final cappedIndex = i.clamp(0, 10);
-                          final delay =
-                              AppConstants.fadeItemOfListDuration * cappedIndex;
-                          return BlogCard(
-                            blog: blog,
-                            chipBackgroudColor: AppColors.black,
-                            chipTextColor: AppColors.white,
+      body: SafeArea(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthSignOutSuccessState) {
+              Navigator.of(
+                context,
+              ).pushAndRemoveUntil(LoginPage.route(), (route) => false);
+            }
+          },
+          builder: (context, state) {
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: _handleRefreshPage,
+                  child: BlocConsumer<BlogBloc, BlogState>(
+                    listener: (context, state) {
+                      if (state is BlogFailureState) {
+                        AppToast.showToast(
+                          context: context,
+                          title: "Failure!",
+                          message: state.message,
+                          type: ToastType.error,
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is BlogLoadingState) {
+                        return const LoadingWidget();
+                      } else if (state is BlogFetchedDataState) {
+                        return SmartListView(
+                          scrollController: _scrollController,
+                          itemBuilder: (context, i) {
+                            final blog = state.blogs[i];
+                            final cappedIndex = i.clamp(0, 10);
+                            final delay =
+                                AppConstants.fadeItemOfListDuration *
+                                cappedIndex;
+                            return BlogCard(
+                              blog: blog,
+                              chipBackgroudColor: AppColors.black,
+                              chipTextColor: AppColors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppConstants.paddingSmall,
+                              ).copyWith(bottom: AppConstants.paddingSmall),
+                              onTap: () {
+                                Navigator.of(
+                                  context,
+                                ).push(BlogDetailPage.route(blog: blog));
+                              },
+                            ).useFadeAnimation(delay: delay);
+                          },
+                          dataList: state.blogs,
+                          hasReachedEnd: state.hasReachedEnd,
+                          onLoadMore:
+                              (int page) => context.read<BlogBloc>().add(
+                                GetBlogsEvent(page: page),
+                              ),
+                          loadingWidget: Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: AppConstants.paddingSmall,
-                            ).copyWith(bottom: AppConstants.paddingSmall),
-                            onTap: () {
-                              Navigator.of(
-                                context,
-                              ).push(BlogDetailPage.route(blog: blog));
-                            },
-                          ).useFadeAnimation(delay: delay);
-                        },
-                        dataList: state.blogs,
-                        hasReachedEnd: state.hasReachedEnd,
-                        onLoadMore:
-                            (int page) => context.read<BlogBloc>().add(
-                              GetBlogsEvent(page: page),
                             ),
-                        loadingWidget: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppConstants.paddingSmall,
-                          ),
-                          child: Shimmer.fromColors(
-                            baseColor: AppColors.black.withValues(alpha: .6),
-                            highlightColor: AppColors.gradient1.withValues(
-                              alpha: .6,
-                            ),
-                            child: Container(
-                              width: AppConstants.widthScreen,
-                              height: AppConstants.containerCardHeight,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  AppConstants.borderImage,
+                            child: Shimmer.fromColors(
+                              baseColor: AppColors.black.withValues(alpha: .6),
+                              highlightColor: AppColors.gradient1.withValues(
+                                alpha: .6,
+                              ),
+                              child: Container(
+                                width: AppConstants.widthScreen,
+                                height: AppConstants.containerCardHeight,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.borderImage,
+                                  ),
+                                  color: AppColors.white,
                                 ),
-                                color: AppColors.white,
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    } else {
-                      return SizedBox(
-                        width: AppConstants.widthScreen,
-                        height: AppConstants.containerCardHeight,
-                      );
-                    }
-                  },
+                        );
+                      } else {
+                        return SizedBox(
+                          width: AppConstants.widthScreen,
+                          height: AppConstants.containerCardHeight,
+                        );
+                      }
+                    },
+                  ),
                 ),
-              ),
-              state is AuthLoadingState
-                  ? SizedBox(
-                    width: AppConstants.widthScreen,
-                    height: AppConstants.heightScreen,
-                    child: const LoadingWidget(),
-                  )
-                  : const SizedBox(),
-            ],
-          );
-        },
+                state is AuthLoadingState
+                    ? SizedBox(
+                      width: AppConstants.widthScreen,
+                      height: AppConstants.heightScreen,
+                      child: const LoadingWidget(),
+                    )
+                    : const SizedBox(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
